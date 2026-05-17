@@ -1,6 +1,7 @@
 from datetime import datetime
-from constants.scraper_contants import *
+from constants.scraper_constants import *
 from utils.scraper_utils import *
+from entities.tour_entities import *
 from logger import logging
 
 class TournamentScraper:
@@ -14,28 +15,27 @@ class TournamentScraper:
         start_time = datetime.now()
         try:
             soup = get_soup(url=self.base_url)
-            contents = soup.select(".header-inner a[href]")
+            contents = get_value(soup=soup, selector=".header-inner a[href]", value="href")
             for content in contents:
-                href = content.get("href")
-                if "events" not in href:
+                if "events" not in content:
                     continue
-                url = absolute(url=href)
+                url = absolute(url=content)
 
             soup = get_soup(url=url)
-            contents = soup.select(".wf-filter-inner a[href]")
+            contents = get_value(soup=soup, selector=".wf-filter-inner a[href]", value="href")
             for content in contents:
-                href = content.get("href")
-                if "60" not in href:
+                if "60" not in content:
                     continue
-                url = absolute(url=href)
+                url = absolute(url=content)
 
             soup = get_soup(url=url)
-            contents = soup.select(".events-container-col a[href]")
+            contents = soup.select(".events-container-col a")
             results = set()
             for content in contents:
                 href = content.get("href")
                 url = absolute(url=href)
-                results.add(url)
+                status = get_value(soup=content, selector=".event-item-desc-item-status", select_option=True)
+                results.add((status, url))
 
             end_time = datetime.now()
             duration = end_time - start_time
@@ -46,9 +46,9 @@ class TournamentScraper:
             logging.error(f"Error Occurs when running scrape_tournament_list: {e}")
             print(f"Error Occurs when running scrape_tournament_list: {e}")
 
-    def scrape_tournament_info(self, url: list) -> list:
+    def scrape_tournament_info(self, tour_list: list) -> list:
         processed = set()
-        queue = list(url) if isinstance(url, (set, list)) else [url]
+        queue = list(tour_list) if isinstance(tour_list, (set, list)) else [tour_list]
         print(f"Queue: {queue[:3]}")
         try:
             results = []
@@ -57,12 +57,13 @@ class TournamentScraper:
             agents_page = set()
             start_time = datetime.now()
             for item in queue:
-                if item in processed:
-                    logging.info(f"{item} has been processed.")
+                status, url = item[0], item[1]
+                if url in processed:
+                    logging.info(f"{url} has been processed.")
                     continue
 
-                soup = get_soup(url=item)
-                tour_id = item.split("/")[4]
+                soup = get_soup(url=url)
+                tour_id = url.split("/")[4]
                 tag = get_value(soup=soup, selector=".event-desc-inner a[href]", select_option=True)
                 if not any(i in self.stage_keyword for i in tag.lower().split(" ")):
                     continue
@@ -72,18 +73,29 @@ class TournamentScraper:
                 region = title_split[0] if len(title_split) == 2 else "all"
                 stage =  title_split[1]
                 
-                results.append([tour_id, title, tag, stage, region])
-
+                tour = Tour(
+                    tour_id=tour_id,
+                    tour_name=title,
+                    tour_tag=tag,
+                    tour_stage=stage,
+                    tour_region=region,
+                    tour_status=status
+                )
+                results.append(tour)
+                
+                if status.lower() == "upcoming" or status.lower() == "ongoing":
+                    logging.info(f"{status} tournaments confirmed. Tournament must be completed to scrape matches list.")
+                    continue
                 contents = soup.select(".wf-nav a[href]")
                 for content in contents:
                     href = content.get("href")
-                    url = absolute(url=href)
+                    content_url = absolute(url=href)
                     if "matches" in href:
-                        matches_page.add((tour_id, url))
+                        matches_page.add((tour_id, content_url))
                     elif "stats" in href:
-                        stats_page.add((tour_id, url))
+                        stats_page.add((tour_id, content_url))
                     elif "agents" in href:
-                        agents_page.add((tour_id, url))
+                        agents_page.add((tour_id, content_url))
                     else:
                         continue
                 
@@ -105,7 +117,7 @@ class TournamentScraper:
         tour_list = self.scrape_tournament_list()
         logging.info("Initialize scrape_tournament_info ...")
         tour_info, matches_page, stats_page, agents_page = self.scrape_tournament_info(tour_list)
-        tour_df = pd.DataFrame(tour_info, columns=["tour_id", "tour_name", "tour_tag", "tour_stage", "tour_region"])
+        tour_df = pd.DataFrame([asdict(t) for t in tour_info])
         path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\tour_raw.csv"
         tour_df.to_csv(path)
         logging.info(f"Data has been save in {path}")
