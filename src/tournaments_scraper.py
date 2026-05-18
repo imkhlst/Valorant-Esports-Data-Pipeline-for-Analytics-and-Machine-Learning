@@ -11,51 +11,50 @@ class TournamentScraper:
         self.region_keyword = region_keyword
 
     def scrape_tournament_list(self):
-        results = set()
         start_time = datetime.now()
+        tour_list = set()
         try:
             soup = get_soup(url=self.base_url)
-            contents = get_value(soup=soup, selector=".header-inner a[href]", value="href")
-            for content in contents:
-                if "events" not in content:
+            elements = get_value(soup=soup, selector=".header-inner a[href]", attr="href", multiple=True)
+            for el in elements:
+                if "events" not in el:
                     continue
-                url = absolute(url=content)
+                url = absolute(url=el)
 
             soup = get_soup(url=url)
-            contents = get_value(soup=soup, selector=".wf-filter-inner a[href]", value="href")
-            for content in contents:
-                if "60" not in content:
+            elements = get_value(soup=soup, selector=".wf-filter-inner a[href]", attr="href", multiple=True)
+            for el in elements:
+                if "60" not in el:
                     continue
-                url = absolute(url=content)
+                url = absolute(url=el)
 
             soup = get_soup(url=url)
-            contents = soup.select(".events-container-col a")
-            results = set()
-            for content in contents:
-                href = content.get("href")
+            elements = get_value(soup=soup, selector=".events-container-col a", multiple=True)
+            for el in elements:
+                href = el.get("href")
                 url = absolute(url=href)
-                status = get_value(soup=content, selector=".event-item-desc-item-status", select_option=True)
-                results.add((status, url))
+                status = get_value(soup=el, selector=".event-item-desc-item-status", attr="text")
+                tour_list.add((status, url))
 
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scraping_tournament_list completed in {duration}s.")
-            return list(results)
+            return list(tour_list)
         
         except Exception as e:
             logging.error(f"Error Occurs when running scrape_tournament_list: {e}")
             print(f"Error Occurs when running scrape_tournament_list: {e}")
 
     def scrape_tournament_info(self, tour_list: list) -> list:
+        start_time = datetime.now()
         processed = set()
         queue = list(tour_list) if isinstance(tour_list, (set, list)) else [tour_list]
         print(f"Queue: {queue[:3]}")
         try:
-            results = []
+            tour_info = []
             matches_page = set()
             stats_page = set()
             agents_page = set()
-            start_time = datetime.now()
             for item in queue:
                 status, url = item[0], item[1]
                 if url in processed:
@@ -63,12 +62,13 @@ class TournamentScraper:
                     continue
 
                 soup = get_soup(url=url)
-                tour_id = url.split("/")[4]
-                tag = get_value(soup=soup, selector=".event-desc-inner a[href]", select_option=True)
+                tour_id = int(url.split("/")[4])
+                tag = get_value(soup=soup, selector=".event-desc-inner a[href]", attr="text")
                 if not any(i in self.stage_keyword for i in tag.lower().split(" ")):
+                    processed.add(url)
                     continue
 
-                title = get_value(soup=soup, selector=".wf-title", select_option=True)
+                title = get_value(soup=soup, selector=".wf-title", attr="text")
                 title_split = title.split(":")[1].strip().split(" ", maxsplit=1) if ":" in title else title.split(" ", maxsplit=2)
                 region = title_split[0] if len(title_split) == 2 else "all"
                 stage =  title_split[1]
@@ -81,30 +81,32 @@ class TournamentScraper:
                     tour_region=region,
                     tour_status=status
                 )
-                results.append(tour)
+                tour_info.append(tour)
                 
                 if status.lower() == "upcoming" or status.lower() == "ongoing":
                     logging.info(f"{status} tournaments confirmed. Tournament must be completed to scrape matches list.")
+                    processed.add(url)
                     continue
-                contents = soup.select(".wf-nav a[href]")
-                for content in contents:
-                    href = content.get("href")
-                    content_url = absolute(url=href)
-                    if "matches" in href:
+
+                elements = get_value(soup=soup, selector=".wf-nav a", attr="href", multiple=True)
+                for el in elements:
+                    content_url = absolute(url=el)
+                    if "matches" in el:
+                        content_url = content_url.replace(content_url[-4:], "all")
                         matches_page.add((tour_id, content_url))
-                    elif "stats" in href:
+                    elif "stats" in el:
                         stats_page.add((tour_id, content_url))
-                    elif "agents" in href:
+                    elif "agents" in el:
                         agents_page.add((tour_id, content_url))
                     else:
                         continue
                 
-                processed.add(item)
+                processed.add(url)
 
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scraping_tournament_info completed in {duration}s.")
-            return list(results), list(matches_page), list(stats_page), list(agents_page)
+            return list(tour_info), list(matches_page), list(stats_page), list(agents_page)
         
         except Exception as e:
             logging.error(f"Error Occurs when running scrape_tournament_info: {e}")
@@ -125,6 +127,8 @@ class TournamentScraper:
         end_time = datetime.now()
         duration = end_time - start_time
         logging.info(f"Tournament scraper pipeline completed in {duration}s")
+        print("="*50)
         print(f"Tournament scraper pipeline completed in {duration}s")
+        print("="*50)
 
         return matches_page, stats_page, agents_page
