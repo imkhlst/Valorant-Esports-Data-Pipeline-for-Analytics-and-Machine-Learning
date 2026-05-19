@@ -72,6 +72,8 @@ class TournamentScraper:
                 title_split = title.split(":")[1].strip().split(" ", maxsplit=1) if ":" in title else title.split(" ", maxsplit=2)
                 region = title_split[0] if len(title_split) == 2 else "all"
                 stage =  title_split[1]
+
+                logging.info(f"{title} is Exist. Tournament status: {status}.")
                 
                 tour = Tour(
                     tour_id=tour_id,
