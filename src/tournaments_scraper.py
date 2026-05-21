@@ -49,7 +49,7 @@ class TournamentScraper:
         start_time = datetime.now()
         processed = set()
         queue = list(tour_list) if isinstance(tour_list, (set, list)) else [tour_list]
-        print(f"Queue: {queue[:3]}")
+        print(f"Queue: {queue[:2]}, ... , {queue[-1]}")
         try:
             tour_info = []
             matches_page = set()
