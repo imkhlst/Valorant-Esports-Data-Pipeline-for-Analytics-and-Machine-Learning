@@ -45,5 +45,5 @@ class Match:
     decider_map: Optional[str] = None
 
     def __post_init__(self) -> None:
-        self.home_last_5_wr = self.home_n_last_win / self.home_n_last_match
-        self.away_last_5_wr = self.away_n_last_win / self.away_n_last_match
+        self.home_n_last_wr = self.home_n_last_win / self.home_n_last_match
+        self.away_n_last_wr = self.away_n_last_win / self.away_n_last_match
