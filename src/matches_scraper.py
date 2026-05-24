@@ -12,7 +12,7 @@ class MatchesScraper:
         start_time = datetime.now()
         processed = set()
         queue = list(match_page) if isinstance(match_page, (list, set)) else [match_page]
-        print(f"Queue: {queue[:3]}")
+        print(f"Queue: {queue[:2]}, ... , {queue[-1]}")
         try:
             matches_list = []
             for item in queue:
@@ -42,7 +42,7 @@ class MatchesScraper:
         start_time = datetime.now()
         processed = set()
         queue = list(match_list) if isinstance(match_list, (set, list)) else [match_list]
-        print(f"Queue: {queue[:3]}")
+        print(f"Queue: {queue[:2]}, ... , {queue[-1]}")
         try:
             matches_info = []
             tab_list = []
@@ -54,9 +54,12 @@ class MatchesScraper:
 
                 soup = get_soup(url=url)
                 bracket = get_value(soup=soup, selector=".match-header-event-series", attr="text")
+                if "showmatch" in bracket.lower():
+                    continue
                 match_id = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="data-match-id")
-                tab_elements = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="href")
-                tab_list.append([match_id, sorted[tab_elements]])
+                tab_elements = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="href", multiple=True)
+                tab_url = [absolute(url=i) for i in tab_elements]
+                tab_list.append([match_id, sorted(tab_url)])
                 date = get_value(soup=soup, selector=".moment-tz-convert", attr="data-utc-ts")
                 date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
                 patch_info = get_value(soup=soup, selector=".match-header-date", attr="text")
@@ -64,55 +67,78 @@ class MatchesScraper:
                     patch = patch_info.split("Patch")[-1].strip()
                 else:
                     patch = None
+
+                logging.info(f"Found {match_id}, {bracket}, {date}, and {patch}.")
                 
                 home_href = get_value(soup=soup, selector=".match-header-link.wf-link-hover.mod-1", attr="href")
                 home_url = absolute(url=home_href)
                 home_soup = get_soup(url=home_url)
                 home_info = get_value(soup=home_soup, selector=".wf-title", attr="text", multiple=True)
-                home_name, home_alias = home_info[0], home_info[1]
+                home_name = home_alias = home_info[0]
+                if len(home_info) > 1:
+                    home_alias = home_info[1]
 
                 away_href = get_value(soup=soup, selector=".match-header-link.wf-link-hover.mod-2", attr="href")
                 away_url = absolute(url=away_href)
                 away_soup = get_soup(url=away_url)
                 away_info = get_value(soup=away_soup, selector=".wf-title", attr="text", multiple=True)
-                away_name, away_alias = away_info[0], away_info[1]
+                away_name = away_alias = away_info[0]
+                if len(away_info) > 1:
+                    away_alias = away_info[1]
 
-                bo_info = get_value(soup=soup, selector=".match-header-vs-note", multiple=True)[1]
-                score_info = get_value(soup=soup, selector=".js-spoiler")
+                logging.info(f"Found {home_name} as {home_alias} and {away_name} as {away_alias}.")
+
+                bo_info = get_value(soup=soup, selector=".match-header-vs-note", attr="text", multiple=True)[-1]
+                score_info = get_value(soup=soup, selector=".js-spoiler", attr="text")
                 home_score = int(score_info.split(":")[0].strip())
                 away_score = int(score_info.split(":")[-1].strip())
+                
+                logging.info(f"Found {bo_info} match score (home) {home_score} vs {away_score} (away).")
 
                 h2h = get_value(soup=soup, selector=".match-h2h-matches-score", attr="text", multiple=True)
                 home_h2h_win, home_h2h_score = 0, 0
                 away_h2h_win, away_h2h_score = 0, 0
                 for value in h2h:
-                    score = value.split("\n")
-                    home_h2h_score += int(score[0])
-                    away_h2h_score += int(score[1])
-                    if int(score[0]) > int(score[1]):
+                    home_h2h_score += int(value[0])
+                    away_h2h_score += int(value[1])
+                    if int(value[0]) > int(value[1]):
                         home_h2h_win += 1
                     else:
                         away_h2h_win += 1
+                        
+                logging.info(f"Head to Head score (home) {home_h2h_score}({home_h2h_win}) vs {away_h2h_score}({away_h2h_win}) (away).")
 
-                last_match = get_value(soup=soup, selector=".wf-card.mod-dark.match-histories")
-                home_last_match = get_value(soup=last_match[0], selector=".match-histories-item.wf-module-item", attr="class")
-                away_last_match = get_value(soup=last_match[1], selector=".match-histories-item.wf-module-item", attr="class")
-                home_n_last_match_win, away_n_last_match_win = 0, 0
-                for i in [home_last_match, away_last_match]:
-                    for value in i:
-                        if "mod-win" not in value:
-                            continue
-                        elif i == home_last_match:
-                            home_n_last_match_win += 1
-                            home_n_last_match = len(i)
-                        elif i == away_last_match:
-                            away_n_last_match_win += 1
-                            away_n_last_match = len(i)
-                        else:
-                            logging.info(f"{value} unindentified.")
+                last_match = get_value(soup=soup, selector=".wf-card.mod-dark.match-histories", multiple=True)
+                if len(last_match) > 0:
+                    home_last_match = get_value(soup=last_match[0], selector=".match-histories-item-result", attr="class", multiple=True)
+                    away_last_match = get_value(soup=last_match[1], selector=".match-histories-item-result", attr="class", multiple=True)
+                    home_n_last_match_win, away_n_last_match_win = 0, 0
+                    for match_histories in [home_last_match, away_last_match]:
+                        for i, value in enumerate(match_histories):
+                            if match_histories == home_last_match:
+                                if "mod-win" in value:
+                                    home_n_last_match_win += 1
+                                    home_n_last_match = len(match_histories)
+                                else:
+                                    if i + 1 == len(match_histories):
+                                        home_n_last_match = len(match_histories)
+                            elif match_histories == away_last_match:
+                                if "mod-win" in value:
+                                    away_n_last_match_win += 1
+                                    away_n_last_match = len(match_histories)
+                                else:
+                                    if i + 1 == len(match_histories):
+                                        away_n_last_match = len(match_histories)
+                            else:
+                                logging.info(f"{value} unindentified.")
+                else:
+                    home_n_last_match_win = home_n_last_match = away_n_last_match_win = away_n_last_match = 0
+                
+                logging.info(f"n-last match win (home) {home_n_last_match_win} vs {away_n_last_match_win} (away).")
 
                 map_selection_container = get_value(soup=soup, selector=".match-header-note", attr="text")
                 if map_selection_container is None:
+                    logging.info(f"Map selection not found.")
                     match = Match(
                         tour_id=tour_id,
                         match_id=match_id,
@@ -146,24 +172,26 @@ class MatchesScraper:
                     continue
 
                 # Need to seperate into different dataclass next update
-                map_selection = map_selection_container.split(";").strip()
+                map_selection = map_selection_container.split(";")
                 home_map_picks, home_map_bans = [], []
                 away_map_picks, away_map_bans = [], []
                 decider_map = ""
                 for map in map_selection:
-                    map_split = map.split(" ").strip()
-                    if map_split[0] == home_alias:
+                    map_split = map.strip().split(" ")
+                    if map_split[0].strip() == home_alias:
                         if map_split[1] == "pick":
                             home_map_picks.append(map_split[2].strip())
                         else:
                             home_map_bans.append(map_split[2].strip())
-                    elif map_split[0] == away_alias:
+                    elif map_split[0].strip() == away_alias:
                         if map_split[1] == "pick":
                             away_map_picks.append(map_split[2].strip())
                         else:
                             away_map_bans.append(map_split[2].strip())
                     else:
                         decider_map = map_split[0].strip()
+                
+                logging.info(f"Map selection are exist. Decider map: {decider_map}")
 
                 match = Match(
                     tour_id=tour_id,
@@ -191,23 +219,24 @@ class MatchesScraper:
                     away_n_last_match=away_n_last_match,
                     away_n_last_win=away_n_last_match_win,
 
-                    home_map_ban_1=home_map_bans[0],
-                    home_map_ban_2=home_map_bans[1] if bo_info == "BO3" or bo_info == "BO1" else None,
-                    home_map_ban_3=home_map_bans[2] if bo_info == "BO1" else None,
-                    home_map_pick_1=home_map_picks[0] if bo_info == "BO3" or bo_info == "BO5" else None,
-                    home_map_pick_2=home_map_picks[1] if bo_info == "BO5" else None,
-                    away_map_ban_1=away_map_bans[0],
-                    away_map_ban_2=away_map_bans[1] if bo_info == "BO3" or bo_info == "BO1" else None,
-                    away_map_ban_3=away_map_bans[2] if bo_info == "BO1" else None,
-                    away_map_pick_1=away_map_picks[0] if bo_info == "BO3" or bo_info == "BO5" else None,
-                    away_map_pick_2=away_map_picks[1] if bo_info == "BO5" else None,
+                    home_map_ban_1=safe_index(home_map_bans, 0),
+                    home_map_ban_2=safe_index(home_map_bans, 1),
+                    home_map_ban_3=safe_index(home_map_bans, 2),
+                    home_map_pick_1=safe_index(home_map_picks, 0),
+                    home_map_pick_2=safe_index(home_map_picks, 1),
+                    away_map_ban_1=safe_index(away_map_bans, 0),
+                    away_map_ban_2=safe_index(away_map_bans, 1),
+                    away_map_ban_3=safe_index(away_map_bans, 2),
+                    away_map_pick_1=safe_index(away_map_picks, 0),
+                    away_map_pick_2=safe_index(away_map_picks, 1),
                     decider_map=decider_map
                 )
 
                 matches_info.append(match)
-
+                logging.info(f"Match info has been added.")
                 processed.add(url)
 
+            save_json(data=tab_list, filename="matches")
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scrape_matches_info completed in {duration}s")
@@ -217,16 +246,17 @@ class MatchesScraper:
             logging.error(f"Error occurs when running scrape_matches_info: {e}")
             print(f"Error occurs when running scrape_matches_info: {e}")
     
-    def run(self, match_pages: list):
+    def run(self, match_pages):
         start_time = datetime.now()
 
         logging.info("Initialize scrape_matches_list ...")
-        matches_list = self.scrape_matches_list(match_page=match_pages)
+        match_page = load_json(r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\link\tour.json")
+        matches_list = self.scrape_matches_list(match_page=match_page)
         logging.info("Initialize scrape_matches_info ...")
         matches_info, tab_list = self.scrape_matches_info(match_list=matches_list)
         matches_df = pd.DataFrame([asdict(m) for m in matches_info])
         path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\matches_raw.csv"
-        matches_df.to_csv(path)
+        matches_df.to_csv(path, index=False)
         logging.info(f"Data has been save in {path}")
 
         end_time = datetime.now()
