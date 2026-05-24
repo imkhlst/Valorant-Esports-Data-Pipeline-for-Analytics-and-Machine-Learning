@@ -250,8 +250,10 @@ class MatchesScraper:
         start_time = datetime.now()
 
         logging.info("Initialize scrape_matches_list ...")
-        match_page = load_json(r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\link\tour.json")
-        matches_list = self.scrape_matches_list(match_page=match_page)
+        if not isinstance(match_pages, (set, list)):
+            match_pages = load_json(match_pages)
+        
+        matches_list = self.scrape_matches_list(match_page=match_pages)
         logging.info("Initialize scrape_matches_info ...")
         matches_info, tab_list = self.scrape_matches_info(match_list=matches_list)
         matches_df = pd.DataFrame([asdict(m) for m in matches_info])
