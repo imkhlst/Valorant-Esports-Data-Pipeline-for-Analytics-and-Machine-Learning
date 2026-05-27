@@ -37,9 +37,14 @@ class GamesScraper:
                 if def_score:
                     home_def_score, away_def_score = int(def_score[0]), int(def_score[1])
                 
+                home_ot_score, away_ot_score = None, None
+                ot_score = get_value(soup=game, selector=".mod-ot", attr="text", multiple=True)
+                if ot_score:
+                    home_ot_score, away_ot_score = int(ot_score[0]), int(ot_score[1])
+                
                 logging.info(f"Found {game_id[i]}, on {map_name} - {game_duration}.")
-                logging.info(f"Found game score home ({home_att_score}/{home_def_score}) {home_score} vs {away_score} ({away_att_score}/{away_def_score}) away.")
-                game_overview.append([game_id[i], map_name, game_duration, home_score, away_score, home_att_score, away_att_score, home_def_score, away_def_score])
+                logging.info(f"Found game score home ({home_att_score}/{home_def_score}/{home_ot_score}) {home_score} vs {away_score} ({away_att_score}/{away_def_score}/{away_ot_score}) away.")
+                game_overview.append([game_id[i], map_name, game_duration, home_score, away_score, home_att_score, away_att_score, home_def_score, away_def_score, home_ot_score, away_ot_score])
 
             return game_overview, soup
         
@@ -90,7 +95,7 @@ class GamesScraper:
         start_time = datetime.now()
         processed = set()
         queue = list(tab_list) if isinstance(tab_list, (set, list)) else [tab_list]
-        print(f"Queue: {queue[:2]}, ... , {queue[-1]}")
+        print(f"Queue: {queue[0]}, ... {len(queue)} more.")
         try:
             game_info = []
             soup_list = []
