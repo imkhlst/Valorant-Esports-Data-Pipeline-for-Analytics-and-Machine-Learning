@@ -12,7 +12,7 @@ class MatchesScraper:
         start_time = datetime.now()
         processed = set()
         queue = list(match_page) if isinstance(match_page, (list, set)) else [match_page]
-        print(f"Queue: {queue[:2]}, ... , {queue[-1]}")
+        print(f"Queue: {queue[0]}, ... {len(queue)} more.")
         try:
             matches_list = []
             for item in queue:
@@ -136,8 +136,8 @@ class MatchesScraper:
                 
                 logging.info(f"n-last match win (home) {home_n_last_match_win} vs {away_n_last_match_win} (away).")
 
-                map_selection_container = get_value(soup=soup, selector=".match-header-note", attr="text")
-                if map_selection_container is None:
+                map_selection_container = get_value(soup=soup, selector=".match-header-note", attr="text", multiple=True)
+                if map_selection_container[-1] is None:
                     logging.info(f"Map selection not found.")
                     match = Match(
                         tour_id=tour_id,
@@ -172,7 +172,7 @@ class MatchesScraper:
                     continue
 
                 # Need to seperate into different dataclass next update
-                map_selection = map_selection_container.split(";")
+                map_selection = map_selection_container[-1].split(";")
                 home_map_picks, home_map_bans = [], []
                 away_map_picks, away_map_bans = [], []
                 decider_map = ""
