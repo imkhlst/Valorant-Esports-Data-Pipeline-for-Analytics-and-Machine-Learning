@@ -70,7 +70,7 @@ class TournamentScraper:
 
                 title = get_value(soup=soup, selector=".wf-title", attr="text")
                 title_split = title.split(":")[1].strip().split(" ", maxsplit=1) if ":" in title else title.split(" ", maxsplit=2)
-                region = title_split[0] if len(title_split) == 2 else "all"
+                region = title_split[0] if len(title_split) == 2 else "All"
                 stage =  title_split[1]
 
                 logging.info(f"{title} is Exist. Tournament status: {status}.")
@@ -94,7 +94,7 @@ class TournamentScraper:
                 for el in elements:
                     content_url = absolute(url=el)
                     if "matches" in el:
-                        content_url = content_url.replace(content_url[-4:], "all")
+                        content_url = content_url.replace(content_url[-4:], "All")
                         matches_page.add((tour_id, content_url))
                     elif "stats" in el:
                         stats_page.add((tour_id, content_url))
