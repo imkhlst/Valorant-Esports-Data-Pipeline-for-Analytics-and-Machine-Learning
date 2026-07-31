@@ -105,7 +105,7 @@ class TournamentScraper:
                 
                 processed.add(url)
 
-            save_json(data=matches_page, filename="tour")
+            save_json(data=matches_page, filename="tours")
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scraping_tournament_info completed in {duration}s.")
