@@ -2,11 +2,50 @@ from datetime import datetime
 from constants.scraper_constants import *
 from utils.scraper_utils import *
 from entities.match_entities import *
+from entities.map_veto_entities import *
 from logger import logging
 
 class MatchesScraper:
     def __init__(self):
         pass
+
+    def scrape_map_veto(self, soup, match_id: str,):
+        start_time = datetime.now()
+        logging.info("Initialize scrape_map_veto ...")
+        try:
+            map_order_container = get_value(soup=soup, selector=".match-header-note", attr="text", multiple=True)
+            if map_order_container[-1] is None:
+                logging.info(f"Map selection not found.")
+                return None
+
+            map_order = map_order_container[-1].split(";")
+            vetos = []
+            for map in map_order:
+                map_split = map.strip().split(" ")
+                if map_split[1].strip() == "ban" or map_split[1].strip() == "pick":
+                    veto = MapVeto(
+                        match_id=match_id,
+                        team_name=map_split[0],
+                        phase=map_split[1],
+                        map_name=map_split[2]
+                    )
+                    vetos.append(veto)
+                else:
+                    veto = MapVeto(
+                        match_id=match_id,
+                        map_name=map_split[0]
+                    )
+                    logging.info(f"Found decider map: {map_split[0]}")
+                    vetos.append(veto)
+
+            end_time = datetime.now()
+            duration = end_time - start_time
+            logging.info(f"scrape_map_veto completed in {duration}s")
+            return vetos
+
+        except Exception as e:
+            logging.error(f"Error occurs whe running scrape_map_veto: {e}")
+            print(f"Error occurs whe running scrape_map_veto: {e}")
 
     def scrape_matches_list(self, match_page: list) -> list:
         start_time = datetime.now()
@@ -42,9 +81,10 @@ class MatchesScraper:
         start_time = datetime.now()
         processed = set()
         queue = list(match_list) if isinstance(match_list, (set, list)) else [match_list]
-        print(f"Queue: {queue[:2]}, ... , {queue[-1]}")
+        print(f"Queue: {queue[0]}, ... {len(queue)} more.")
         try:
             matches_info = []
+            map_veto = []
             tab_list = []
             for item in queue:
                 tour_id, url = item[0], item[1]
@@ -89,9 +129,9 @@ class MatchesScraper:
                 logging.info(f"Found {home_name} as {home_alias} and {away_name} as {away_alias}.")
 
                 bo_info = get_value(soup=soup, selector=".match-header-vs-note", attr="text", multiple=True)[-1]
-                score_info = get_value(soup=soup, selector=".js-spoiler", attr="text")
-                home_score = int(score_info.split(":")[0].strip())
-                away_score = int(score_info.split(":")[-1].strip())
+                score_info = get_value(soup=soup, selector=".sp-hide span", attr="text", multiple=True)
+                home_score = int(score_info[0])
+                away_score = int(score_info[-1])
                 
                 logging.info(f"Found {bo_info} match score (home) {home_score} vs {away_score} (away).")
 
@@ -136,63 +176,6 @@ class MatchesScraper:
                 
                 logging.info(f"n-last match win (home) {home_n_last_match_win} vs {away_n_last_match_win} (away).")
 
-                map_selection_container = get_value(soup=soup, selector=".match-header-note", attr="text", multiple=True)
-                if map_selection_container[-1] is None:
-                    logging.info(f"Map selection not found.")
-                    match = Match(
-                        tour_id=tour_id,
-                        match_id=match_id,
-                        date=date,
-                        bracket=bracket,
-                        patch=patch,
-
-                        home_name=home_name,
-                        home_alias=home_alias,
-                        away_name=away_name,
-                        away_alias=away_alias,
-
-                        bo=bo_info,
-                        home_score=home_score,
-                        away_score=away_score,
-
-                        home_h2h_win=home_h2h_win,
-                        away_h2h_win=away_h2h_win,
-                        home_h2h_score=home_h2h_score,
-                        away_h2h_score=away_h2h_score,
-
-                        home_n_last_match=home_n_last_match,
-                        home_n_last_win=home_n_last_match_win,
-                        away_n_last_match=away_n_last_match,
-                        away_n_last_win=away_n_last_match_win
-                    )
-
-                    matches_info.append(match)
-
-                    processed.add(url)
-                    continue
-
-                # Need to seperate into different dataclass next update
-                map_selection = map_selection_container[-1].split(";")
-                home_map_picks, home_map_bans = [], []
-                away_map_picks, away_map_bans = [], []
-                decider_map = ""
-                for map in map_selection:
-                    map_split = map.strip().split(" ")
-                    if map_split[0].strip() == home_alias:
-                        if map_split[1] == "pick":
-                            home_map_picks.append(map_split[2].strip())
-                        else:
-                            home_map_bans.append(map_split[2].strip())
-                    elif map_split[0].strip() == away_alias:
-                        if map_split[1] == "pick":
-                            away_map_picks.append(map_split[2].strip())
-                        else:
-                            away_map_bans.append(map_split[2].strip())
-                    else:
-                        decider_map = map_split[0].strip()
-                
-                logging.info(f"Map selection are exist. Decider map: {decider_map}")
-
                 match = Match(
                     tour_id=tour_id,
                     match_id=match_id,
@@ -217,30 +200,22 @@ class MatchesScraper:
                     home_n_last_match=home_n_last_match,
                     home_n_last_win=home_n_last_match_win,
                     away_n_last_match=away_n_last_match,
-                    away_n_last_win=away_n_last_match_win,
-
-                    home_map_ban_1=safe_index(home_map_bans, 0),
-                    home_map_ban_2=safe_index(home_map_bans, 1),
-                    home_map_ban_3=safe_index(home_map_bans, 2),
-                    home_map_pick_1=safe_index(home_map_picks, 0),
-                    home_map_pick_2=safe_index(home_map_picks, 1),
-                    away_map_ban_1=safe_index(away_map_bans, 0),
-                    away_map_ban_2=safe_index(away_map_bans, 1),
-                    away_map_ban_3=safe_index(away_map_bans, 2),
-                    away_map_pick_1=safe_index(away_map_picks, 0),
-                    away_map_pick_2=safe_index(away_map_picks, 1),
-                    decider_map=decider_map
+                    away_n_last_win=away_n_last_match_win
                 )
 
                 matches_info.append(match)
-                logging.info(f"Match info has been added.")
+
+                vetos = self.scrape_map_veto(soup=soup, match_id=match_id)
+                map_veto.extend(vetos)
+
+                logging.info(f"Match info and map veto has been added.")
                 processed.add(url)
 
             save_json(data=tab_list, filename="matches")
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scrape_matches_info completed in {duration}s")
-            return matches_info, tab_list
+            return matches_info, map_veto, tab_list
         
         except Exception as e:
             logging.error(f"Error occurs when running scrape_matches_info: {e}")
@@ -255,10 +230,16 @@ class MatchesScraper:
         
         matches_list = self.scrape_matches_list(match_page=match_pages)
         logging.info("Initialize scrape_matches_info ...")
-        matches_info, tab_list = self.scrape_matches_info(match_list=matches_list)
+        matches_info, map_veto, tab_list = self.scrape_matches_info(match_list=matches_list)
+
         matches_df = pd.DataFrame([asdict(m) for m in matches_info])
         path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\matches_raw.csv"
         matches_df.to_csv(path, index=False)
+        logging.info(f"Data has been save in {path}")
+
+        map_veto_df = pd.DataFrame([asdict(m) for m in map_veto])
+        path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\map_veto_raw.csv"
+        map_veto_df.to_csv(path, index=False)
         logging.info(f"Data has been save in {path}")
 
         end_time = datetime.now()
