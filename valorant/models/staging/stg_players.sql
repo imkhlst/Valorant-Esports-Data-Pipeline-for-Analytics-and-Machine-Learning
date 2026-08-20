@@ -1,0 +1,20 @@
+SELECT
+    SAFE_CAST(game_id AS STRING) AS game_id,
+    SAFE_CAST(name AS STRING) AS player_name,
+    SAFE_CAST(team_alias AS STRING) AS team_alias,
+    SAFE_CAST(nationality AS STRING) AS nationality,
+    SAFE_CAST(agent AS STRING) AS agent,
+    SAFE_CAST(mod AS STRING) AS mod,
+    SAFE_CAST(r AS FLOAT64) AS r,
+    SAFE_CAST(acs AS INT64) AS acs,
+    SAFE_CAST(k AS INT64) AS k,
+    SAFE_CAST(d AS INT64) AS d,
+    SAFE_CAST(a AS INT64) AS a,
+    SAFE_CAST(kd AS INT64) AS kd,
+    SAFE_CAST(kast AS INT64) AS kast,
+    SAFE_CAST(adr AS INT64) AS adr,
+    SAFE_CAST(hs AS INT64) AS hs,
+    SAFE_CAST(fk AS INT64) AS fk,
+    SAFE_CAST(fd AS INT64) AS fd,
+    SAFE_CAST(fkfd AS INT64) AS fkfd
+FROM {{ source('bronze', 'players') }}
