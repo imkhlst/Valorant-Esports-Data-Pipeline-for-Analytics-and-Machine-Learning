@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: valorant-project-2026
+    schema: bronze
+
+    tables:
+      - name: tours
+      - name: matches
+      - name: games_overview
+      - name: games_economy
+      - name: players
+      - name: map_vetos
