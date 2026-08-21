@@ -1,5 +1,7 @@
 # Data Mapping
 
+Version: 1.1
+
 ## Bronze → Staging
 
 ### stg_tours
@@ -96,6 +98,30 @@
 | valorant-project-2026.bronze.map_vetos | team_alias | stg_map_vetos | team_alias | STR conversion | Alias of the team performing the veto action |
 | valorant-project-2026.bronze.map_vetos | action | stg_map_vetos | action | STR conversion | Type of map veto action performed |
 
+### stg_players
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| valorant-project-2026.bronze.players | game_id | stg_players | game_id | STR conversion | game FK |
+| valorant-project-2026.bronze.players | name | stg_players | player_name | STR conversion | Name of the player |
+| valorant-project-2026.bronze.players | team_alias | stg_players | team_alias | STR conversion | Alias of the team represented by the player in the game |
+| valorant-project-2026.bronze.players | nationality | stg_players | nationality | STR conversion | Nationality associated with the player |
+| valorant-project-2026.bronze.players | agent | stg_players | agent | STR conversion | Agent selected by the player for the game |
+| valorant-project-2026.bronze.players | mod | stg_players | mod | STR conversion | Statistical aggregation mode indicating whether the player statistics |
+| valorant-project-2026.bronze.players | r | stg_players | r | FLOAT conversion | Player rating for the game |
+| valorant-project-2026.bronze.players | acs | stg_players | acs | INT conversion | Average Combat Score (ACS) achieved by the player in the game |
+| valorant-project-2026.bronze.players | k | stg_players | k | INT conversion | Number of kills recorded by the player in the game |
+| valorant-project-2026.bronze.players | d | stg_players | d | INT conversion | Number of deaths recorded by the player in the game |
+| valorant-project-2026.bronze.players | a | stg_players | a | INT conversion | Number of assists recorded by the player in the game |
+| valorant-project-2026.bronze.players | kd | stg_players | kd | INT conversion | Kill-to-death diff of the player in the game |
+| valorant-project-2026.bronze.players | kast | stg_players | kast | INT conversion | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded. |
+| valorant-project-2026.bronze.players | adr | stg_players | adr | INT conversion | Average Damage per Round (ADR) achieved by the player. |
+| valorant-project-2026.bronze.players | hs | stg_players | hs | INT conversion | Percentage of the player's kills that were headshots |
+| valorant-project-2026.bronze.players | fk | stg_players | fk | INT conversion | Number of first kills recorded by the player |
+| valorant-project-2026.bronze.players | fd | stg_players | fd | INT conversion | Number of first deaths recorded by the player |
+| valorant-project-2026.bronze.players | fkfd | stg_players | fkfd | INT conversion | First-kill to first-death diff of the player |
+
+
 ## Staging → Silver
 
 ### matches
@@ -126,6 +152,75 @@
 | stg_matches | home_n_last_wr | matches | home_n_last_wr | Domain validation | home team n-last match win rate |
 | stg_matches | away_n_last_wr | matches | away_n_last_wr | Domain validation | away team n-last match win rate |
 
+### games_overview
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| stg_games_overview | match_id | games_overview | match_id | Direct mapping | Match FK |
+| stg_games_overview | game_id | games_overview | game_id | Direct mapping |  Unique identifier of the game |
+| stg_games_overview | date | games_overview | match_date | Direct mapping | Calendar date on which the match took place |
+| stg_games_overview | date | games_overview | match_datetime | Direct mapping | Date and time when the match took place |
+| stg_games_overview | game_map | games_overview | game_map | Direct mapping | Map on which the game was played |
+| stg_games_overview | game_duration | games_overview | game_duration | Domain validation | Duration of the game in seconds |
+| stg_games_overview | home_score | games_overview | home_score | Domain validation | Total rounds won by the home team in the game |
+| stg_games_overview | away_score | games_overview | away_score | Domain validation | Total rounds won by the away team in the game |
+| stg_games_overview | home_atk_score | games_overview | home_atk_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the home team while attacking |
+| stg_games_overview | away_atk_score | games_overview | away_atk_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the away team while attacking |
+| stg_games_overview | home_def_score | games_overview | home_def_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the home team while defending |
+| stg_games_overview | away_def_score | games_overview | away_def_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the away team while defending |
+| stg_games_overview | home_ot_score | games_overview | home_ot_score | Domain validation | Number of overtime rounds won by the home team |
+| stg_games_overview | away_ot_score | games_overview | away_ot_score | Domain validation | Number of overtime rounds won by the away team |
+
+### games_economy
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| stg_games_economy | match_id | games_economy | match_id | Direct mapping | Match FK |
+| stg_games_economy | game_id | games_economy | game_id | Direct mapping |  Unique identifier of the game |
+| stg_games_economy | date | games_economy | match_date | Direct mapping | Calendar date on which the match took place |
+| stg_games_economy | date | games_economy | match_datetime | Direct mapping | Date and time when the match took place |
+| stg_games_economy | home_pstl_win | games_economy | home_pstl_win | Domain validation | Number of pistol rounds won by the home team |
+| stg_games_economy | away_pstl_win | games_economy | away_pstl_win | Domain validation | Number of pistol rounds won by the away team |
+| stg_games_economy | home_eco_round | games_economy | home_eco_round | Domain validation | Number of eco rounds played by the home team |
+| stg_games_economy | away_eco_round | games_economy | away_eco_round | Domain validation | Number of eco rounds played by the away team |
+| stg_games_economy | home_eco_win | games_economy | home_eco_win | Domain validation | Number of eco win played by the home team |
+| stg_games_economy | away_eco_win | games_economy | away_eco_win | Domain validation | Number of eco win played by the away team. |
+| stg_games_economy | home_semi_eco_round | games_economy | home_semi_eco_round | Domain validation | Number of semi eco rounds played by the home team |
+| stg_games_economy | away_semi_eco_round | games_economy | away_semi_eco_round | Domain validation | Number of semi eco rounds played by the away team |
+| stg_games_economy | home_semi_eco_win | games_economy | home_semi_eco_win | Domain validation | Number of semi eco rounds win by the home team |
+| stg_games_economy | away_semi_eco_win | games_economy | away_semi_eco_win | Domain validation | Number of semi eco rounds win by the away team |
+| stg_games_economy | home_semi_buy_round | games_economy | home_semi_buy_round | Domain validation | Number of semi buy rounds played by the home team |
+| stg_games_economy | away_semi_buy_round | games_economy | away_semi_buy_round | Domain validation | Number of semi buy rounds played by the away team |
+| stg_games_economy | home_semi_buy_win | games_economy | home_semi_buy_win | Domain validation | Number of semi buy win played by the home team |
+| stg_games_economy | away_semi_buy_win | games_economy | away_semi_buy_win | Domain validation | Number of semi buy win played by the away team |
+| stg_games_economy | home_full_buy_round | games_economy | home_full_buy_round | Domain validation | Number of full buy rounds played by the home team |
+| stg_games_economy | away_full_buy_round | games_economy | away_full_buy_round | Domain validation | Number of full buy rounds played by the away team |
+| stg_games_economy | home_full_buy_win | games_economy | home_full_buy_win | Domain validation | Number of full buy win played by the home team |
+| stg_games_economy | away_full_buy_win | games_economy | away_full_buy_win | Domain validation | Number of full buy win played by the away team |
+
+### players
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| stg_players | game_id | players | game_id | Direct mapping | Game FK |
+| stg_players | name | players | player_name | Direct mapping | Name of the player |
+| stg_players | team_alias | players | team_alias | Direct mapping | Alias of the team represented by the player in the game |
+| stg_players | nationality | players | nationality | Direct mapping | Nationality associated with the player |
+| stg_players | agent | players | agent | Direct mapping | Agent selected by the player for the game |
+| stg_players | mod | players | mod | Direct mapping | Statistical aggregation mode indicating whether the player statistics |
+| stg_players | r | players | r | Domain validation | Player rating for the game |
+| stg_players | acs | players | acs | Domain validation | Average Combat Score (ACS) achieved by the player in the game |
+| stg_players | k | players | k | Domain validation | Number of kills recorded by the player in the game |
+| stg_players | d | players | d | Domain validation | Number of deaths recorded by the player in the game |
+| stg_players | a | players | a | Domain validation | Number of assists recorded by the player in the game |
+| stg_players | kd | players | kd | Domain validation | Kill-to-death diff of the player in the game |
+| stg_players | kast | players | kast | Domain validation | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded. |
+| stg_players | adr | players | adr | Domain validation | Average Damage per Round (ADR) achieved by the player. |
+| stg_players | hs | players | hs | Domain validation | Percentage of the player's kills that were headshots |
+| stg_players | fk | players | fk | Domain validation | Number of first kills recorded by the player |
+| stg_players | fd | players | fd | Domain validation | Number of first deaths recorded by the player |
+| stg_players | fkfd | players | fkfd | Domain validation | First-kill to first-death diff of the player |
+
 ### dims_tours
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
@@ -136,6 +231,37 @@
 | stg_tours | tour_stage | dims_tours | tour_stage | Domain validation |  Competetion stage of the tournament |
 | stg_tours | tour_region | dims_tours | tour_region | Domain validation | Regional scope of the tournament |
 | stg_tours | tour_status | dims_tours | tour_status | Direct mapping | Current or recorded status of the tournament |
+
+### dims_teams
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| matches | team_name | dims_teams | team_id | Window function | Surrogate identifier uniquely assigned to each team |
+| matches | team_name | dims_teams | team_name | Unique direct mapping | Standardized full name of the team |
+| matches | team_alias | dims_teams | team_alias | Direct mapping | Standardized short alias used to identify the team in source data |
+| dims_tours | tour_region | dims_teams | tour_region | Dimension lookup | Competitive region associated with the team |
+
+### dims_players
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| players | player_name | dims_players | player_id | Window function | Surrogate identifier uniquely assigned to each player |
+| players | player_name | dims_players | player_name | Unique direct mapping | Standardized name of the player |
+| players | nationality | dims_players | player_nationality | Direct mapping | Nationality associated with the player |
+
+### dims_maps
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| stg_map_vetos | map_name | dims_map_vetos | map_id | Window function | Surrogate identifier uniquely assigned to each map |
+| stg_map_vetos | map_name | dims_map_vetos | map_name | Unique direct mapping | Standardized name of the map |
+
+### dims_agents
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| players | agent_name | dims_agents | agent_id | Window function | Surrogate identifier uniquely assigned to each agent |
+| players | agent_name | dims_agents | agent_name | Unique direct mapping | Standardized name of the agent |
 
 ## Silver → Gold
 
@@ -148,21 +274,22 @@
 | matches | match_date | fact_matches | match_date | Direct mapping | Calendar date |
 | matches | match_datetime | fact_matches | match_datetime | Direct mapping | Match timestamp |
 | matches | bracket | fact_matches | bracket | Direct mapping | Match bracket |
-| dims_tours | team_id | fact_matches | home_team_id | Dimension Lookup | Home team FK |
-| dims_tours | team_id | fact_matches | away_team_id | DImension Lookup | Away team FK |
+| dims_teams | team_id | fact_matches | home_team_id | Dimension Lookup | Team FK |
+| dims_teams | team_id | fact_matches | away_team_id | Dimension Lookup | Team FK |
 | matches | bo | fact_matches | bo | Direct mapping | Best-of-series match |
 | matches | patch | fact_matches | patch | Direct mapping | Patch version played |
 | matches | home_score | fact_matches | home_score | Direct mapping | Home team score |
 | matches | away_score | fact_matches | away_score | Direct mapping | Away team score |
-| games_overview | home_score | fact_matches | home_total_round | Derived metric | Home team total game round score |
-| games_overview | away_score | fact_matches | away_total_round | Derived metric | Away team total game round score |
-| games_overview | home_score & away_score | fact_matches | score_diff_ratio | Derived metric | home score diff againts away score |
+| matches | home_score & away_score | fact_matches | normalized_score_diff | Normalization | Normalized difference between home and away match scores |
+| games_overview | home_score | fact_matches | home_total_round | Aggregation (SUM) + Join | Home team total game round score |
+| games_overview | away_score | fact_matches | away_total_round | Aggregation (SUM) + Join | Away team total game round score |
+| games_overview | home_score & away_score | fact_matches | normalized_match_round_diff | Aggregation (SUM) + Join + Normalization | Normalized home score diff againts away score |
 | matches | home_h2h_win | fact_matches | home_h2h_win | Direct mapping | home team match win against away team |
 | matches | away_h2h_win | fact_matches | away_h2h_win | Direct mapping | away team match win against home team |
-| matches | home_h2h_win & away_h2h_win | fact_matches | h2h_win_ratio | Derived metric | Home team head-to-head match win ratio against home team |
+| matches | home_h2h_win & away_h2h_win | fact_matches | normalized_h2h_win_diff | Normalization | Normalized home team head-to-head match win rate against home team |
 | matches | home_h2h_score | fact_matches | home_h2h_score | Direct mapping | Home team game win score against away team |
 | matches | away_h2h_score | fact_matches | away_h2h_score | Direct mapping | Away team game win score against home team |
-| matches | home_h2h_score & away_h2h_score | fact_matches | h2h_game_win_ratio | Derived metric | Home team head-to-head game win score ratio against away team |
+| matches | home_h2h_score & away_h2h_score | fact_matches | normalized_h2h_game_win_diff | Normalization | Normalized home team head-to-head game win score rate against away team |
 | matches | home_n_last_win | fact_matches | home_n_last_win | Direct mapping | Home team n-last match win recorded |
 | matches | away_n_last_win | fact_matches | away_n_last_win | Direct mapping | Away team n-last match win recorded |
 | matches | home_n_last_match | fact_matches | home_n_last_match | Direct mapping | Home team n-last match recorded |
@@ -170,3 +297,208 @@
 | matches | home_n_last_wr | fact_matches | home_n_last_wr | Direct mapping | Home team n-last match win rate |
 | matches | away_n_last_wr | fact_matches | away_n_last_wr | Direct mapping | Away team n-last match win rate |
 | matches | home_score & away_score | fact_matches | is_home_win | Business logic | Boolean represent home team win status |
+
+### fact_games
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| fact_matches | tour_id | fact_games | tour_id | Direct mapping | Tournament FK |
+| games_overview | match_id | fact_games | match_id | Direct mapping | Match FK |
+| games_overview | game_id | fact_games | game_id | Direct mapping | Unique identifier of the game |
+| games_overview | match_date | fact_games | match_date | Direct mapping | Calendar date on which the match containing the game took place |
+| games_overview | match_datetime | fact_games | match_datetime | Direct mapping | Date and time at which the match containing the game took place |
+| fact_matches | home_team_id | fact_games | home_team_id | Direct mapping | Team FK |
+| fact_matches | away_team_id | fact_games | away_team_id | Direct mapping | Team FK |
+| dims_maps | map_id | fact_games | map_id | Dimension lookup | Map FK |
+| games_overview | game_duration | fact_games | game_duration | Direct mapping | Duration of the game in seconds |
+| games_overview | home_score | fact_games | home_score | Direct mapping | Total rounds won by the home team in the game |
+| games_overview | away_score | fact_games | away_score | Direct mapping | Total rounds won by the away team in the game |
+| games_overview | home_score & away_score | fact_games | total_round | Derived metric |  Total number of rounds played in the game |
+| games_overview | home_score & away_score | fact_games | normalized_score_diff | Normalization | Normalized difference between home and away round scores |
+| games_overview | home_atk_score | fact_games | home_atk_score | Direct mapping | Number of rounds won by the home team while attacking |
+| games_overview | away_atk_score | fact_games | away_atk_score | Direct mapping | Number of rounds won by the away team while attacking |
+| games_overview | home_atk_score, home_def_score, away_atk_score, away_def_score | fact_games | atk_wr_ratio | Derived metric | Ratio comparing the attacking-side win rates of the home and away teams | ?
+| games_overview | home_def_score | fact_games | home_def_score | Direct mapping | Number of rounds won by the home team while defending |
+| games_overview | away_def_score | fact_games | away_def_score | Direct mapping | Number of rounds won by the away team while defending |
+| games_overview | home_atk_score, home_def_score, away_atk_score, away_def_score | fact_games | def_wr_ratio | Derived metric | Ratio comparing the defending-side win rates of the home and away teams | ?
+| games_overview | home_ot_score | fact_games | home_ot_score | Direct mapping | Number of overtime rounds won by the home team |
+| games_overview | away_ot_score | fact_games | away_ot_score | Direct mapping | Number of overtime rounds won by the away team |
+| games_overview | home_ot_score & away_ot_score | fact_games | normalized_ot_score_diff | Normalization | Rate representing the relative overtime round performance between the home and away teams |
+| games_economy | home_pstl_win | fact_games | home_pstl_win | Direct mapping | Number of pistol rounds won by the home team |
+| games_economy | away_pstl_win | fact_games | away_pstl_win | Direct mapping | Number of pistol rounds won by the away team |
+| games_economy | home_pstl_win & away_pstl_win | fact_games | pstl_win_diff | Derived metric | Difference between the number of pistol rounds won by the home and away teams |
+| games_economy | home_eco_round | fact_games | home_eco_round | Direct mapping | Number of eco rounds played by the home team |
+| games_economy | away_eco_round | fact_games | away_eco_round | Direct mapping | Number of eco rounds played by the away team |
+| games_economy | home_eco_win | fact_games | home_eco_win | Direct mapping | Number of eco rounds won by the home team |
+| games_economy | away_eco_win | fact_games | away_eco_win | Direct mapping | Number of eco rounds won by the away team |
+| games_economy | home_eco_round, home_eco_win, away_eco_round, away_eco_win | fact_games | eco_wr_diff | Derived metric | Relative difference in eco-round win rate between the home and away teams |
+| games_economy | home_semi_eco_round | fact_games | home_semi_eco_round | Direct mapping | Number of semi eco rounds played by the home team |
+| games_economy | away_semi_eco_round | fact_games | away_semi_eco_round | Direct mapping | Number of semi eco rounds played by the away team |
+| games_economy | home_semi_eco_win | fact_games | home_semi_eco_win | Direct mapping | Number of semi eco won played by the home team |
+| games_economy | away_semi_eco_win | fact_games | away_semi_eco_win | Direct mapping | Number of semi eco won played by the away team |
+| games_economy | home_semi_eco_round, home_semi_eco_win, away_semi_eco_round, away_semi_eco_win | fact_games | semi_eco_wr_diff | Derived metric | Relative difference in semi-eco-round win rate between the home and away teams |
+| games_economy | home_semi_buy_round | fact_games | home_semi_buy_round | Direct mapping | Number of semi buy rounds played by the home team |
+| games_economy | away_semi_buy_round | fact_games | away_semi_buy_round | Direct mapping | Number of semi buy rounds played by the away team |
+| games_economy | home_semi_buy_win | fact_games | home_semi_buy_win | Direct mapping | Number of semi buy won played by the home team |
+| games_economy | away_semi_buy_win | fact_games | away_semi_buy_win | Direct mapping | Number of semi buy won played by the away team |
+| games_economy | home_semi_buy_round, home_semi_buy_win, away_semi_buy_round, away_semi_buy_win | fact_games | semi_buy_wr_diff | Derived metric | Relative difference in semi-buy-round win rate between the home and away teams |
+| games_economy | home_full_buy_round | fact_games | home_full_buy_round | Direct mapping | Number of full buy rounds played by the home team |
+| games_economy | away_full_buy_round | fact_games | away_full_buy_round | Direct mapping | Number of full buy rounds played by the away team |
+| games_economy | home_full_buy_win | fact_games | home_full_buy_win | Direct mapping | Number of full buy won played by the home team |
+| games_economy | away_full_buy_win | fact_games | away_full_buy_win | Direct mapping | Number of full buy won played by the away team |
+| games_economy | home_full_buy_round, home_full_buy_win, away_full_buy_round, away_full_buy_win | fact_games | full_buy_wr_diff | Derived metric | Relative difference in full-buy-round win rate between the home and away teams |
+| games_overview | home_score & away_score | fact_matches | is_home_win | Business logic | Boolean represent home team win status |
+
+### fact_map_vetos
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| stg_map_vetos | match_id | fact_map_vetos | match_id | Direct mapping | Match FK |
+| dims_maps | map_id | fact_map_vetos | map_id | Dimension lookup | Map FK |
+| dims_teams | team_id | fact_map_vetos | team_id | Dimension lookup | Team FK |
+| fact_matches | home_team_id | fact_map_vetos | team_id | Direct mapping + Join | Team FK |
+| fact_matches | away_team_id | fact_map_vetos | team_id | Direct mapping + Join | Team FK |
+| stg_map_vetos | action | fact_map_vetos | action | Direct mapping | Type of map veto action performed |
+| stg_map_vetos | match_id, map_id, team_id, action | fact_map_vetos | action_order | Window function | Sequential order of the veto action for a team and action type |
+
+### fact_players
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| team_games_performance | tour_id | fact_players | tour_id | Direct mapping | Tournament FK |
+| team_games_performance | match_id | fact_players | match_id | Direct mapping | Match FK |
+| players | game_id | fact_players | game_id | Direct mapping | Game FK |
+| team_games_performance | map_id | fact_players | map_id | Direct mapping + CTE | Map FK |
+| dims_players | player_id | fact_players | player_id | Dimension lookup | Player FK |
+| team_games_performance | team_id | fact_players | team_id | Direct mapping + Join | Team FK |
+| dims_agents | agent_id | fact_players | agent_id | Dimension lookup | Agent FK |
+| team_games_performance | is_win | fact_players | is_win | Direct mapping | Binary indicator equal to 1 when the player's team won the game |
+| players | mod | fact_players | mod | Direct mapping | Statistical aggregation mode indicating whether the player statistics |
+| players | r | fact_players | r | Direct mapping | Player rating for the game |
+| players | acs | fact_players | acs | Direct mapping | Average Combat Score (ACS) achieved by the player in the game |
+| players | k | fact_players | k | Direct mapping | Number of kills recorded by the player in the game |
+| players | d | fact_players | d | Direct mapping | Number of deaths recorded by the player in the game |
+| players | a | fact_players | a | Direct mapping | Number of assists recorded by the player in the game |
+| players | kd | fact_players | kd | Direct mapping | Kill-to-death diff of the player in the game |
+| players | kast | fact_players | kast | Direct mapping | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded |
+| players | adr | fact_players | adr | Direct mapping | Average Damage per Round (ADR) achieved by the player |
+| players | hs | fact_players | hs | Direct mapping | Percentage of the player's kills that were headshots |
+| players | fk | fact_players | fk | Direct mapping | Number of first kills recorded by the player |
+| players | fd | fact_players | fd | Direct mapping | Number of first deaths recorded by the player |
+| players | fkfd | fact_players | fkfd | Direct mapping | First-kill to first-death diff of the player |
+
+### team_games_performance
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| fact_games | tour_id | team_games_performance | tour_id | Direct mapping | Tournament FK |
+| fact_games | match_id | team_games_performance | match_id | Direct mapping | Match FK |
+| fact_games | game_id | team_games_performance | game_id | Direct mapping | Game FK |
+| fact_games | map_id | team_games_performance | map_id | Direct mapping | Map FK |
+| fact_games | home_team_id | team_games_performance | team_id | Role normalization | Team FK |
+| fact_games | away_team_id | team_games_performance | team_id | Role normalization | Team FK |
+| fact_games | home_ot_score & away_ot_score | team_games_performance | is_ot | Business logic | Binary indicator equal to 1 when the game went to overtime |
+| fact_games | is_home_win | team_games_performance | is_win | Direct mapping & Domain validation | Binary indicator equal to 1 when the team won the game |
+| fact_games | game_duration | team_games_performance | game_duration | Direct mapping | Duration of the game in seconds |
+| fact_games | normalized_score_diff | team_games_performance | normalized_score_diff | Direct mapping & Negation transformation | Normalized score difference from the perspective of the team |
+| fact_games | home_atk_score & away_def_score | team_games_performance | atk_wr | Derived metric | Attacking-side round win rate of the team |
+| fact_games | away_atk_score & home_def_score | team_games_performance | atk_wr | Derived metric | Attacking-side round win rate of the team |
+| fact_games | home_def_score & away_atk_score | team_games_performance | def_wr | Derived metric | Defending-side round win rate of the team |
+| fact_games | away_def_score & home_atk_score | team_games_performance | def_wr | Derived metric | Defending-side round win rate of the team |
+| fact_games | home_pstl_win & away_pstl_win | team_games_performance | pstl_wr | Direct mapping | Pistol-round win rate of the team |
+| fact_games | home_eco_round & home_eco_win | team_games_performance | eco_wr | Derived metric | Eco-round win rate of the team |
+| fact_games | away_eco_round & away_eco_win | team_games_performance | eco_wr | Derived metric | Eco-round win rate of the team |
+| fact_games | home_semi_eco_round & home_semi_eco_win | team_games_performance | semi_eco_wr | Derived metric | Semi-eco-round win rate of the team |
+| fact_games | away_semi_eco_round & away_semi_eco_win | team_games_performance | semi_eco_wr | Derived metric | Semi-eco-round win rate of the team |
+| fact_games | home_semi_buy_round & home_semi_buy_win | team_games_performance | semi_buy_wr | Derived metric | Semi-buy-round win rate of the team |
+| fact_games | away_semi_buy_round & away_semi_buy_win | team_games_performance | semi_buy_wr | Derived metric | Semi-buy-round win rate of the team |
+| fact_games | home_full_buy_round & home_full_buy_win | team_games_performance | full_buy_wr | Derived metric | Full-buy-round win rate of the team |
+| fact_games | away_full_buy_round & away_full_buy_win | team_games_performance | full_buy_wr | Derived metric | Full-buy-round win rate of the team |
+
+### team_maps_performance
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| team_games_performance | team_id | team_maps_performance | team_id | Direct mapping | Tournament FK |
+| team_games_performance | map_id | team_maps_performance | map_id | Direct mapping | Match FK |
+| team_games_performance | All source model columns | team_maps_performance | map_played | Aggregation (COUNT) | Game FK |
+| team_games_performance | is_ot | team_maps_performance | ot_played | Aggregation (SUM) | Map FK |
+| team_games_performance | is_win | team_maps_performance | maps_win | Aggregation (SUM) | Team FK |
+| team_games_performance | is_win & All source model columns | team_maps_performance | map_wr | Aggregation (COUNT & SUM) + Derived metric | Team FK |
+| fact_map_vetos | action | team_maps_performance | pick_count | Business logic + Aggregation (SUM) | Team FK |
+| fact_map_vetos | action | team_maps_performance | ban_count | Business logic + Aggregation (SUM) | Team FK |
+| fact_map_vetos & team_games_performance | action & match_id | team_maps_performance | pick_rate | Business logic + Aggregation (COUNT) | Team FK |
+| fact_map_vetos & team_games_performance | action & match_id | team_maps_performance | ban_rate | Business logic + Aggregation (COUNT) | Team FK |
+| team_games_performance | action | team_maps_performance | map_pick_preference | Business logic + Derived metric | Team FK |
+| team_games_performance | game_duration | team_games_performance | avg_game_duration | Aggregation (AVG) | Team FK |
+| team_games_performance | normalized_score_diff | team_games_performance | avg_normalized_score_diff | Aggregation (AVG) | Team FK |
+| team_games_performance | atk_wr | team_games_performance | avg_atk_wr | Aggregation (AVG) | Team FK |
+| team_games_performance | def_wr | team_games_performance | avg_def_wr | Aggregation (AVG) | Team FK |
+| team_games_performance | pstl_wr | team_games_performance | avg_pstl_wr | Aggregation (AVG) | Team FK |
+| team_games_performance | eco_wr | team_games_performance | avg_eco_wr | Aggregation (AVG) | Team FK |
+| team_games_performance | semi_eco_wr | team_games_performance | avg_semi_eco_wr | Aggregation (AVG) | Team FK |
+| team_games_performance | semi_buy_wr | team_games_performance | avg_semi_buy_wr | Aggregation (AVG) | Team FK |
+| team_games_performance | full_buy_wr | team_games_performance | avg_full_buy_wr | Aggregation (AVG) | Team FK |
+
+### maps_performance
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| team_games_performance | map_id | maps_performance | map_id | Direct mapping | Match FK |
+| team_games_performance | match_id | maps_performance | map_played | Aggregation (COUNT DISTINCT) | Game FK |
+| team_games_performance | is_ot | maps_performances | ot_played | Aggregation (SUM) | Map FK |
+| fact_map_vetos | action | maps_performances | pick_count | Business logic + Aggregation (SUM) | Map FK |
+| fact_map_vetos | action | maps_performances | ban_count | Business logic + Aggregation (SUM) | Map FK |
+| fact_map_vetos & fact_games | action & total_round | maps_performance | pick_rate | Business logic + Derived metric | Team FK |
+| fact_map_vetos & fact_games | action & total_round | maps_performance | ban_rate | Business logic + Derived metric | Team FK |
+| team_games_performance | action | maps_performance | map_pick_preference | Business logic + Derived metric | Team FK |
+| team_games_performance | game_duration | maps_performance | avg_game_duration | Aggregation (AVG) | Team FK |
+| fact_games | home_atk_score & away_atk_score | maps_performance | atk_side_ratio | Aggregation (SUM) + Derived metric| Team FK |
+| fact_games | home_def_score & away_def_score | maps_performance | def_side_ratio | Aggregation (SUM) + Derived metric| Team FK |
+
+### players_agents_maps_performance
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| fact_players | player_id | players_agents_maps_performance | player_id | Direct mapping | Player FK |
+| fact_players | agent_id | players_agents_maps_performance | agent_id | Direct mapping | Player FK |
+| fact_players | map_id | players_agents_maps_performance | map_id | Direct mapping | Player FK |
+| fact_players | map_id | players_agents_maps_performance | agent_played | Aggregation (COUNT) | Player FK |
+| fact_players | is_win | players_agents_maps_performance | total_win | Aggregation (SUM) | Player FK |
+| fact_players | is_win & map_id | players_agents_maps_performance | agent_wr | Aggregation (SUM & COUNT) + Derived metric | Player FK |
+| fact_players | r | players_agents_maps_performance | avg_r | Aggregation (AVG) | Player FK |
+| fact_players | acs | players_agents_maps_performance | avg_acs | Aggregation (AVG) | Player FK |
+| fact_players | k | players_agents_maps_performance | avg_k | Aggregation (AVG) | Player FK |
+| fact_players | d | players_agents_maps_performance | avg_d | Aggregation (AVG) | Player FK |
+| fact_players | a | players_agents_maps_performance | avg_a | Aggregation (AVG) | Player FK |
+| fact_players | kd | players_agents_maps_performance | avg_kd | Aggregation (AVG) | Player FK |
+| fact_players | kast | players_agents_maps_performance | avg_kast | Aggregation (AVG) | Player FK |
+| fact_players | adr | players_agents_maps_performance | avg_adr | Aggregation (AVG) | Player FK |
+| fact_players | hs | players_agents_maps_performance | avg_hs | Aggregation (AVG) | Player FK |
+| fact_players | fk | players_agents_maps_performance | avg_fk | Aggregation (AVG) | Player FK |
+| fact_players | fd | players_agents_maps_performance | avg_fd | Aggregation (AVG) | Player FK |
+| fact_players | fkfd | players_agents_maps_performance | avg_fkfd | Aggregation (AVG) | Player FK |
+
+### agents_maps_performance
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| fact_players | agent_id | agents_maps_performance | agent_id | Direct mapping | Player FK |
+| fact_players | map_id | agents_maps_performance | map_id | Direct mapping | Player FK |
+| fact_players | game_id | agents_maps_performance | presence_count | Aggregation (COUNT DISTINCT) | Player FK |
+| maps_performance | map_played | agents_maps_performance | map_played | Aggregation (SUM) | Player FK |
+| fact_players | agent_id | agents_maps_performance | pick_count | Aggregation (COUNT) | Player FK |
+| fact_players | is_win | agents_maps_performance | total_win | Aggregation (SUM) | Player FK |
+| fact_players & maps_performance | agent_id & map_played | agents_maps_performance | pick_rate | Aggregation (COUNT) + Derived metric | Player FK |
+| fact_players | is_win & game_id | agents_maps_performance | win_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Player FK |
+| fact_players & maps_performance | game_id & map_played | agents_maps_performance | presence_rate | Aggregation (COUNT DISTINCT) + Derived metric | Player FK |
+
+### agents_performance
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| fact_players | agent_id | agents_maps_performance | agent_id | Direct mapping | Player FK |
+| fact_players | All source model columns | agents_maps_performance | pick_count | Aggregation (COUNT) | Player FK |
+| maps_performance | game_id | agents_maps_performance | map_played | Aggregation (COUNT & COUNT DISTINCT) + Derived metric| Player FK |
+| fact_players | All source model columns & game_id | agents_maps_performance | pick_count | Aggregation (SUM &COUNT) + Derived metric | Player FK |
+| fact_players | is_win & All source model columns | agents_maps_performance | total_win | Aggregation (SUM) | Player FK |
