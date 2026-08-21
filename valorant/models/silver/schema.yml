@@ -1,0 +1,778 @@
+version: 1.1
+
+models:
+  - name: dims_tours
+    description: >
+      Dimension table containing standardized tournament attributes used to
+      identify and categorize tournaments.
+      Grain: one row per tournament.
+    config:
+      contract:
+        enforced: true
+    columns:
+    - name: tour_id
+      description: >
+        Unique identifier assigned to each tournament.
+      data_type: string
+      data_tests:
+      - not_null
+      - unique
+    - name: tour_name
+      description: >
+        Official name of the tournament.
+      data_type: string
+      data_tests:
+      - not_null
+      - unique
+    - name: tour_tag
+      description: >
+        Short tag or abbreviation used to identify the tournament.
+      data_type: string
+      data_tests:
+      - not_null
+    - name: tour_stage
+      description: >
+        Competetion stage of the tournament, such a Kickoff, Stage 1, Stage 2 or Champions.
+      data_type: string
+      data_tests:
+      - not_null
+    - name: tour_region
+      description: >
+        Regional scope of the tournament, such as a specific region or All for globally contested events.
+      data_type: string
+      data_tests:
+      - not_null
+    - name: tour_status
+      description: >
+        Current or recorded status of the tournament, such as ongoing or completed.
+      data_type: string
+      data_tests:
+      - not_null
+      
+  - name: matches
+    description: >
+      Match-level dataset containing tournament context, match metadata,
+      team identities, scores, and historical head-to-head statistics.
+      Grain: one row per match.
+    columns:
+      - name: tour_id
+        description: >
+          Identifier of the tournament associated with the match.
+          References the tournament dimension.
+        data_type: string
+        data_tests:
+        - not_null
+        - relationships:
+            to: ref('dims_tours')
+            field: tour_id
+      - name: match_id
+        description: >
+          Unique identifier of the match. Represents the grain of this model:
+          one row per match.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: match_date
+        description: >
+          Calendar date on which the match took place, derived from
+          match_datetime and used for date-based filtering or partitioning.
+        data_type: date
+        data_tests:
+          - not_null
+      - name: match_datetime
+        description: >
+          Date and time when the match took place.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: bracket
+        description: >
+          Tournament bracket or stage position in which the match was played.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: home_name
+        description: >
+          Full name of the home team participating in the match.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: home_alias
+        description: >
+          Short alias or abbreviation identifying the home team.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: away_name
+        description: >
+          Full name of the away team participating in the match.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: away_alias
+        description: >
+          Short alias or abbreviation identifying the away team.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: bo
+        description: >
+          Match format indicating the number of games that can be played,
+          such as Best-of-1 (bo1), Best-of-3 (bo3), or Best-of-5 (bo5).
+        data_type: string
+        data_tests:
+          - not_null
+      - name: patch
+        description: >
+          Game patch version under which the match was played.
+        data_type: string
+      - name: home_score
+        description: >
+          Number of games won by the home team in the match.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_score
+        description: >
+          Number of games won by the away team in the match.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_h2h_win
+        description: >
+          Number of previous head-to-head matches between the home team
+          and away team won by the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_h2h_win
+        description: >
+          Number of previous head-to-head matches between the home team
+          and away team won by the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_h2h_score
+        description: >
+          Number of previous head-to-head games won by the away team
+          against the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_h2h_score
+        description: >
+          Number of previous head-to-head games won by the home team
+          against the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_n_last_match
+        description: >
+          Number of previous matches available in the historical window
+          for the home team at the time of this match.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_n_last_match
+        description: >
+          Number of previous matches available in the historical window
+          for the away team at the time of this match.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_n_last_wr
+        description: >
+          Number of previous matches available in the historical window
+          for the home team at the time of this match.
+          Values range from 0 to 1 and must be float.
+        data_type: float64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+      - name: away_n_last_wr
+        description: >
+          Number of previous matches available in the historical window
+          for the away team at the time of this match.
+          Values range from 0 and 1 and must be float.
+        data_type: float64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              
+  - name: games_overview
+    description: >
+      Game-level overview containing match identification, game timing,
+      map information, round scores, and attack, defense, and overtime
+      performance for both teams.
+      Grain: one row per game.
+    columns:
+      - name: match_id
+        description: >
+          Unique identifier of the match to which the game belongs.
+        data_type: string
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('matches')
+              field: match_id
+      - name: game_id
+        description: >
+          Unique identifier of the game. Represents the grain of this model.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: match_date
+        description: >
+          Calendar date on which the match was played.
+        data_type: date
+        data_tests:
+          - not_null
+      - name: match_datetime
+        description: >
+          Date and time at which the match was played.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: game_map
+        description: >
+          Map on which the game was played.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: game_duration
+        description: >
+          Duration of the game in seconds.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_score
+        description: >
+          Total rounds won by the home team in the game.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_score
+        description: >
+          Total rounds won by the away team in the game.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_atk_score
+        description: >
+          Number of regulation and overtime-adjusted rounds won by the home team while attacking.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_atk_score
+        description: >
+          Number of regulation and overtime-adjusted rounds won by the away team while attacking.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_def_score
+        description: >
+          Number of regulation and overtime-adjusted rounds won by the home team while defending.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_def_score
+        description: >
+          Number of regulation and overtime-adjusted rounds won by the away team while defending.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_ot_score
+        description: >
+          Number of overtime rounds won by the home team.
+          Values must be non-negative and must be integers.
+          NULL values represent overtime was not happens.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_ot_score
+        description: >
+          Number of overtime rounds won by the away team.
+          Values must be non-negative and must be integers.
+          NULL values represent overtime was not happens.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: games_economy
+    description: >
+      Game-level economy statistics containing pistol, eco, semi-eco,
+      semi-buy, and full-buy round and win statistics for both teams.
+      Grain: one row per game.
+    columns:
+      - name: match_id
+        description: >
+          Unique identifier of the match to which the game belongs.
+        data_type: string
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('matches')
+              field: match_id
+      - name: game_id
+        description: >
+          Unique identifier of the game.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique     
+      - name: match_date
+        description: >
+          Calendar date on which the match was played.
+        data_type: date
+        data_tests:
+          - not_null
+      - name: match_datetime
+        description: >
+          Date and time at which the match was played.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: home_pstl_win
+        description: >
+          Number of pistol rounds won by the home team.
+          Values range from 0 to 2 and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 2
+      - name: away_pstl_win
+        description: >
+          Number of pistol rounds won by the away team.
+          Values range from 0 to 2 and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 2
+      - name: home_eco_round
+        description: >
+          Number of eco rounds played by the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_eco_round
+        description: >
+          Number of eco rounds played by the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_eco_win
+        description: >
+          Number of eco rounds won by the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_eco_win
+        description: >
+          Number of eco rounds won by the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_semi_eco_round
+        description: >
+          Number of semi eco rounds played by the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_semi_eco_round
+        description: >
+          Number of semi eco rounds played by the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_semi_eco_win
+        description: >
+          Number of semi eco rounds won by the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_semi_eco_win
+        description: >
+          Number of semi eco rounds won by the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_semi_buy_round
+        description: >
+          Number of semi buy rounds played by the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_semi_buy_round
+        description: >
+          Number of semi buy rounds played by the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_semi_buy_win
+        description: >
+          Number of semi buy rounds won by the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_semi_buy_win
+        description: >
+          Number of semi buy rounds won by the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_full_buy_round
+        description: >
+          Number of full buy rounds played by the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_full_buy_round
+        description: >
+          Number of full buy rounds played by the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: home_full_buy_win
+        description: >
+          Number of full buy rounds won by the home team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: away_full_buy_win
+        description: >
+          Number of full buy rounds won by the away team.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: players
+    description: >
+      Player-level statistics for each game, including player identity,
+      team, agent, and combat performance metrics.
+      Grain: one row per player per game.
+    columns:
+      - name: game_id
+        description: >
+          Unique identifier of the game in which the player participated.
+        data_type: string
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('games_overview')
+              field: game_id
+      - name: player_name
+        description: >
+          Name of the player.
+        data_type: string
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dims_players')
+              field: player_name
+      - name: team_alias
+        description: >
+          Alias of the team represented by the player in the game.
+        data_type: string
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dims_teams')
+              field: team_alias
+      - name: nationality
+        description: >
+          Nationality associated with the player.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: agent
+        description: >
+          Agent selected by the player for the game.
+        data_type: string
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dims_agents')
+              field: agent_name
+      - name: mod
+        description: >
+          Statistical aggregation mode indicating whether the player
+          statistics represent overall, attacking-side, or defending-side
+          performance.
+        data_type: string
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['avg', 'atk', 'def']
+      - name: r
+        description: >
+          Player rating for the game.
+          Values must be non-negative and must be float.
+        data_type: float64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: acs
+        description: >
+          Average Combat Score (ACS) achieved by the player in the game.
+          Values must be non-negative and must be integers.
+          NULL represent a failed transform due to anomaly value or data not recorded.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: k
+        description: >
+          Number of kills recorded by the player in the game.
+          Values must be non-negative and must be integers.
+          NULL represent a failed transform due to anomaly value or data not recorded.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: d
+        description: >
+          Number of deaths recorded by the player in the game.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: a
+        description: >
+          Number of assists recorded by the player in the game.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: kd
+        description: >
+          Kill-to-death diff of the player in the game.
+          Values must be integers.
+        data_type: int64
+      - name: kast
+        description: >
+          Percentage of rounds in which the player recorded a kill,
+          assist, survived, or was traded.
+          Values range from 0 to 100 and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+      - name: adr
+        description: >
+          Average Damage per Round (ADR) achieved by the player.
+          Values must be non-negative and must be integers.
+          NULL represent a failed transform due to anomaly value or data not recorded.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: hs
+        description: >
+          Percentage of the player's kills that were headshots.
+          Values range from 0 to 1 and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+      - name: fk
+        description: >
+          Number of first kills recorded by the player.
+          Values must be non-negative and must be integers.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: fd
+        description: >
+          Number of first deaths recorded by the player.
+          Values must be non-negative and must be integers.
+          NULL represent a failed transform due to anomaly value or data not recorded.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: fkfd
+        description: >
+          First-kill to first-death diff of the player.
+          Values must be integers.
+        data_type: int64
+
+  - name: dims_teams
+    description: >
+      Team dimension containing the standardized identity and regional classification of teams.
+      Grain: one row per team.
+    columns:
+      - name: team_id
+        description: >
+          Surrogate identifier uniquely assigned to each team.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: team_name
+        description: >
+          Standardized full name of the team.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: team_alias
+        description: >
+          Standardized short alias used to identify the team in source data.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: team_region
+        description: >
+          Competitive region associated with the team.
+        data_type: string
+        data_tests:
+          - not_null
+
+  - name: dims_players
+    description: >
+      Player dimension containing standardized player identities and nationality information.
+      Grain: one row per player.
+    columns:
+      - name: player_id
+        description: >
+          Surrogate identifier uniquely assigned to each player.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: player_name
+        description: >
+          Standardized name of the player.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: player_nationality
+        description: >
+          Nationality associated with the player.
+        data_type: string
+        data_tests:
+          - not_null
+
+  - name: dims_maps
+    description: >
+      Map dimension containing standardized identifiers and names for maps available in the dataset.
+      Grain: one row per map.
+    columns:
+      - name: map_id
+        description: >
+          Surrogate identifier uniquely assigned to each map.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: map_name
+        description: >
+          Standardized name of the map.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dims_agents
+    description: >
+      Agent dimension containing standardized identifiers and names for playable agents.
+      Grain: one row per agent.
+    columns:
+      - name: agent_id
+        description: >
+          Surrogate identifier uniquely assigned to each agent.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: agent_name
+        description: >
+          Standardized name of the agent.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
