@@ -55,7 +55,8 @@ class TournamentScraper:
             matches_page = set()
             stats_page = set()
             agents_page = set()
-            for item in queue:
+            progress = 0
+            for i, item in enumerate(queue):
                 status, url = item[0], item[1]
                 if url in processed:
                     logging.info(f"{url} has been processed.")
@@ -102,7 +103,8 @@ class TournamentScraper:
                         agents_page.add((tour_id, content_url))
                     else:
                         continue
-                
+
+                progress = get_progress(i, len(queue), progress)
                 processed.add(url)
 
             save_json(data=matches_page, filename="tours")
