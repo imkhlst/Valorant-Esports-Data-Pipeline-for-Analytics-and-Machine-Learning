@@ -102,7 +102,6 @@ class MatchesScraper:
                 tab_url = [absolute(url=i) for i in tab_elements]
                 tab_list.append([match_id, sorted(tab_url)])
                 date = get_value(soup=soup, selector=".moment-tz-convert", attr="data-utc-ts")
-                date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
                 patch_info = get_value(soup=soup, selector=".match-header-date", attr="text")
                 if "patch" in patch_info.lower():
                     patch = patch_info.split("Patch")[-1].strip()
