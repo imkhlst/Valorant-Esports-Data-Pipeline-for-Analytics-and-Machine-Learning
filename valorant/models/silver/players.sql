@@ -1,5 +1,7 @@
 SELECT
-    game_id,
+    p.game_id,
+    g.match_date,
+    g.match_datetime,
     player_name,
     team_alias,
     nationality,
@@ -77,4 +79,6 @@ SELECT
         THEN SAFE_CAST(fkfd AS INT64)
         ELSE NULL
     END AS fkfd
-FROM {{ ref('stg_players') }}
+FROM {{ ref('stg_players') }} p
+JOIN {{ ref('stg_game_overview') }} o
+ON p.match_id = o.match_id

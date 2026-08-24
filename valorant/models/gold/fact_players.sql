@@ -15,6 +15,8 @@ SELECT
     s.tour_id,
     s.match_id,
     pp.game_id,
+    match_date,
+    match_datetime,
     s.map_id,
     p.player_id,
     s.team_id,
