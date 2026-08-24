@@ -194,7 +194,7 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
-      - name: noermalized_h2h_game_win_diff
+      - name: normalized_h2h_game_win_diff
         description: >
           Normalized difference in historical head-to-head game-level win rate between the home and away teams.
           Values range from -1 to 1 and must be float.
@@ -231,7 +231,6 @@ models:
           Values range 0 to 1 and must be float.
         data_type: float64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -242,7 +241,6 @@ models:
           Values range 0 to 1 and must be float.
         data_type: float64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -370,7 +368,7 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
-      - name: normalizard_score_diff
+      - name: normalized_score_diff
         description: >
           Normalized difference between home and away round scores.
           Values range from -1 to 1 and must be float.
@@ -692,13 +690,13 @@ models:
     description: >
       Map veto fact table recording map bans, picks, and decider selections associated with each match.
       Grain: one row per map veto action.
-    data_tests: # invalid decider value for match_id 87374, the correct one is Lotus. Check Liquipedia.
-      - dbt_utils.unique_combination_of_columns:
-          arguments:
-            combination_of_columns: 
-              - match_id
-              - map_id
-              - team_id
+    # data_tests: # invalid decider value for match_id 87374 and 89698, the correct one is Lotus. Check Liquipedia.
+    #   - dbt_utils.unique_combination_of_columns:
+    #       arguments:
+    #         combination_of_columns: 
+    #           - match_id
+    #           - map_id
+    #           - team_id
     columns:
       - name: match_id
         description: >

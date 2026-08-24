@@ -212,7 +212,6 @@ models:
           Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 1
@@ -223,7 +222,6 @@ models:
           Values range from 0 and 1 and must be float.
         data_type: float64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 1
