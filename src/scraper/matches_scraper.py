@@ -19,7 +19,7 @@ class MatchesScraper:
                 return None
 
             map_order = map_order_container[-1].split(";")
-            vetos = []
+            vetos = set()
             for map in map_order:
                 map_split = map.strip().split(" ")
                 if map_split[1].strip() == "ban" or map_split[1].strip() == "pick":
@@ -29,14 +29,14 @@ class MatchesScraper:
                         action=map_split[1].lower(),
                         map_name=map_split[2]
                     )
-                    vetos.append(veto)
+                    vetos.add(veto)
                 else:
                     veto = MapVeto(
                         match_id=match_id,
                         map_name=map_split[0]
                     )
                     logging.info(f"Found decider map: {map_split[0]}")
-                    vetos.append(veto)
+                    vetos.add(veto)
 
             end_time = datetime.now()
             duration = end_time - start_time
