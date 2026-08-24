@@ -4,14 +4,14 @@ SELECT
 
     DATE(
         SAFE.PARSE_DATETIME(
-           '%Y-%m-%d %H:%M:%S',
-            date 
-        )
+            '%Y-%m-%d %H:%M:%S',
+            date
+        ) 
     ) AS match_date,
     
     SAFE.PARSE_DATETIME(
         '%Y-%m-%d %H:%M:%S',
-        date
+        date 
     ) AS match_datetime,
     
     SAFE_CAST(bracket AS STRING) AS bracket,
@@ -31,6 +31,6 @@ SELECT
     SAFE_CAST(away_n_last_win AS INT64) AS away_n_last_win,
     SAFE_CAST(home_n_last_match AS INT64) AS home_n_last_match,
     SAFE_CAST(away_n_last_match AS INT64) AS away_n_last_match,
-    home_n_last_match_win / NULLIF(home_n_last_match, 0) AS home_n_last_wr,
-    away_n_last_match_win / NULLIF(away_n_last_match, 0) AS away_n_last_wr
+    home_n_last_win / NULLIF(home_n_last_match, 0) AS home_n_last_wr,
+    away_n_last_win / NULLIF(away_n_last_match, 0) AS away_n_last_wr
 FROM {{ source('bronze', 'matches') }}

@@ -4,14 +4,14 @@ SELECT
     
     SAFE.PARSE_DATETIME(
         '%Y-%m-%d %H:%M:%S',
-        m.date
+        m.date 
     ) AS match_datetime,
 
     DATE(
         SAFE.PARSE_DATETIME(
-           '%Y-%m-%d %H:%M:%S',
-            m.date 
-        )
+            '%Y-%m-%d %H:%M:%S',
+            m.date
+        ) 
     ) AS match_date,
 
     SAFE_CAST(home_pstl_win AS INT64) AS home_pstl_win,

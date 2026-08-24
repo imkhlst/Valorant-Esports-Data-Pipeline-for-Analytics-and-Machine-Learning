@@ -4,14 +4,14 @@ SELECT
 
     SAFE.PARSE_DATETIME(
         '%Y-%m-%d %H:%M:%S',
-        m.date
+        m.date 
     ) AS match_datetime,
 
     DATE(
         SAFE.PARSE_DATETIME(
-           '%Y-%m-%d %H:%M:%S',
-            m.date 
-        )
+            '%Y-%m-%d %H:%M:%S',
+            m.date
+        ) 
     ) AS match_date,
 
     SAFE_CAST(NULLIF(game_map, '-') AS STRING) AS game_map,

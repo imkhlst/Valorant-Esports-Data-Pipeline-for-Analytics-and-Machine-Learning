@@ -37,7 +37,7 @@ SELECT
     END AS a,
 
     CASE
-        WHEN SAFE_CAST(kd AS INT64) == (SAFE_CAST(k AS INT64) - SAFE_CAST(d AS INT64))
+        WHEN SAFE_CAST(kd AS INT64) = (SAFE_CAST(k AS INT64) - SAFE_CAST(d AS INT64))
         THEN SAFE_CAST(kd AS INT64)
         ELSE NULL
     END AS kd,
@@ -73,7 +73,7 @@ SELECT
     END AS fd,
 
     CASE
-        WHEN SAFE_CAST(fkfd AS INT64) == (SAFE_CAST(fk AS INT64) - SAFE_CAST(fd AS INT64))
+        WHEN SAFE_CAST(fkfd AS INT64) = (SAFE_CAST(fk AS INT64) - SAFE_CAST(fd AS INT64))
         THEN SAFE_CAST(fkfd AS INT64)
         ELSE NULL
     END AS fkfd
