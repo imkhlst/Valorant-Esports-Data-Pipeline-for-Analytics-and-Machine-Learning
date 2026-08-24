@@ -794,6 +794,18 @@ models:
               arguments:
                 to: ref('games_overview')
                 field: game_id
+      - name: match_date
+        description: >
+          Calendar date on which the match was played.
+        data_type: date
+        data_tests:
+          - not_null
+      - name: match_datetime
+        description: >
+          Date and time at which the match was played.
+        data_type: timestamp
+        data_tests:
+          - not_null
       - name: map_id
         description: >
           Identifier of the map on which the player played.
