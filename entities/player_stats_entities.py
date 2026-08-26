@@ -1,23 +1,23 @@
 from dataclasses import dataclass, asdict
+from typing import Optional
 
 @dataclass
 class PlayerStats:
-    match_id: str
     game_id: str
     name: str
-    team: str
+    team_alias: str
     nationality: str
-    stat_scope: str
-    side: str
+    agent: str
+    mod: str
     r: float
     acs: int
     k: int
     d: int
     a: int
     kd: int
-    kast: float
+    kast: int
     adr: int
-    hs: float
+    hs: int
     fk: int
     fd: int
     fkfd: int

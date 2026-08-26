@@ -27,23 +27,5 @@ class Match:
     away_n_last_win: int
     home_n_last_match: int
     away_n_last_match: int
-    home_n_last_wr: float = field(init=False)
-    away_n_last_wr: float = field(init=False)
 
     patch: Optional[str] = None
-
-    home_map_ban_1: Optional[str] = None
-    home_map_ban_2: Optional[str] = None
-    home_map_ban_3: Optional[str] = None
-    home_map_pick_1: Optional[str] = None
-    home_map_pick_2: Optional[str] = None
-    away_map_ban_1: Optional[str] = None
-    away_map_ban_2: Optional[str] = None
-    away_map_ban_3: Optional[str] = None
-    away_map_pick_1: Optional[str] = None
-    away_map_pick_2: Optional[str] = None
-    decider_map: Optional[str] = None
-
-    def __post_init__(self) -> None:
-        self.home_n_last_wr = self.home_n_last_win / self.home_n_last_match
-        self.away_n_last_wr = self.away_n_last_win / self.away_n_last_match
