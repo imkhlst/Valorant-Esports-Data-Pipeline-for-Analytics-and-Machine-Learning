@@ -1,6 +1,6 @@
 # Data Mapping
 
-Version: 1.1
+Version: 1.2
 
 ## Bronze → Staging
 
@@ -75,7 +75,7 @@ Version: 1.1
 | valorant-project-2026.bronze.games_economy | home_eco_round | stg_games_economy | home_eco_round | INT conversion | Number of eco rounds played by the home team |
 | valorant-project-2026.bronze.games_economy | away_eco_round | stg_games_economy | away_eco_round | INT conversion | Number of eco rounds played by the away team |
 | valorant-project-2026.bronze.games_economy | home_eco_win | stg_games_economy | home_eco_win | INT conversion | Number of eco win played by the home team |
-| valorant-project-2026.bronze.games_economy | away_eco_win | stg_games_economy | away_eco_win | INT conversion | Number of eco win played by the away team. |
+| valorant-project-2026.bronze.games_economy | away_eco_win | stg_games_economy | away_eco_win | INT conversion | Number of eco win played by the away team|
 | valorant-project-2026.bronze.games_economy | home_semi_eco_round | stg_games_economy | home_semi_eco_round | INT conversion | Number of semi eco rounds played by the home team |
 | valorant-project-2026.bronze.games_economy | away_semi_eco_round | stg_games_economy | away_semi_eco_round | INT conversion | Number of semi eco rounds played by the away team |
 | valorant-project-2026.bronze.games_economy | home_semi_eco_win | stg_games_economy | home_semi_eco_win | INT conversion | Number of semi eco rounds win by the home team |
@@ -114,8 +114,8 @@ Version: 1.1
 | valorant-project-2026.bronze.players | d | stg_players | d | INT conversion | Number of deaths recorded by the player in the game |
 | valorant-project-2026.bronze.players | a | stg_players | a | INT conversion | Number of assists recorded by the player in the game |
 | valorant-project-2026.bronze.players | kd | stg_players | kd | INT conversion | Kill-to-death diff of the player in the game |
-| valorant-project-2026.bronze.players | kast | stg_players | kast | INT conversion | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded. |
-| valorant-project-2026.bronze.players | adr | stg_players | adr | INT conversion | Average Damage per Round (ADR) achieved by the player. |
+| valorant-project-2026.bronze.players | kast | stg_players | kast | INT conversion | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded|
+| valorant-project-2026.bronze.players | adr | stg_players | adr | INT conversion | Average Damage per Round (ADR) achieved by the player|
 | valorant-project-2026.bronze.players | hs | stg_players | hs | INT conversion | Percentage of the player's kills that were headshots |
 | valorant-project-2026.bronze.players | fk | stg_players | fk | INT conversion | Number of first kills recorded by the player |
 | valorant-project-2026.bronze.players | fd | stg_players | fd | INT conversion | Number of first deaths recorded by the player |
@@ -130,7 +130,7 @@ Version: 1.1
 |---|---|---|---|---|---|
 | stg_matches | tour_id | matches | tour_id | Direct mapping | Tournament FK |
 | stg_matches | match_id | matches | match_id | Direct mapping | Match identifier |
-| stg_matches | match_date | matches | match_date | Direct mapping | Calendar date |
+| stg_matches | match_date | matches | match_date | Direct mapping | Match calendar date |
 | stg_matches | match_datetime | matches | match_datetime | Direct mapping | Match timestamp |
 | stg_matches | bracket | matches | bracket | Direct mapping | Match bracket |
 | stg_matches | home_name | matches | home_name | Direct mapping | Home team name |
@@ -184,7 +184,7 @@ Version: 1.1
 | stg_games_economy | home_eco_round | games_economy | home_eco_round | Domain validation | Number of eco rounds played by the home team |
 | stg_games_economy | away_eco_round | games_economy | away_eco_round | Domain validation | Number of eco rounds played by the away team |
 | stg_games_economy | home_eco_win | games_economy | home_eco_win | Domain validation | Number of eco win played by the home team |
-| stg_games_economy | away_eco_win | games_economy | away_eco_win | Domain validation | Number of eco win played by the away team. |
+| stg_games_economy | away_eco_win | games_economy | away_eco_win | Domain validation | Number of eco win played by the away team|
 | stg_games_economy | home_semi_eco_round | games_economy | home_semi_eco_round | Domain validation | Number of semi eco rounds played by the home team |
 | stg_games_economy | away_semi_eco_round | games_economy | away_semi_eco_round | Domain validation | Number of semi eco rounds played by the away team |
 | stg_games_economy | home_semi_eco_win | games_economy | home_semi_eco_win | Domain validation | Number of semi eco rounds win by the home team |
@@ -203,6 +203,8 @@ Version: 1.1
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | stg_players | game_id | players | game_id | Direct mapping | Game FK |
+| stg_game_overview | date | players | match_date | Direct mapping | Match calendar date |
+| stg_game_overview | datetime | players | match_dateime | Direct mapping | Match timestamp |
 | stg_players | name | players | player_name | Direct mapping | Name of the player |
 | stg_players | team_alias | players | team_alias | Direct mapping | Alias of the team represented by the player in the game |
 | stg_players | nationality | players | nationality | Direct mapping | Nationality associated with the player |
@@ -214,8 +216,8 @@ Version: 1.1
 | stg_players | d | players | d | Domain validation | Number of deaths recorded by the player in the game |
 | stg_players | a | players | a | Domain validation | Number of assists recorded by the player in the game |
 | stg_players | kd | players | kd | Domain validation | Kill-to-death diff of the player in the game |
-| stg_players | kast | players | kast | Domain validation | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded. |
-| stg_players | adr | players | adr | Domain validation | Average Damage per Round (ADR) achieved by the player. |
+| stg_players | kast | players | kast | Domain validation | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded |
+| stg_players | adr | players | adr | Domain validation | Average Damage per Round (ADR) achieved by the player |
 | stg_players | hs | players | hs | Domain validation | Percentage of the player's kills that were headshots |
 | stg_players | fk | players | fk | Domain validation | Number of first kills recorded by the player |
 | stg_players | fd | players | fd | Domain validation | Number of first deaths recorded by the player |
@@ -227,8 +229,8 @@ Version: 1.1
 |---|---|---|---|---|---|
 | stg_tours | tour_id | dims_tours | tour_id | Direct mapping | Tournament unique identifier |
 | stg_tours | tour_name | dims_tours | tour_name | Direct mapping | Official name of the tournament |
-| stg_tours | tour_tag | dims_tours | tour_tag | Direct mapping |  Short tag or abbreviation used to identify the tournament |
-| stg_tours | tour_stage | dims_tours | tour_stage | Domain validation |  Competetion stage of the tournament |
+| stg_tours | tour_tag | dims_tours | tour_tag | Direct mapping | Short tag or abbreviation used to identify the tournament |
+| stg_tours | tour_stage | dims_tours | tour_stage | Domain validation | Competetion stage of the tournament |
 | stg_tours | tour_region | dims_tours | tour_region | Domain validation | Regional scope of the tournament |
 | stg_tours | tour_status | dims_tours | tour_status | Direct mapping | Current or recorded status of the tournament |
 
@@ -271,7 +273,7 @@ Version: 1.1
 |---|---|---|---|---|---|
 | matches | tour_id | fact_matches | tour_id | Direct mapping | Tournament FK |
 | matches | match_id | fact_matches | match_id | Direct mapping | Match identifier |
-| matches | match_date | fact_matches | match_date | Direct mapping | Calendar date |
+| matches | match_date | fact_matches | match_date | Direct mapping | Match calendar date |
 | matches | match_datetime | fact_matches | match_datetime | Direct mapping | Match timestamp |
 | matches | bracket | fact_matches | bracket | Direct mapping | Match bracket |
 | dims_teams | team_id | fact_matches | home_team_id | Dimension Lookup | Team FK |
@@ -313,14 +315,14 @@ Version: 1.1
 | games_overview | game_duration | fact_games | game_duration | Direct mapping | Duration of the game in seconds |
 | games_overview | home_score | fact_games | home_score | Direct mapping | Total rounds won by the home team in the game |
 | games_overview | away_score | fact_games | away_score | Direct mapping | Total rounds won by the away team in the game |
-| games_overview | home_score & away_score | fact_games | total_round | Derived metric |  Total number of rounds played in the game |
+| games_overview | home_score & away_score | fact_games | total_round | Derived metric | Total number of rounds played in the game |
 | games_overview | home_score & away_score | fact_games | normalized_score_diff | Normalization | Normalized difference between home and away round scores |
 | games_overview | home_atk_score | fact_games | home_atk_score | Direct mapping | Number of rounds won by the home team while attacking |
 | games_overview | away_atk_score | fact_games | away_atk_score | Direct mapping | Number of rounds won by the away team while attacking |
-| games_overview | home_atk_score, home_def_score, away_atk_score, away_def_score | fact_games | atk_wr_ratio | Derived metric | Ratio comparing the attacking-side win rates of the home and away teams | ?
+| games_overview | home_atk_score, home_def_score, away_atk_score, away_def_score | fact_games | atk_wr_ratio | Derived metric | Ratio comparing the attacking-side win rates of the home and away teams |
 | games_overview | home_def_score | fact_games | home_def_score | Direct mapping | Number of rounds won by the home team while defending |
 | games_overview | away_def_score | fact_games | away_def_score | Direct mapping | Number of rounds won by the away team while defending |
-| games_overview | home_atk_score, home_def_score, away_atk_score, away_def_score | fact_games | def_wr_ratio | Derived metric | Ratio comparing the defending-side win rates of the home and away teams | ?
+| games_overview | home_atk_score, home_def_score, away_atk_score, away_def_score | fact_games | def_wr_ratio | Derived metric | Ratio comparing the defending-side win rates of the home and away teams |
 | games_overview | home_ot_score | fact_games | home_ot_score | Direct mapping | Number of overtime rounds won by the home team |
 | games_overview | away_ot_score | fact_games | away_ot_score | Direct mapping | Number of overtime rounds won by the away team |
 | games_overview | home_ot_score & away_ot_score | fact_games | normalized_ot_score_diff | Normalization | Rate representing the relative overtime round performance between the home and away teams |
@@ -368,6 +370,8 @@ Version: 1.1
 | team_games_performance | tour_id | fact_players | tour_id | Direct mapping | Tournament FK |
 | team_games_performance | match_id | fact_players | match_id | Direct mapping | Match FK |
 | players | game_id | fact_players | game_id | Direct mapping | Game FK |
+| match_date | date | No | None | Match calendar date |
+| match_datetime | datetime | No | None | Match timestamp |
 | team_games_performance | map_id | fact_players | map_id | Direct mapping + CTE | Map FK |
 | dims_players | player_id | fact_players | player_id | Dimension lookup | Player FK |
 | team_games_performance | team_id | fact_players | team_id | Direct mapping + Join | Team FK |
@@ -415,90 +419,92 @@ Version: 1.1
 | fact_games | home_full_buy_round & home_full_buy_win | team_games_performance | full_buy_wr | Derived metric | Full-buy-round win rate of the team |
 | fact_games | away_full_buy_round & away_full_buy_win | team_games_performance | full_buy_wr | Derived metric | Full-buy-round win rate of the team |
 
-### team_maps_performance
+### team_maps_performance 
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | team_games_performance | team_id | team_maps_performance | team_id | Direct mapping | Tournament FK |
 | team_games_performance | map_id | team_maps_performance | map_id | Direct mapping | Match FK |
-| team_games_performance | All source model columns | team_maps_performance | map_played | Aggregation (COUNT) | Game FK |
-| team_games_performance | is_ot | team_maps_performance | ot_played | Aggregation (SUM) | Map FK |
-| team_games_performance | is_win | team_maps_performance | maps_win | Aggregation (SUM) | Team FK |
-| team_games_performance | is_win & All source model columns | team_maps_performance | map_wr | Aggregation (COUNT & SUM) + Derived metric | Team FK |
-| fact_map_vetos | action | team_maps_performance | pick_count | Business logic + Aggregation (SUM) | Team FK |
-| fact_map_vetos | action | team_maps_performance | ban_count | Business logic + Aggregation (SUM) | Team FK |
-| fact_map_vetos & team_games_performance | action & match_id | team_maps_performance | pick_rate | Business logic + Aggregation (COUNT) | Team FK |
-| fact_map_vetos & team_games_performance | action & match_id | team_maps_performance | ban_rate | Business logic + Aggregation (COUNT) | Team FK |
-| team_games_performance | action | team_maps_performance | map_pick_preference | Business logic + Derived metric | Team FK |
-| team_games_performance | game_duration | team_games_performance | avg_game_duration | Aggregation (AVG) | Team FK |
-| team_games_performance | normalized_score_diff | team_games_performance | avg_normalized_score_diff | Aggregation (AVG) | Team FK |
-| team_games_performance | atk_wr | team_games_performance | avg_atk_wr | Aggregation (AVG) | Team FK |
-| team_games_performance | def_wr | team_games_performance | avg_def_wr | Aggregation (AVG) | Team FK |
-| team_games_performance | pstl_wr | team_games_performance | avg_pstl_wr | Aggregation (AVG) | Team FK |
-| team_games_performance | eco_wr | team_games_performance | avg_eco_wr | Aggregation (AVG) | Team FK |
-| team_games_performance | semi_eco_wr | team_games_performance | avg_semi_eco_wr | Aggregation (AVG) | Team FK |
-| team_games_performance | semi_buy_wr | team_games_performance | avg_semi_buy_wr | Aggregation (AVG) | Team FK |
-| team_games_performance | full_buy_wr | team_games_performance | avg_full_buy_wr | Aggregation (AVG) | Team FK |
+| team_games_performance | All source model columns | team_maps_performance | map_played | Aggregation (COUNT) | Total map played by team |
+| team_games_performance | is_ot | team_maps_performance | ot_played | Aggregation (SUM) | Total Overtime played on the map by team |
+| team_games_performance| All source model columns & is_ot | maps_performance | ot_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Overtime rate played on the map by team |
+| team_games_performance | is_win | team_maps_performance | maps_win | Aggregation (SUM) | Total win on the map by team |
+| team_games_performance | is_win & All source model columns | team_maps_performance | map_wr | Aggregation (COUNT & SUM) + Derived metric | Map win rate by team on the map |
+| fact_map_vetos | action | team_maps_performance | pick_count | Business logic + Aggregation (SUM) | Total map pick by team over total team matches |
+| fact_map_vetos | action | team_maps_performance | ban_count | Business logic + Aggregation (SUM) | Total map ban by team over total team matches |
+| fact_map_vetos & team_games_performance | action & match_id | team_maps_performance | pick_rate | Business logic + Aggregation (COUNT) | Map pick rate by team |
+| fact_map_vetos & team_games_performance | action & match_id | team_maps_performance | ban_rate | Business logic + Aggregation (COUNT) | Map ban rate by team |
+| team_games_performance | action | team_maps_performance | map_pick_preference | Business logic + Derived metric | Map pick rate by team when the map is not picked by opponent and banned by both team |
+| team_games_performance | game_duration | team_games_performance | avg_game_duration | Aggregation (AVG) | Duration aggregation of game on the map by team |
+| team_games_performance | normalized_score_diff | team_games_performance | avg_normalized_score_diff | Aggregation (AVG) | Normalized aggregation score difference from the perspective of the team |
+| team_games_performance | atk_wr | team_games_performance | avg_atk_wr | Aggregation (AVG) | Aggregation of attacking-side round win rate of the team on the map |
+| team_games_performance | def_wr | team_games_performance | avg_def_wr | Aggregation (AVG) | Aggregation of defending-side round win rate of the team on the map |
+| team_games_performance | pstl_wr | team_games_performance | avg_pstl_wr | Aggregation (AVG) | Aggregation of pistol-round win rate of the team on the map |
+| team_games_performance | eco_wr | team_games_performance | avg_eco_wr | Aggregation (AVG) | Aggregation eco-round win rate of the team on the map |
+| team_games_performance | semi_eco_wr | team_games_performance | avg_semi_eco_wr | Aggregation (AVG) | Aggregation semi-eco-round win rate of the team on the map |
+| team_games_performance | semi_buy_wr | team_games_performance | avg_semi_buy_wr | Aggregation (AVG) | Aggregation semi-buy-round win rate of the team on the map |
+| team_games_performance | full_buy_wr | team_games_performance | avg_full_buy_wr | Aggregation (AVG) | Aggregation full-buy-round win rate of the team on the map |
 
 ### maps_performance
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | team_games_performance | map_id | maps_performance | map_id | Direct mapping | Match FK |
-| team_games_performance | match_id | maps_performance | map_played | Aggregation (COUNT DISTINCT) | Game FK |
-| team_games_performance | is_ot | maps_performances | ot_played | Aggregation (SUM) | Map FK |
-| fact_map_vetos | action | maps_performances | pick_count | Business logic + Aggregation (SUM) | Map FK |
-| fact_map_vetos | action | maps_performances | ban_count | Business logic + Aggregation (SUM) | Map FK |
-| fact_map_vetos & fact_games | action & total_round | maps_performance | pick_rate | Business logic + Derived metric | Team FK |
-| fact_map_vetos & fact_games | action & total_round | maps_performance | ban_rate | Business logic + Derived metric | Team FK |
-| team_games_performance | action | maps_performance | map_pick_preference | Business logic + Derived metric | Team FK |
-| team_games_performance | game_duration | maps_performance | avg_game_duration | Aggregation (AVG) | Team FK |
-| fact_games | home_atk_score & away_atk_score | maps_performance | atk_side_ratio | Aggregation (SUM) + Derived metric| Team FK |
-| fact_games | home_def_score & away_def_score | maps_performance | def_side_ratio | Aggregation (SUM) + Derived metric| Team FK |
+| team_games_performance | match_id | maps_performance | map_played | Aggregation (COUNT DISTINCT) | Total map played |
+| team_games_performance | is_ot | maps_performances | ot_played | Aggregation (SUM) | Total overtime played on the map |
+| team_games_performance| match_id & is_ot | maps_performance | ot_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Overtime rate played on the map |
+| fact_map_vetos | action | maps_performances | pick_count | Business logic + Aggregation (SUM) | total map pick |
+| fact_map_vetos | action | maps_performances | ban_count | Business logic + Aggregation (SUM) | total map ban |
+| fact_map_vetos & fact_games | action & match_id | maps_performance | pick_rate | Business logic + Aggregation (COUNT DISTINCT) + Derived metric | Map pick rate over total matches played |
+| fact_map_vetos & fact_games | action & match_id | maps_performance | ban_rate | Business logic + Aggregation (COUNT DISTINCT) + Derived metric | Map ban rate over total matches played |
+| team_games_performance | action | maps_performance | map_pick_preference | Business logic + Derived metric | Map pick rate by team when the map is not banned by both team |
+| team_games_performance | game_duration | maps_performance | avg_game_duration | Aggregation (AVG) | Duration aggregation of game on the map by team |
+| fact_games | home_atk_score & away_atk_score | maps_performance | atk_side_ratio | Aggregation (SUM) + Derived metric| Attacking-side win ratio on the map|
+| fact_games | home_def_score & away_def_score | maps_performance | def_side_ratio | Aggregation (SUM) + Derived metric| Defending-side win ratio on the map |
 
 ### players_agents_maps_performance
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | fact_players | player_id | players_agents_maps_performance | player_id | Direct mapping | Player FK |
-| fact_players | agent_id | players_agents_maps_performance | agent_id | Direct mapping | Player FK |
-| fact_players | map_id | players_agents_maps_performance | map_id | Direct mapping | Player FK |
-| fact_players | map_id | players_agents_maps_performance | agent_played | Aggregation (COUNT) | Player FK |
-| fact_players | is_win | players_agents_maps_performance | total_win | Aggregation (SUM) | Player FK |
-| fact_players | is_win & map_id | players_agents_maps_performance | agent_wr | Aggregation (SUM & COUNT) + Derived metric | Player FK |
-| fact_players | r | players_agents_maps_performance | avg_r | Aggregation (AVG) | Player FK |
-| fact_players | acs | players_agents_maps_performance | avg_acs | Aggregation (AVG) | Player FK |
-| fact_players | k | players_agents_maps_performance | avg_k | Aggregation (AVG) | Player FK |
-| fact_players | d | players_agents_maps_performance | avg_d | Aggregation (AVG) | Player FK |
-| fact_players | a | players_agents_maps_performance | avg_a | Aggregation (AVG) | Player FK |
-| fact_players | kd | players_agents_maps_performance | avg_kd | Aggregation (AVG) | Player FK |
-| fact_players | kast | players_agents_maps_performance | avg_kast | Aggregation (AVG) | Player FK |
-| fact_players | adr | players_agents_maps_performance | avg_adr | Aggregation (AVG) | Player FK |
-| fact_players | hs | players_agents_maps_performance | avg_hs | Aggregation (AVG) | Player FK |
-| fact_players | fk | players_agents_maps_performance | avg_fk | Aggregation (AVG) | Player FK |
-| fact_players | fd | players_agents_maps_performance | avg_fd | Aggregation (AVG) | Player FK |
-| fact_players | fkfd | players_agents_maps_performance | avg_fkfd | Aggregation (AVG) | Player FK |
+| fact_players | agent_id | players_agents_maps_performance | agent_id | Direct mapping | Agent FK |
+| fact_players | map_id | players_agents_maps_performance | map_id | Direct mapping | Map FK |
+| fact_players | map_id | players_agents_maps_performance | agent_played | Aggregation (COUNT) | Total agent played |
+| fact_players | is_win | players_agents_maps_performance | total_win | Aggregation (SUM) | Total win with the agent played |
+| fact_players | is_win & map_id | players_agents_maps_performance | agent_wr | Aggregation (SUM & COUNT) + Derived metric | Agent win rate |
+| fact_players | r | players_agents_maps_performance | avg_r | Aggregation (AVG) | Average player rating |
+| fact_players | acs | players_agents_maps_performance | avg_acs | Aggregation (AVG) | Average player ACS |
+| fact_players | k | players_agents_maps_performance | avg_k | Aggregation (AVG) | Average player kills |
+| fact_players | d | players_agents_maps_performance | avg_d | Aggregation (AVG) | Average player deaths |
+| fact_players | a | players_agents_maps_performance | avg_a | Aggregation (AVG) | Average player assists |
+| fact_players | kd | players_agents_maps_performance | avg_kd | Aggregation (AVG) | Average kill-to-death diff of the player in the game |
+| fact_players | kast | players_agents_maps_performance | avg_kast | Aggregation (AVG) | Average percentage of rounds in which the player recorded a kill, assist, survived, or was traded |
+| fact_players | adr | players_agents_maps_performance | avg_adr | Aggregation (AVG) | Average ADR achieved by the player |
+| fact_players | hs | players_agents_maps_performance | avg_hs | Aggregation (AVG) | Average percentage of the player's kills that were headshots |
+| fact_players | fk | players_agents_maps_performance | avg_fk | Aggregation (AVG) | Average player first kills |
+| fact_players | fd | players_agents_maps_performance | avg_fd | Aggregation (AVG) | Average player first deaths |
+| fact_players | fkfd | players_agents_maps_performance | avg_fkfd | Aggregation (AVG) | Average first kill-to-first death diff of the player in the game |
 
 ### agents_maps_performance
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| fact_players | agent_id | agents_maps_performance | agent_id | Direct mapping | Player FK |
-| fact_players | map_id | agents_maps_performance | map_id | Direct mapping | Player FK |
-| fact_players | game_id | agents_maps_performance | presence_count | Aggregation (COUNT DISTINCT) | Player FK |
-| maps_performance | map_played | agents_maps_performance | map_played | Aggregation (SUM) | Player FK |
-| fact_players | agent_id | agents_maps_performance | pick_count | Aggregation (COUNT) | Player FK |
-| fact_players | is_win | agents_maps_performance | total_win | Aggregation (SUM) | Player FK |
-| fact_players & maps_performance | agent_id & map_played | agents_maps_performance | pick_rate | Aggregation (COUNT) + Derived metric | Player FK |
-| fact_players | is_win & game_id | agents_maps_performance | win_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Player FK |
-| fact_players & maps_performance | game_id & map_played | agents_maps_performance | presence_rate | Aggregation (COUNT DISTINCT) + Derived metric | Player FK |
+| fact_players | agent_id | agents_maps_performance | agent_id | Direct mapping | Agent FK |
+| fact_players | map_id | agents_maps_performance | map_id | Direct mapping | Map FK |
+| fact_players | game_id | agents_maps_performance | presence_count | Aggregation (COUNT DISTINCT) | Total agent presence on the map |
+| maps_performance | map_played | agents_maps_performance | map_played | Aggregation (SUM) | Total map played with the agent |
+| fact_players | agent_id | agents_maps_performance | pick_count | Aggregation (COUNT) | Total agent pick on the map |
+| fact_players | is_win | agents_maps_performance | total_win | Aggregation (SUM) | Total agent win on the map |
+| fact_players & maps_performance | agent_id & map_played | agents_maps_performance | pick_rate | Aggregation (COUNT) + Derived metric | Agent pick rate on the map |
+| fact_players | is_win & game_id | agents_maps_performance | win_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Agent win rate on the map |
+| fact_players & maps_performance | game_id & map_played | agents_maps_performance | presence_rate | Aggregation (COUNT DISTINCT) + Derived metric | Agent presence rate on the map |
 
 ### agents_performance
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| fact_players | agent_id | agents_maps_performance | agent_id | Direct mapping | Player FK |
-| fact_players | All source model columns | agents_maps_performance | pick_count | Aggregation (COUNT) | Player FK |
-| maps_performance | game_id | agents_maps_performance | map_played | Aggregation (COUNT & COUNT DISTINCT) + Derived metric| Player FK |
-| fact_players | All source model columns & game_id | agents_maps_performance | pick_count | Aggregation (SUM &COUNT) + Derived metric | Player FK |
-| fact_players | is_win & All source model columns | agents_maps_performance | total_win | Aggregation (SUM) | Player FK |
+| fact_players | agent_id | agents_maps_performance | agent_id | Direct mapping | Agent FK |
+| fact_players | All source model columns | agents_maps_performance | pick_count | Aggregation (COUNT) | Total agent pick on the map |
+| maps_performance | game_id | agents_maps_performance | total_games | Aggregation (COUNT & COUNT DISTINCT) + Derived metric| Total map played with the agent |
+| fact_players | All source model columns & game_id | agents_maps_performance | pick_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Agent pick rate on the map |
+| fact_players | is_win & All source model columns | agents_maps_performance | win_rate | Aggregation (SUM & COUNT) + Derived metric | Agent win rate on the map |
