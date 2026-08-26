@@ -48,12 +48,13 @@ SELECT
     m.map_id,
     map_played,
     ot_played,
+    1.0 * ot_played / NULLIF(map_played) AS ot_rate,
 
     p.pick_count,
     p.ban_count,
 
-    1.0 * p.pick_count / NULLIF(c.total_round, 0) AS pick_rate,
-    1.0 * p.ban_count / NULLIF(c.total_round, 0) AS ban_rate,
+    1.0 * p.pick_count / NULLIF(c.total_matches, 0) AS pick_rate,
+    1.0 * p.ban_count / NULLIF(c.total_matches, 0) AS ban_rate,
     1.0 * p.pick_count / NULLIF(p.pick_count + p.ban_count, 0) AS map_pick_preference,
     
     avg_game_duration,

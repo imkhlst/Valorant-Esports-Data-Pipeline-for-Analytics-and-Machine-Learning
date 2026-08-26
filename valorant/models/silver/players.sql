@@ -1,7 +1,7 @@
 SELECT
     p.game_id,
-    g.match_date,
-    g.match_datetime,
+    o.match_date,
+    o.match_datetime,
     player_name,
     team_alias,
     nationality,

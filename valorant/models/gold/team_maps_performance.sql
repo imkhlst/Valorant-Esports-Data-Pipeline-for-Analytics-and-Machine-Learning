@@ -61,6 +61,7 @@ SELECT
     m.map_id,
     map_played,
     ot_played,
+    1.0 * ot_played / NULLIF(map_played) AS ot_rate,
     maps_win,
 
     1.0 * maps_win / map_played AS map_wr,
