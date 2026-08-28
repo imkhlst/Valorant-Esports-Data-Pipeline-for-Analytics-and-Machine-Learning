@@ -973,6 +973,15 @@ models:
           Values must be integers.
         data_type: int64
 
+  - name: team_matches_performance
+    description: >
+
+    data_tests:
+      -
+    columns:
+      - name: 
+        description:
+
   - name: team_games_performance
     description: >
       Team-level game performance model containing outcome, duration, score, side,
