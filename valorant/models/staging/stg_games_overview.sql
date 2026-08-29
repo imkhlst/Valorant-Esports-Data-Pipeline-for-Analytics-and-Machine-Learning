@@ -1,6 +1,6 @@
 SELECT
-    SAFE_CAST(o.match_id AS STRING) AS match_id,
-    SAFE_CAST(game_id AS STRING) AS game_id,
+    SAFE_CAST(o.match_id AS INT64) AS match_id,
+    SAFE_CAST(game_id AS INT64) AS game_id,
 
     SAFE.PARSE_DATETIME(
         '%Y-%m-%d %H:%M:%S',

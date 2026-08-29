@@ -1,6 +1,6 @@
 SELECT
-    SAFE_CAST(tour_id AS STRING) AS tour_id,
-    SAFE_CAST(match_id AS STRING) AS match_id,
+    SAFE_CAST(tour_id AS INT64) AS tour_id,
+    SAFE_CAST(match_id AS INT64) AS match_id,
 
     DATE(
         SAFE.PARSE_DATETIME(

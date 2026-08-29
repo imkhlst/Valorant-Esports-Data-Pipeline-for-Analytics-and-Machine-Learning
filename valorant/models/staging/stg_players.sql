@@ -1,5 +1,5 @@
 SELECT
-    SAFE_CAST(game_id AS STRING) AS game_id,
+    SAFE_CAST(game_id AS INT64) AS game_id,
     SAFE_CAST(name AS STRING) AS player_name,
     SAFE_CAST(team_alias AS STRING) AS team_alias,
     SAFE_CAST(nationality AS STRING) AS nationality,
