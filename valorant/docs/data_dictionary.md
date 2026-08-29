@@ -17,10 +17,10 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `tour_id` | string | No | None | Tournament FK | `2379` |
-| `match_id` | string | No | `Unique` | Match identifier | `87370` |
+| `tour_id` | integer | No | None | Tournament FK | `2379` |
+| `match_id` | integer | No | `Unique` | Match identifier | `87370` |
 | `match_date` | date | No | None | Match calendar date | `2025-04-06` |
-| `match_datetime` | datetime | No | None | Match timestamp | `2025-04-06T04:00:00` |
+| `match_datetime` | timestamp | No | None | Match timestamp | `2025-04-06T04:00:00` |
 | `bracket` | string | No | None | Match bracket | `Group Stage: Week 3` |
 | `home_name` | string | No | None | Home team name | `Paper Rex` |
 | `home_alias` | string | No | None | Home team alias | `PRX` |
@@ -54,10 +54,10 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `match_id` | string | No | None | Match FK | `107942` |
-| `game_id` | string | No | None | Game identifier | `258358` |
+| `match_id` | integer | No | None | Match FK | `107942` |
+| `game_id` | integer | No | None | Game identifier | `258358` |
 | `match_date` | date | No | None | Match calendar date | `2026-04-08` |
-| `match_datetime` | datetime | No | None | Match timestamp | `2026-04-08T11:00:00` |
+| `match_datetime` | timestamp | No | None | Match timestamp | `2026-04-08T11:00:00` |
 | `game_map` | string | No | None | Map name played | `Pearl` |
 | `game_duration` | integer | No | Must be `>= 0` when present | Duration games in seconds | `3482` |
 | `home_score` | integer | No | Must be `>= 0` | Total rounds won by the home team in the game | `14` |
@@ -82,10 +82,10 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `match_id` | string | No | None | Match FK | `77172` |
-| `game_id` | string | No | None | Game identifier | `178835` |
+| `match_id` | integer | No | None | Match FK | `77172` |
+| `game_id` | integer | No | None | Game identifier | `178835` |
 | `match_date` | date | No | None | Match Calendar date | `2024-07-21` |
-| `match_datetime` | datetime | No | None | Match timestamp | `2024-07-21T17:00:00` |
+| `match_datetime` | timestamp | No | None | Match timestamp | `2024-07-21T17:00:00` |
 | `home_pstl_win` | integer | Yes | Must be in range `0` and `2` when present | Number of pistol rounds won by the home team | `2` |
 | `away_pstl_win` | integer | Yes | Must be in range `0` and `2` when present | Number of pistol rounds won by the away team | `0` |
 | `home_eco_round` | integer | Yes | Must be `>= 0` when present | Number of eco rounds won by the home team | `2` |
@@ -118,9 +118,9 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `game_id` | string | No | None | Game FK | `196430` |
+| `game_id` | integer | No | None | Game FK | `196430` |
 | `match_date` | date | No | None | Match calendar date | `2024-07-21` |
-| `match_datetime` | datetime | No | None | Match timestamp | `2024-07-21T17:00:00` |
+| `match_datetime` | timestamp | No | None | Match timestamp | `2024-07-21T17:00:00` |
 | `player_name` | string | No | None | Name of the player | `Jemkin` |
 | `team_alias` | string | No | None | Alias of the team represented by the player in the game | `RRQ` |
 | `nationality` | string | No | None | Nationality associated with the player | `Russia` |
@@ -139,6 +139,8 @@ Version : 1.2
 | `fd` | integer | Yes | Must be `>= 0` when present | Number of first deaths recorded by the player | `1` |
 | `fkfd` | integer | Yes | `fk - fd` when present | First-kill to first-death diff of the player | `11` |
 
+## Gold Models
+
 ### dims_tours
 
 | Property | Description |
@@ -152,7 +154,7 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `tour_id` | string | No | `Unique` | Tournament unique identifier | `2283` |
+| `tour_id` | integer | No | `Unique` | Tournament unique identifier | `2283` |
 | `tour_name` | string | No | None | Official name of the tournament | `Valorant Champions 2025` |
 | `tour_tag` | string | No | None | Short tag or abbreviation used to identify the tournament | `Valorant Champions Tour 2025` |
 | `tour_stage` | string | No | None | Competetion stage of the tournament | `Champions` |
@@ -172,7 +174,7 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `team_id` | Integer | No | `Unique` | Surrogate identifier uniquely assigned to each team | `11` |
+| `team_id` | integer | No | `Unique` | Surrogate identifier uniquely assigned to each team | `11` |
 | `team_name` | string | No | None | Standardized full name of the team | `Dragon Ranger Gaming` |
 | `team_alias` | string | No | None | Standardized short alias used to identify the team in source data | `DRG` |
 | `team_region` | string | No | None | Competitive region associated with the team | `China` |
@@ -190,7 +192,7 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `player_id` | Integer | No | `Unique` | Surrogate identifier uniquely assigned to each player | `11` |
+| `player_id` | integer | No | `Unique` | Surrogate identifier uniquely assigned to each player | `11` |
 | `player_name` | string | No | None | Standardized name of the player | `Akeman` |
 | `player_nationality` | string | No | None | Nationality associated with the player | `China` |
 
@@ -207,7 +209,7 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `map_id` | Integer | No | `Unique` | Surrogate identifier uniquely assigned to each map | `1` |
+| `map_id` | integer | No | `Unique` | Surrogate identifier uniquely assigned to each map | `1` |
 | `map_name` | string | No | None | Standardized name of the map | `Abyss` |
 
 ### dims_agents
@@ -223,10 +225,8 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `agent_id` | Integer | No | `Unique` | Surrogate identifier uniquely assigned to each agent | `5` |
+| `agent_id` | integer | No | `Unique` | Surrogate identifier uniquely assigned to each agent | `5` |
 | `agent_name` | string | No | None | Standardized name of the agent | `Clove` |
-
-## Gold Models
 
 ### fact_matches
 
@@ -241,10 +241,10 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `tour_id` | string | No | None | Tournament FK | `1998` |
-| `match_id` | string | No | `Unique` | Match identifier | `71902` |
+| `tour_id` | integer | No | None | Tournament FK | `1998` |
+| `match_id` | integer | No | `Unique` | Match identifier | `71902` |
 | `match_date` | date | No | None | Match calendar date | `2024-04-04` |
-| `match_datetime` | datetime | No | None | Match timestamp | `2025-04-06T11:00:00` |
+| `match_datetime` | timestamp | No | None | Match timestamp | `2025-04-06T11:00:00` |
 | `bracket` | string | No | None | Match bracket | `Regular Season: Week 1` |
 | `home_team_id` | integer | No | None | Team FK | `49` |
 | `away_team_id` | integer | No | None | Team FK | `36` |
@@ -283,11 +283,11 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `tour_id` | string | No | None | Tournament FK | `2004` |
-| `match_id` | string | No | None | Match FK | `71657` |
-| `game_id` | string | No | `Unique` | Unique identifier of the game | `163433` |
+| `tour_id` | integer | No | None | Tournament FK | `2004` |
+| `match_id` | integer | No | None | Match FK | `71657` |
+| `game_id` | integer | No | `Unique` | Unique identifier of the game | `163433` |
 | `match_date` | date | No | None | Match calendar date | `2024-05-04` |
-| `match_datetime` | datetime | No | None | Match timestamp | `2024-05-04T19:20:00` |
+| `match_datetime` | timestamp | No | None | Match timestamp | `2024-05-04T19:20:00` |
 | `home_team_id` | integer | No | None | Team FK | `30` |
 | `away_team_id` | integer | No | None | Team FK | `32` |
 | `map_id` | integer | No | None | Map FK | `4` |
@@ -343,7 +343,7 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `match_id` | string | No | None | Match FK | `102885` |
+| `match_id` | integer | No | None | Match FK | `102885` |
 | `map_id` | integer | No | None | Map FK | `1` |
 | `team_id` | integer | No | None | Team FK | `45` |
 | `action` | string | No | None | Type of map veto action performed | `ban` |
@@ -362,11 +362,11 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `tour_id` | string | No | None | Tournament FK | `1658` |
-| `match_id` | string | No | None | Match FK | `59970` |
-| `game_id` | string | No | None | Game FK | `134551` |
+| `tour_id` | integer | No | None | Tournament FK | `1658` |
+| `match_id` | integer | No | None | Match FK | `59970` |
+| `game_id` | integer | No | None | Game FK | `134551` |
 | `match_date` | date | No | None | Match calendar date | `2024-05-04` |
-| `match_datetime` | datetime | No | None | Match timestamp | `2024-05-04T19:20:00` |
+| `match_datetime` | timestamp | No | None | Match timestamp | `2024-05-04T19:20:00` |
 | `map_id` | integer | No | None | Map FK | `10` |
 | `player_id` | integer | No | None | Player FK | `66` |
 | `team_id` | integer | No | None | Team FK | `1` |
@@ -386,6 +386,40 @@ Version : 1.2
 | `fd` | integer | Yes | Must be `>= 0` when present | Number of first deaths recorded by the player | `0` |
 | `fkfd` | integer | Yes | `fk - fd` when present | First-kill to first-death diff of the player | `0` |
 
+### team_matches_performance
+
+| Property | Description |
+|---|---|
+| Purpose | team by match-level performance view |
+| Grain | One row per team per match |
+| Primary Key | None |
+| Partition | None |
+| Main Dimensions | `match_id`, `team_id` |
+
+
+| Column | Data Type | Nullable | Business Rule | Description | Example |
+|---|---|---|---|---|---|
+| `tour_id` | integer | No | None | Tournament FK | `1998` |
+| `tour_name` | string | No | None | Official name of the tournament | `Champions Tour 2024: EMEA Stage 1` |
+| `tour_region` | string | No | None | Regional scope of the tournament | `EMEA` |
+| `match_id` | integer | No | None | Match FK | `71902` |
+| `match_date` | date | No | None | Match calendar date | `2024-04-04` |
+| `match_datetime` | timestamp | No | None | Match timestamp | `2025-04-06T11:00:00` |
+| `bracket` | string | No | None | Match bracket | `Regular Season: Week 1` |
+| `team_id` | integer | No | None | Team FK | `49` |
+| `team_name` | string | No | None | Standardized full name of the team | `Team Vitality` |
+| `team_alias` | string | No | None | Standardized short alias used to identify the team | `VIT` |
+| `bo` | string | No | None | Best-of-series match | `Bo3` |
+| `patch` | string | Yes | None | Patch version played | `8.05` |
+| `score` | integer | No | Must be `>= 0` | Home team score | `0` |
+| `total_round` | integer | No | Must be `>= 0` | Home team total game round score | `13` |
+| `h2h_win` | integer | No | Must be `>= 0` | home team match win against away team | `0` |
+| `h2h_score` | integer | No | Must be `>= 0` | Home team game win score against away team | `0` |
+| `n_last_win` | integer | No | Must be in range `0` and `5` | home team n-last match win recorded | `3` |
+| `n_last_match` | integer | No |Must be in range `0` and `5` | home team n-last match recorded | `5` |
+| `n_last_wr` | float | Yes | Must be in range `0` and `1` and can be NULL when denominator `home_n_last_match` is zero | home team n-last match win rate | `0.6` |
+| `is_win` | integer | No | Must be in range `0` and `1` and can be NULL when denominator `away_n_last_match` is zero | away team n-last match win rate | `0` |
+
 ### team_games_performance
 
 | Property | Description |
@@ -399,11 +433,16 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `tour_id` | string | No | None | Tournament FK | `2004` |
-| `match_id` | string | No | None | Match FK | `71657` |
-| `game_id` | string | No | None | Game FK | `163433` |
+| `tour_id` | integer | No | None | Tournament FK | `2004` |
+| `tour_name` | string | No | None | Official name of the tournament | `Champions Tour 2024: Americas Stage 1` |
+| `tour_region` | string | No | None | Regional scope of the tournament | `Americas` |
+| `match_id` | integer | No | None | Match FK | `71657` |
+| `game_id` | integer | No | None | Game FK | `163433` |
 | `map_id` | integer | No | None | Map FK | `4` |
+| `map_name` | string | No | None | Standardized name of the map | `Breeze` |
 | `team_id` | integer | No | None | Team FK | `30` |
+| `team_name` | string | No | None | Standardized full name of the team | `KRÜ Esports` |
+| `team_alias` | string | No | None | Standardized short alias used to identify the team | `KRÜ` |
 | `is_ot` | integer | No | Must be in range `0` and `1` | Binary indicator equal to 1 when the game went to overtime | `1` |
 | `is_win` | integer | No | Must be in range `0` and `1` | Binary indicator equal to 1 when the team won the game | `1` |
 | `game_duration` | integer | Yes | Must be `>= 0` when present | Duration of the game in seconds | `3456` |
@@ -429,8 +468,11 @@ Version : 1.2
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `team_id` | string | No | None | Tournament FK | `30` |
+| `team_id` | integer | No | None | Tournament FK | `30` |
+| `team_name` | string | No | None | Standardized full name of the team | `KRÜ Esports` |
+| `team_alias` | string | No | None | Standardized short alias used to identify the team | `KRÜ` |
 | `map_id` | integer | No | None | Map FK | `4` |
+| `map_name` | string | No | None | Standardized name of the map | `Breeze` |
 | `map_played` | integer | No | None | Total map played by team | `6` |
 | `ot_played` | integer | No | Must be in range `0` and `1` | Total Overtime played on the map by team | `1` |
 | `ot_rate` | float | No | Must be in range `0` and `1` | Overtime rate played on the map by team | `` |
@@ -465,6 +507,7 @@ Version : 1.2
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
 | `map_id` | integer | No | None | Map FK | `4` |
+| `map_name` | string | No | None | Standardized name of the map | `Breeze` |
 | `map_played` | integer | No | None | Total map played | `172` |
 | `ot_played` | integer | No | Must be in range `0` and `1` | Total overtime played on the map | `24` |
 | `ot_rate` | float | No | Must be in range `0` and `1` | Overtime rate played on the map | `` |
@@ -491,8 +534,11 @@ Version : 1.2
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
 | `player_id` | integer | No | None | Player FK | `1` |
+| `player_name` | string | No | None | Standardized name of the player | `2GE` |
 | `agent_id` | integer | No | None | Agent FK | `17` |
+| `map_name` | string | No | None | Standardized name of the agent | `Omen` |
 | `map_id` | integer | No | None | Map FK | `9` |
+| `map_name` | string | No | None | Standardized name of the map | `Lotus` |
 | `agent_played` | integer | No | Must be `>= 0` | Total agent played | `6` |
 | `total_win` | integer | No | Must be `>= 0` | Total win with the agent played | `1` |
 | `agent_wr` | float | No | Must be in range `0` and `1` | Agent win rate | `0.17` |
@@ -523,7 +569,9 @@ Version : 1.2
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
 | `agent_id` | integer | No | None | Agent FK | `16` |
+| `agent_name` | string | No | None | Standardized name of the agent | `Neon` |
 | `map_id` | integer | No | None | Map FK | `6` |
+| `map_name` | string | No | None | Standardized name of the map | `Fracture` |
 | `presence_count` | integer | No | Must be `>= 0` | Total agent presence on the map | `103` |
 | `map_played` | integer | No | Must be `>= 0` | Total map played with the agent | `138` |
 | `pick_count` | integer | No | Must be `>= 0` | Total agent pick on the map | `160` |
@@ -546,6 +594,7 @@ Version : 1.2
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | `agent_id` | integer | No | None | Agent FK | `17` |
+| `agent_name` | string | No | None | Standardized name of the agent | `Omen` |
 | `pick_count` | integer | No | Must be `>= 0` | Total agent pick on the map | `6` |
 | `total_games` | integer | No | Must be `>= 0` | Total map played with the agent | `6` |
 | `pick_rate` | float | Yes | Must be in range `0` and `1` | Agent pick rate on the map | `1.0` |

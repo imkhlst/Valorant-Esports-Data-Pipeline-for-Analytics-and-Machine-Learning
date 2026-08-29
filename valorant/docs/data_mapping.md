@@ -8,7 +8,7 @@ Version: 1.2
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| valorant-project-2026.bronze.tours | tour_id | stg_tours | tour_id | STR conversion | Tournament unique identifier |
+| valorant-project-2026.bronze.tours | tour_id | stg_tours | tour_id | INT conversion | Tournament unique identifier |
 | valorant-project-2026.bronze.tours | tour_name | stg_tours | tour_name | STR conversion | Official name of the tournament |
 | valorant-project-2026.bronze.tours | tour_tag | stg_tours | tour_tag | STR conversion |  Short tag or abbreviation used to identify the tournament |
 | valorant-project-2026.bronze.tours | tour_stage | stg_tours | tour_stage | STR conversion |  Competetion stage of the tournament |
@@ -19,8 +19,8 @@ Version: 1.2
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| valorant-project-2026.bronze.matches | tour_id | stg_matches | tour_id | STR conversion | Tournament FK |
-| valorant-project-2026.bronze.matches | match_id | stg_matches | match_id | STR conversion | Match unique identifier |
+| valorant-project-2026.bronze.matches | tour_id | stg_matches | tour_id | INT conversion | Tournament FK |
+| valorant-project-2026.bronze.matches | match_id | stg_matches | match_id | INT conversion | Match unique identifier |
 | valorant-project-2026.bronze.matches | date | stg_matches | match_date | DATE conversion | Calendar date on which the match took place |
 | valorant-project-2026.bronze.matches | date | stg_matches | match_datetime | Datetime parsing | Date and time when the match took place |
 | valorant-project-2026.bronze.matches | bracket | stg_matches | bracket | STR conversion | Tournament bracket or stage position in which the match was played |
@@ -47,8 +47,8 @@ Version: 1.2
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| valorant-project-2026.bronze.games_overview | match_id | stg_games_overview | match_id | STR conversion | Match FK |
-| valorant-project-2026.bronze.games_overview | game_id | stg_games_overview | game_id | STR conversion |  Unique identifier of the game |
+| valorant-project-2026.bronze.games_overview | match_id | stg_games_overview | match_id | INT conversion | Match FK |
+| valorant-project-2026.bronze.games_overview | game_id | stg_games_overview | game_id | INT conversion |  Unique identifier of the game |
 | valorant-project-2026.bronze.matches | date | stg_games_overview | match_date | DATE conversion | Calendar date on which the match took place |
 | valorant-project-2026.bronze.matches | date | stg_games_overview | match_datetime | Datetime parsing | Date and time when the match took place |
 | valorant-project-2026.bronze.games_overview | game_map | stg_games_overview | game_map | STR conversion & Missing-value handling | Map on which the game was played |
@@ -66,8 +66,8 @@ Version: 1.2
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| valorant-project-2026.bronze.games_economy | match_id | stg_games_economy | match_id | STR conversion | Match FK |
-| valorant-project-2026.bronze.games_economy | game_id | stg_games_economy | game_id | STR conversion |  Unique identifier of the game |
+| valorant-project-2026.bronze.games_economy | match_id | stg_games_economy | match_id | INT conversion | Match FK |
+| valorant-project-2026.bronze.games_economy | game_id | stg_games_economy | game_id | INT conversion |  Unique identifier of the game |
 | valorant-project-2026.bronze.matches | date | stg_games_economy | match_date | DATE conversion | Calendar date on which the match took place |
 | valorant-project-2026.bronze.matches | date | stg_games_economy | match_datetime | Datetime parsing | Date and time when the match took place |
 | valorant-project-2026.bronze.games_economy | home_pstl_win | stg_games_economy | home_pstl_win | INT conversion | Number of pistol rounds won by the home team |
@@ -93,7 +93,7 @@ Version: 1.2
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| valorant-project-2026.bronze.map_vetos | match_id | stg_map_vetos | match_id | STR conversion | Match FK |
+| valorant-project-2026.bronze.map_vetos | match_id | stg_map_vetos | match_id | INT conversion | Match FK |
 | valorant-project-2026.bronze.map_vetos | map_name | stg_map_vetos | map_name | STR conversion | Name of the map involved in the veto action |
 | valorant-project-2026.bronze.map_vetos | team_alias | stg_map_vetos | team_alias | STR conversion | Alias of the team performing the veto action |
 | valorant-project-2026.bronze.map_vetos | action | stg_map_vetos | action | STR conversion | Type of map veto action performed |
@@ -102,7 +102,7 @@ Version: 1.2
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| valorant-project-2026.bronze.players | game_id | stg_players | game_id | STR conversion | game FK |
+| valorant-project-2026.bronze.players | game_id | stg_players | game_id | INT conversion | game FK |
 | valorant-project-2026.bronze.players | name | stg_players | player_name | STR conversion | Name of the player |
 | valorant-project-2026.bronze.players | team_alias | stg_players | team_alias | STR conversion | Alias of the team represented by the player in the game |
 | valorant-project-2026.bronze.players | nationality | stg_players | nationality | STR conversion | Nationality associated with the player |
@@ -223,6 +223,8 @@ Version: 1.2
 | stg_players | fd | players | fd | Domain validation | Number of first deaths recorded by the player |
 | stg_players | fkfd | players | fkfd | Domain validation | First-kill to first-death diff of the player |
 
+## Silver → Gold
+
 ### dims_tours
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
@@ -264,8 +266,6 @@ Version: 1.2
 |---|---|---|---|---|---|
 | players | agent_name | dims_agents | agent_id | Window function | Surrogate identifier uniquely assigned to each agent |
 | players | agent_name | dims_agents | agent_name | Unique direct mapping | Standardized name of the agent |
-
-## Silver → Gold
 
 ### fact_matches
 
@@ -391,16 +391,51 @@ Version: 1.2
 | players | fd | fact_players | fd | Direct mapping | Number of first deaths recorded by the player |
 | players | fkfd | fact_players | fkfd | Direct mapping | First-kill to first-death diff of the player |
 
+### team_matches_performance
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| fact_matches | tour_id | team_matches_performance | tour_id | Direct mapping | Tournament FK |
+| dims_tours | tour_name | team_matches_performance | tour_name | Dimension Lookup | Official name of the tournament |
+| dims_tours | tour_region | team_matches_performance | tour_region | Dimension Lookup | Regional scope of the tournament |
+| fact_matches | match_id | team_matches_performance | match_id | Direct mapping | Match FK |
+| fact_matches | match_date | team_matches_performance | match_date | Direct mapping | Calendar date on which the match took place |
+| fact_matches | match_datetime | team_matches_performance | match_datetime | Direct mapping | Date and time when the match took place |
+| fact_matches | bracket | team_matches_performance | bracket | Role normalization | Tournament bracket or stage position in which the match was played |
+| fact_matches | home_team_id | team_matches_performance | team_id | Role normalization | Team FK |
+| fact_matches | away_team_id | team_matches_performance | team_id | Role normalization | Team FK |
+| fact_matches | bo | team_matches_performance | bo | Direct mapping | Match format indicating the number of games that can be played |
+| fact_matches | patch | team_matches_performance | patch | Direct mapping | Game patch associated with the match |
+| fact_matches | home_score | team_matches_performance | score | Direct mapping | Home team score |
+| fact_matches | away_score | team_matches_performance | score | Direct mapping | Away team score |
+| fact_matches | home_h2h_win | team_matches_performance | h2h_win | Direct mapping | home team match win against away team |
+| fact_matches | away_h2h_win | team_matches_performance | h2h_win | Direct mapping | away team match win against home team |
+| fact_matches | home_h2h_score | team_matches_performance | h2h_score | Direct mapping | Home team game win score against away team |
+| fact_matches | away_h2h_score | team_matches_performance | h2h_score | Direct mapping | Away team game win score against home team |
+| fact_matches | home_n_last_win | team_matches_performance | n_last_win | Direct mapping | Home team n-last match win recorded |
+| fact_matches | away_n_last_win | team_matches_performance | n_last_win | Direct mapping | Away team n-last match win recorded |
+| fact_matches | home_n_last_match | team_matches_performance | n_last_match | Direct mapping | Home team n-last match recorded |
+| fact_matches | away_n_last_match | team_matches_performance | n_last_match | Direct mapping | Away team n-last match recorded |
+| fact_matches | home_n_last_wr | team_matches_performance | n_last_wr | Direct mapping | Home team n-last match win rate |
+| fact_matches | away_n_last_wr | team_matches_performance | n_last_wr | Direct mapping | Away team n-last match win rate |
+| fact_matches | is_home_win | team_matches_performance | is_win | Direct mapping & Domain validation | Boolean represent home team win status |
+
 ### team_games_performance
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
+| fact_games | match_date | team_games_performance | match_date | Direct mapping | Calendar date on which the match took place |
 | fact_games | tour_id | team_games_performance | tour_id | Direct mapping | Tournament FK |
+| dims_tours | tour_name | team_games_performance | tour_name | Dimension Lookup | Official name of the tournament |
+| dims_tours | tour_region | team_games_performance | tour_region | Dimension Lookup | Regional scope of the tournament |
 | fact_games | match_id | team_games_performance | match_id | Direct mapping | Match FK |
 | fact_games | game_id | team_games_performance | game_id | Direct mapping | Game FK |
 | fact_games | map_id | team_games_performance | map_id | Direct mapping | Map FK |
+| dims_maps | map_name | team_matches_performance | map_name | Dimension Lookup | Standardized name of the map |
 | fact_games | home_team_id | team_games_performance | team_id | Role normalization | Team FK |
 | fact_games | away_team_id | team_games_performance | team_id | Role normalization | Team FK |
+| dims_teams | team_name | team_matches_performance | team_name | Dimension Lookup | Standardized full name of the team |
+| dims_teams | team_alias | team_matches_performance | team_alias | Dimension Lookup | Standardized short alias used to identify the team |
 | fact_games | home_ot_score & away_ot_score | team_games_performance | is_ot | Business logic | Binary indicator equal to 1 when the game went to overtime |
 | fact_games | is_home_win | team_games_performance | is_win | Direct mapping & Domain validation | Binary indicator equal to 1 when the team won the game |
 | fact_games | game_duration | team_games_performance | game_duration | Direct mapping | Duration of the game in seconds |
@@ -424,7 +459,10 @@ Version: 1.2
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | team_games_performance | team_id | team_maps_performance | team_id | Direct mapping | Tournament FK |
+| dims_teams | team_name | team_maps_performance | team_name | Dimension Lookup | Standardized full name of the team |
+| dims_teams | team_alias | team_maps_performance | team_alias | Dimension Lookup | Standardized short alias used to identify the team |
 | team_games_performance | map_id | team_maps_performance | map_id | Direct mapping | Match FK |
+| dims_maps | map_name | team_maps_performance | map_name | Dimension Lookup | Standardized name of the map |
 | team_games_performance | All source model columns | team_maps_performance | map_played | Aggregation (COUNT) | Total map played by team |
 | team_games_performance | is_ot | team_maps_performance | ot_played | Aggregation (SUM) | Total Overtime played on the map by team |
 | team_games_performance| All source model columns & is_ot | maps_performance | ot_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Overtime rate played on the map by team |
@@ -450,6 +488,7 @@ Version: 1.2
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | team_games_performance | map_id | maps_performance | map_id | Direct mapping | Match FK |
+| dims_maps | map_name | maps_performance | map_name | Dimension Lookup | Standardized name of the map |
 | team_games_performance | match_id | maps_performance | map_played | Aggregation (COUNT DISTINCT) | Total map played |
 | team_games_performance | is_ot | maps_performances | ot_played | Aggregation (SUM) | Total overtime played on the map |
 | team_games_performance| match_id & is_ot | maps_performance | ot_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Overtime rate played on the map |
@@ -467,8 +506,11 @@ Version: 1.2
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | fact_players | player_id | players_agents_maps_performance | player_id | Direct mapping | Player FK |
+| dims_players | player_name | players_agents_maps_performance | player_name | Dimension Lookup | Standardized name of the player |
 | fact_players | agent_id | players_agents_maps_performance | agent_id | Direct mapping | Agent FK |
+| dims_agents | agent_name | players_agents_maps_performance | agent_name | Dimension Lookup | Standardized name of the agent |
 | fact_players | map_id | players_agents_maps_performance | map_id | Direct mapping | Map FK |
+| fact_players | map_name | players_agents_maps_performance | map_name | Dimension Lookup | Standardized name of the map |
 | fact_players | map_id | players_agents_maps_performance | agent_played | Aggregation (COUNT) | Total agent played |
 | fact_players | is_win | players_agents_maps_performance | total_win | Aggregation (SUM) | Total win with the agent played |
 | fact_players | is_win & map_id | players_agents_maps_performance | agent_wr | Aggregation (SUM & COUNT) + Derived metric | Agent win rate |
@@ -490,7 +532,9 @@ Version: 1.2
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | fact_players | agent_id | agents_maps_performance | agent_id | Direct mapping | Agent FK |
+| dims_agents | agent_name | agents_maps_performance | agent_name | Dimension Lookup | Standardized name of the agent |
 | fact_players | map_id | agents_maps_performance | map_id | Direct mapping | Map FK |
+| fact_players | map_name | agents_maps_performance | map_name | Dimension Lookup | Standardized name of the map |
 | fact_players | game_id | agents_maps_performance | presence_count | Aggregation (COUNT DISTINCT) | Total agent presence on the map |
 | maps_performance | map_played | agents_maps_performance | map_played | Aggregation (SUM) | Total map played with the agent |
 | fact_players | agent_id | agents_maps_performance | pick_count | Aggregation (COUNT) | Total agent pick on the map |
@@ -504,6 +548,7 @@ Version: 1.2
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
 | fact_players | agent_id | agents_maps_performance | agent_id | Direct mapping | Agent FK |
+| dims_agents | agent_name | agents_maps_performance | agent_name | Dimension Lookup | Standardized name of the agent |
 | fact_players | All source model columns | agents_maps_performance | pick_count | Aggregation (COUNT) | Total agent pick on the map |
 | maps_performance | game_id | agents_maps_performance | total_games | Aggregation (COUNT & COUNT DISTINCT) + Derived metric| Total map played with the agent |
 | fact_players | All source model columns & game_id | agents_maps_performance | pick_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Agent pick rate on the map |
