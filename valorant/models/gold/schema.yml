@@ -1,17 +1,176 @@
-version: 1.1
+version: 1.2
 
 models:
+  - name: dims_tours
+    description: >
+      Dimension table containing standardized tournament attributes used to
+      identify and categorize tournaments.
+      Grain: one row per tournament.
+    config:
+      contract:
+        enforced: true
+    columns:
+    - name: tour_id
+      description: >
+        Unique identifier assigned to each tournament.
+      data_type: int64
+      data_tests:
+      - not_null
+      - unique
+    - name: tour_name
+      description: >
+        Official name of the tournament.
+      data_type: string
+      data_tests:
+      - not_null
+      - unique
+    - name: tour_tag
+      description: >
+        Short tag or abbreviation used to identify the tournament.
+      data_type: string
+      data_tests:
+      - not_null
+    - name: tour_stage
+      description: >
+        Competetion stage of the tournament, such a Kickoff, Stage 1, Stage 2 or Champions.
+      data_type: string
+      data_tests:
+      - not_null
+    - name: tour_region
+      description: >
+        Regional scope of the tournament, such as a specific region or All for globally contested events.
+      data_type: string
+      data_tests:
+      - not_null
+    - name: tour_status
+      description: >
+        Current or recorded status of the tournament, such as ongoing or completed.
+      data_type: string
+      data_tests:
+      - not_null
+      
+  - name: dims_teams
+    description: >
+      Team dimension containing the standardized identity and regional classification of teams.
+      Grain: one row per team.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: team_id
+        description: >
+          Surrogate identifier uniquely assigned to each team.
+        data_type: int64
+        data_tests:
+          - not_null
+          - unique
+      - name: team_name
+        description: >
+          Standardized full name of the team.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: team_alias
+        description: >
+          Standardized short alias used to identify the team in source data.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: team_region
+        description: >
+          Competitive region associated with the team.
+        data_type: string
+        data_tests:
+          - not_null
+
+  - name: dims_players
+    description: >
+      Player dimension containing standardized player identities and nationality information.
+      Grain: one row per player.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: player_id
+        description: >
+          Surrogate identifier uniquely assigned to each player.
+        data_type: int64
+        data_tests:
+          - not_null
+          - unique
+      - name: player_name
+        description: >
+          Standardized name of the player.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: player_nationality
+        description: >
+          Nationality associated with the player.
+        data_type: string
+        data_tests:
+          - not_null
+
+  - name: dims_maps
+    description: >
+      Map dimension containing standardized identifiers and names for maps available in the dataset.
+      Grain: one row per map.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: map_id
+        description: >
+          Surrogate identifier uniquely assigned to each map.
+        data_type: int64
+        data_tests:
+          - not_null
+          - unique
+      - name: map_name
+        description: >
+          Standardized name of the map.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dims_agents
+    description: >
+      Agent dimension containing standardized identifiers and names for playable agents.
+      Grain: one row per agent.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: agent_id
+        description: >
+          Surrogate identifier uniquely assigned to each agent.
+        data_type: int64
+        data_tests:
+          - not_null
+          - unique
+      - name: agent_name
+        description: >
+          Standardized name of the agent.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+
   - name: fact_matches
     description: >
       Match-level fact table containing tournament, timing, team, format, score,
       head-to-head, and recent team performance information.
       Grain: one row per match.
+    config:
+      contract:
+        enforced: true
     columns:
       - name: tour_id
         description: >
           Identifier of the tournament associated with the match.
           Foreign key referencing the tournament dimension.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - relationships:
@@ -22,8 +181,7 @@ models:
         description: >
           Unique identifier of the match.
           Represents the grain of this model: one row per match.
-          Values must be unique.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - unique
@@ -86,7 +244,6 @@ models:
       - name: home_score
         description: >
           Number of games won by the home team in the match.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - not_null
@@ -96,7 +253,6 @@ models:
       - name: away_score
         description: >
           Number of games won by the away team in the match.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - not_null
@@ -106,7 +262,6 @@ models:
       - name: normalized_score_diff
         description: >
           Normalized difference between home and away match scores.
-          Values range from -1 to 1 and must be float.
         data_type: float64
         data_tests:
           - not_null
@@ -117,7 +272,6 @@ models:
       - name: home_total_round
         description: >
           Total number of rounds won by the home team across games included in the match.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -126,7 +280,6 @@ models:
       - name: away_total_round
         description: >
           Total number of rounds won by the away team across games included in the match.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -135,7 +288,6 @@ models:
       - name: normalized_match_round_diff
         description: >
           Normalized difference between the total rounds won by the home and away teams in the match.
-          Values range from -1 to 1 and must be float.
         data_type: float64
         data_tests:
           - not_null
@@ -146,7 +298,6 @@ models:
       - name: home_h2h_win
         description: >
           Number of previous head-to-head matches won by the home team against the opposing team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - not_null
@@ -156,7 +307,6 @@ models:
       - name: away_h2h_win
         description: >
           Number of previous head-to-head matches won by the away team against the opposing team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - not_null
@@ -166,7 +316,6 @@ models:
       - name: normalized_h2h_win_diff
         description: >
           Normalized difference in historical head-to-head win rate between the home and away teams.
-          Values range from -1 to 1 and must be float.
           NULL represent both teams was never faces each other before.
         data_type: float64
         data_tests:
@@ -177,7 +326,6 @@ models:
       - name: home_h2h_score
         description: >
           Total games won by the home team in previous head-to-head encounters.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - not_null
@@ -187,7 +335,6 @@ models:
       - name: away_h2h_score
         description: >
           Total games won by the away team in previous head-to-head encounters.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - not_null
@@ -197,7 +344,6 @@ models:
       - name: normalized_h2h_game_win_diff
         description: >
           Normalized difference in historical head-to-head game-level win rate between the home and away teams.
-          Values range from -1 to 1 and must be float.
           NULL represent both teams was never faces each other before.
         data_type: float64
         data_tests:
@@ -205,10 +351,27 @@ models:
               arguments:
                 min_value: -1
                 max_value: 1
+      - name: home_n_last_win
+        description: >
+          Number of previous win matches available for calculating the home team's recent performance.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: away_n_last_win
+        description: >
+          Number of previous win matches available for calculating the away team's recent performance.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: home_n_last_match
         description: >
           Number of previous matches available for calculating the home team's recent performance.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - not_null
@@ -218,7 +381,6 @@ models:
       - name: away_n_last_match
         description: >
           Number of previous matches available for calculating the away team's recent performance.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - not_null
@@ -228,7 +390,6 @@ models:
       - name: home_n_last_wr
         description: >
           Recent win rate of the home team based on the available previous matches.
-          Values range 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -238,7 +399,6 @@ models:
       - name: away_n_last_wr
         description: >
           Recent win rate of the away team based on the available previous matches.
-          Values range 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -261,15 +421,24 @@ models:
       Game-level fact table containing game outcome, round performance, side performance,
       overtime, pistol-round, and economy statistics for both teams.
       Grain: one row per game.
+    config:
+      contract:
+        enforced: true
     columns:
       - name: tour_id
         description: >
           Identifier of the tournament containing the game.
-        data_type:
+        data_type: int64
+        data_tests:
+          - not_null
+          - relationships:
+                arguments:
+                  to: ref('matches')
+                  field: match_id
       - name: match_id
         description: >
           Identifier of the match containing the game.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - relationships:
@@ -280,8 +449,7 @@ models:
         description: >
           Unique identifier of the game.
           Represents the grain of this model: one row per game.
-          Values must be unique.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - unique
@@ -334,7 +502,6 @@ models:
       - name: game_duration
         description: >
           Duration of the game in seconds.
-          Values must be positive and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -344,7 +511,6 @@ models:
       - name: home_score
         description: >
           Total rounds won by the home team in the game.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -353,7 +519,6 @@ models:
       - name: away_score
         description: >
           Total rounds won by the away team in the game.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -362,7 +527,6 @@ models:
       - name: total_round
         description: >
           Total number of rounds played in the game.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -371,7 +535,6 @@ models:
       - name: normalized_score_diff
         description: >
           Normalized difference between home and away round scores.
-          Values range from -1 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -381,7 +544,6 @@ models:
       - name: home_atk_score
         description: >
           Number of rounds won by the home team while attacking.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -390,7 +552,6 @@ models:
       - name: away_atk_score
         description: >
           Number of rounds won by the away team while attacking.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -399,7 +560,6 @@ models:
       - name: atk_wr_ratio
         description: >
           Ratio comparing the attacking-side win rates of the home and away teams.
-          Values must be non-negative and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -408,7 +568,6 @@ models:
       - name: home_def_score
         description: >
           Number of rounds won by the home team while defending.
-          Values must be non negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -417,7 +576,6 @@ models:
       - name: away_def_score
         description: >
           Number of rounds won by the away team while defending.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -426,7 +584,6 @@ models:
       - name: def_wr_ratio
         description: >
           Ratio comparing the defending-side win rates of the home and away teams.
-          Values must be non-negative and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -435,7 +592,6 @@ models:
       - name: home_ot_score
         description: >
           Number of overtime rounds won by the home team.
-          Values must be non-negative and must be integers.
           Null values represent overtime was not happens.
         data_type: int64
         data_tests:
@@ -445,7 +601,6 @@ models:
       - name: away_ot_score
         description: >
           Number of overtime rounds won by the away team.
-          Values must be non-negative and must be integers.
           Null values represent overtime was not happens.
         data_type: int64
         data_tests:
@@ -455,7 +610,6 @@ models:
       - name: normalized_ot_score_diff
         description: >
           Normalization representing the relative overtime round performance between the home and away teams.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -465,7 +619,6 @@ models:
       - name: home_pstl_win
         description: >
           Number of pistol rounds won by the home team.
-          Values range from 0 to 2 and must be integers.
         data_type: int64
         data_tests: 
           - dbt_utils.accepted_range:
@@ -475,7 +628,6 @@ models:
       - name: away_pstl_win
         description: >
           Number of pistol rounds won by the away team.
-          Values range from 0 to 2 and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -485,7 +637,6 @@ models:
       - name: pstl_win_diff
         description: >
           Difference between the number of pistol rounds won by the home and away teams.
-          Values range from -2 to 2 and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -495,7 +646,6 @@ models:
       - name: home_eco_round
         description: >
           Number of eco rounds played by the home team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -504,7 +654,6 @@ models:
       - name: away_eco_round
         description: >
           Number of eco rounds played by the away team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -513,7 +662,6 @@ models:
       - name: home_eco_win
         description: >
           Number of eco rounds won by the home team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -522,7 +670,6 @@ models:
       - name: away_eco_win
         description: >
           Number of eco rounds won by the away team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -531,7 +678,6 @@ models:
       - name: eco_wr_diff
         description: >
           Relative difference in eco-round win rate between the home and away teams.
-          Values range from -1 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -541,7 +687,6 @@ models:
       - name: home_semi_eco_round
         description: >
           Number of semi eco rounds played by the home team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -550,7 +695,6 @@ models:
       - name: away_semi_eco_round
         description: >
           Number of semi eco rounds played by the away team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -559,7 +703,6 @@ models:
       - name: home_semi_eco_win
         description: >
           Number of semi eco rounds won by the home team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -568,7 +711,6 @@ models:
       - name: away_semi_eco_win
         description: >
           Number of semi eco rounds won by the away team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -577,7 +719,6 @@ models:
       - name: semi_eco_wr_diff
         description: >
           Relative difference in semi-eco-round win rate between the home and away teams.
-          Values range from -1 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -587,7 +728,6 @@ models:
       - name: home_semi_buy_round
         description: >
           Number of semi buy rounds played by the home team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -596,7 +736,6 @@ models:
       - name: away_semi_buy_round
         description: >
           Number of semi buy rounds played by the away team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -605,7 +744,6 @@ models:
       - name: home_semi_buy_win
         description: >
           Number of semi buy rounds won by the home team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -614,7 +752,6 @@ models:
       - name: away_semi_buy_win
         description: >
           Number of semi buy rounds won by the away team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -623,7 +760,6 @@ models:
       - name: semi_buy_wr_diff
         description: >
           Relative difference in semi-buy-round win rate between the home and away teams.
-          Values range from -1 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -633,7 +769,6 @@ models:
       - name: home_full_buy_round
         description: >
           Number of full buy rounds played by the home team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -642,7 +777,6 @@ models:
       - name: away_full_buy_round
         description: >
           Number of full buy rounds played by the away team.
-          Values must be non-negative and must be integers
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -651,7 +785,6 @@ models:
       - name: home_full_buy_win
         description: >
           Number of full buy rounds won by the home team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -660,7 +793,6 @@ models:
       - name: away_full_buy_win
         description: >
           Number of full buy rounds won by the away team.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -669,7 +801,6 @@ models:
       - name: full_buy_wr_diff
         description: >
           Relative difference in full-buy-round win rate between the home and away teams.
-          Values range from -1 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -690,6 +821,9 @@ models:
     description: >
       Map veto fact table recording map bans, picks, and decider selections associated with each match.
       Grain: one row per map veto action.
+    config:
+      contract:
+        enforced: true
     # data_tests: # invalid decider value for match_id 87374 and 89698, the correct one is Lotus. Check Liquipedia.
     #   - dbt_utils.unique_combination_of_columns:
     #       arguments:
@@ -701,7 +835,7 @@ models:
       - name: match_id
         description: >
           Identifier of the match associated with the map veto action.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - relationships:
@@ -752,6 +886,9 @@ models:
       Player-level fact table containing player identity, team, agent selection,
       match outcome, and individual performance statistics.
       Grain: one row per player per game.
+    config:
+      contract:
+        enforced: true
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -767,7 +904,7 @@ models:
       - name: tour_id
         description: >
           Unique identifier of the tournament in which the player participated.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - relationships:
@@ -777,7 +914,7 @@ models:
       - name: match_id
         description: >
           Unique identifier of the match in which the player participated.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - relationships:
@@ -870,7 +1007,6 @@ models:
       - name: r
         description: >
           Player rating for the game.
-          Values must be positive and must be integers.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -880,7 +1016,6 @@ models:
       - name: acs
         description: >
           Average Combat Score (ACS) achieved by the player in the game.
-          Values must be positive and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -890,7 +1025,6 @@ models:
       - name: k
         description: >
           Number of kills recorded by the player in the game.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -899,7 +1033,6 @@ models:
       - name: d
         description: >
           Number of deaths recorded by the player in the game.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -908,7 +1041,6 @@ models:
       - name: a
         description: >
           Number of assists recorded by the player in the game.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -917,12 +1049,10 @@ models:
       - name: kd
         description: >
           Kill-to-death diff of the player in the game.
-          Values must be integers.
         data_type: int64
       - name: kast
         description: >
           Percentage of rounds in which the player recorded a kill, assist, survived, or was traded.
-          Values range from 0 to 100 and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -932,7 +1062,6 @@ models:
       - name: adr
         description: >
           Average Damage per Round (ADR) achieved by the player.
-          Values must be positive and must be integers.
         data_type: int64
         data_tests: 
           - dbt_utils.accepted_range:
@@ -942,7 +1071,6 @@ models:
       - name: hs
         description: >
           Percentage of the player's kills that were headshots.
-          Values range from 0 to 100 and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -952,7 +1080,6 @@ models:
       - name: fk
         description: >
           Number of first kills recorded by the player.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -961,7 +1088,6 @@ models:
       - name: fd
         description: >
           Number of first deaths recorded by the player.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests: 
           - dbt_utils.accepted_range:
@@ -970,23 +1096,186 @@ models:
       - name: fkfd
         description: >
           First-kill to first-death diff of the player.
-          Values must be integers.
         data_type: int64
 
   - name: team_matches_performance
     description: >
-
+      Team-level match performance model containing outcome, duration, score, head-to-head,
+      and n-last match metrics.
+      Grain: one row per team per match.
+    config:
+      contract:
+        enforced: true
     data_tests:
-      -
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - tour_id
+              - match_id
+              - team_id
     columns:
-      - name: 
-        description:
+      - name: tour_id
+        description: >
+          Identifier of the tournament associated with the game.
+        data_type: int64
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dims_tours')
+                field: tour_id
+      - name: tour_name
+        description: >
+          Official name of the tournament.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: tour_region
+        description: >
+          Regional scope of the tournament.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: match_id
+        description: >
+          Identifier of the match containing the game.
+        data_type: int64
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fact_matches')
+                field: match_id
+      - name: match_date
+        description: >
+          Calendar date on which the match took place.
+        data_type: date
+        data_tests:
+          - not_null
+      - name: match_datetime
+        description: >
+          Date and time when the match took place.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: bracket
+        description: >
+          Tournament bracket or stage position in which the match was played.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: team_id
+        description: >
+          Identifier of the home team participating in the match.
+          Foreign key referencing the team dimension.
+        data_type: int64
+        data_tests:
+          - not_null
+      - name: team_name
+        description: >
+          Standardized full name of the team.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: team_alias
+        description: >
+          Standardized short alias used to identify the team.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: bo
+        description: >
+          Match format indicating the number of games that can be played,
+          such as Best-of-1 (bo1), Best-of-3 (bo3), or Best-of-5 (bo5).
+        data_type: string
+        data_tests:
+          - not_null
+      - name: patch
+        description: >
+          Game patch associated with the match. May be NULL when
+          patch information was unavailable in the source data.
+        data_type: string
+      - name: score
+        description: >
+          Number of games won by the team in the match.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: total_round
+        description: >
+          Total number of rounds won by the team across games included in the match.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: h2h_win
+        description: >
+          Number of previous head-to-head matches won by the team against the opposing team.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: h2h_score
+        description: >
+          Total games won by the team in previous head-to-head encounters.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: n_last_win
+        description: >
+          Number of previous win matches available for calculating the team recent performance.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: n_last_match
+        description: >
+          Number of previous matches available for calculating the team recent performance.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: n_last_wr
+        description: >
+          Recent win rate of the team based on the available previous matches.
+        data_type: float64
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: is_win
+        description: >
+          Binary outcome indicator equal to 1 when the team won the match and 0 otherwise.
+        data_type: int64
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
 
   - name: team_games_performance
     description: >
       Team-level game performance model containing outcome, duration, score, side,
       pistol, and economy performance metrics.
       Grain: one row per team per game.
+    config:
+      contract:
+        enforced: true
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -997,20 +1286,38 @@ models:
               - map_id
               - team_id
     columns:
+      - name: match_date
+        description: >
+          Calendar date on which the match took place.
+        data_type: date
+        data_tests:
+          - not_null
       - name: tour_id
         description: >
           Identifier of the tournament associated with the game.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - relationships:
               arguments:
                 to: ref('dims_tours')
                 field: tour_id
+      - name: tour_name
+        description: >
+          Official name of the tournament.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: tour_region
+        description: >
+          Regional scope of the tournament.
+        data_type: string
+        data_tests:
+          - not_null
       - name: match_id
         description: >
           Identifier of the match containing the game.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - relationships:
@@ -1020,7 +1327,7 @@ models:
       - name: game_id
         description: >
           Identifier of the game.
-        data_type: string
+        data_type: int64
         data_tests:
           - not_null
           - relationships:
@@ -1037,6 +1344,12 @@ models:
               arguments:
                 to: ref('dims_maps')
                 field: map_id
+      - name: map_name
+        description: >
+          Standardized name of the map.
+        data_type: string
+        data_tests:
+          - not_null
       - name: team_id
         description: >
           Identifier of the team represented by the row.
@@ -1047,6 +1360,18 @@ models:
               arguments:
                 to: ref('dims_teams')
                 field: team_id
+      - name: team_name
+        description: >
+          Standardized full name of the team.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: team_alias
+        description: >
+          Standardized short alias used to identify the team.
+        data_type: string
+        data_tests:
+          - not_null
       - name: is_ot
         description: >
           Binary indicator equal to 1 when the game went to overtime.
@@ -1070,7 +1395,6 @@ models:
       - name: game_duration
         description: >
           Duration of the game in seconds.
-          Values must be positive and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1079,7 +1403,6 @@ models:
       - name: normalized_score_diff
         description: >
           Normalized score difference from the perspective of the team.
-          Values range from -1 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1089,7 +1412,6 @@ models:
       - name: atk_wr
         description: >
           Attacking-side round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1099,7 +1421,6 @@ models:
       - name: def_wr
         description: >
           Defending-side round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1109,7 +1430,6 @@ models:
       - name: pstl_wr
         description: >
           Pistol-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1119,7 +1439,6 @@ models:
       - name: eco_wr
         description: >
           Eco-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1129,7 +1448,6 @@ models:
       - name: semi_eco_wr
         description: >
           Semi-eco-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1139,7 +1457,6 @@ models:
       - name: semi_buy_wr
         description: >
           Semi-buy-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1149,7 +1466,6 @@ models:
       - name: full_buy_wr
         description: >
           Full-buy-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1162,6 +1478,9 @@ models:
       Team-level map performance model summarizing map usage, results,
       veto behavior, game duration, and performance metrics for each team.
       Grain: one row per team per map.
+    config:
+      contract:
+        enforced: true
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -1179,6 +1498,18 @@ models:
               arguments:
                 to: ref('dims_teams')
                 field: team_id
+      - name: team_name
+        description: >
+          Standardized full name of the team.
+        data_type: string
+        data_tests:
+          - not_null
+      - name: team_alias
+        description: >
+          Standardized short alias used to identify the team.
+        data_type: string
+        data_tests:
+          - not_null
       - name: map_id
         description: >
           Identifier of the map.
@@ -1189,10 +1520,15 @@ models:
               arguments:
                 to: ref('dims_maps')
                 field: map_id
+      - name: map_name
+        description: >
+          Standardized name of the map.
+        data_type: string
+        data_tests:
+          - not_null
       - name: map_played
         description: >
           Number of games played by the team on the map.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1201,7 +1537,6 @@ models:
       - name: ot_played
         description: >
           Number of games that went to overtime on the map.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1210,7 +1545,6 @@ models:
       - name: maps_win
         description: >
           Number of map-level wins recorded by the team.
-          Values must be non negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1219,7 +1553,6 @@ models:
       - name: map_wr
         description: >
           Win rate of the team on the map.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1229,7 +1562,6 @@ models:
       - name: pick_count
         description: >
           Number of times the team picked the map.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1238,7 +1570,6 @@ models:
       - name: ban_count
         description: >
           Number of times the team banned the map.
-          Values must be non negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1247,7 +1578,6 @@ models:
       - name: pick_rate
         description: >
           Proportion of eligible map veto actions in which the team picked the map.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1257,7 +1587,6 @@ models:
       - name: ban_rate
         description: >
           Proportion of eligible map veto actions in which the team banned the map.
-          Values range from 0 to 1 and must be float.          
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1267,7 +1596,6 @@ models:
       - name: map_pick_preference
         description: >
           Relative preference of the team for picking the map based on its map veto activity.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1277,7 +1605,6 @@ models:
       - name: avg_game_duration
         description: >
           Average duration in seconds of games played by the team on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1286,7 +1613,6 @@ models:
       - name: avg_normalized_score_diff
         description: >
           Average normalized score difference of the team on the map.
-          Values range from -1 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1296,7 +1622,6 @@ models:
       - name: avg_atk_wr
         description: >
           Attacking-side round win rate of the team by map.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1306,7 +1631,6 @@ models:
       - name: avg_def_wr
         description: >
           Attacking-side round win rate of the team by map.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1316,7 +1640,6 @@ models:
       - name: avg_pstl_wr
         description: >
           Pistol-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1326,7 +1649,6 @@ models:
       - name: avg_eco_wr
         description: >
           Eco-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1336,7 +1658,6 @@ models:
       - name: avg_semi_eco_wr
         description: >
           Semi-eco-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1346,7 +1667,6 @@ models:
       - name: avg_semi_buy_wr
         description: >
           Semi-buy-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1356,7 +1676,6 @@ models:
       - name: avg_full_buy_wr
         description: >
           Full-buy-round win rate of the team.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1369,6 +1688,9 @@ models:
       Map-level performance model summarizing map usage, veto activity, game duration,
       and attacking and defending side performance.
       Grain: one row per map.
+    config:
+      contract:
+        enforced: true
     columns:
       - name: map_id
         description: >
@@ -1381,10 +1703,15 @@ models:
               arguments:
                 to: ref('dims_maps')
                 field: map_id
+      - name: map_name
+        description: >
+          Standardized name of the map.
+        data_type: string
+        data_tests:
+          - not_null
       - name: map_played
         description: >
           Total number of games played on the map.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1393,7 +1720,6 @@ models:
       - name: ot_played
         description: >
           Total number of games played on the map that went to overtime.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1402,7 +1728,6 @@ models:
       - name: pick_rate
         description: >
           Proportion of map veto actions resulting in the map being picked.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1412,7 +1737,6 @@ models:
       - name: ban_rate
         description: >
           Proportion of map veto actions resulting in the map being banned.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1422,7 +1746,6 @@ models:
       - name: map_pick_preference
         description: >
           Relative preference for the map based on its pick and ban activity.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1432,7 +1755,6 @@ models:
       - name: avg_game_duration
         description: >
           Average duration in seconds of games played on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1441,7 +1763,6 @@ models:
       - name: atk_side_ratio
         description: >
           Proportion of total attacking-side rounds won across both teams on the map.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1451,7 +1772,6 @@ models:
       - name: def_side_ratio
         description: >
           Proportion of total defending-side rounds won across both teams on the map.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1464,6 +1784,9 @@ models:
       Player-agent-map performance model summarizing usage, wins,and individual performance
       metrics for each player's use of an agent on a specific map.
       Grain: one row per player per agent per map.
+    config:
+      contract:
+        enforced: true
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -1482,6 +1805,12 @@ models:
               arguments:
                 to: ref('dims_players')
                 field: player_id
+      - name: player_name
+        description: >
+          Standardized name of the player.
+        data_type: string
+        data_tests:
+          - not_null
       - name: agent_id
         description: >
           Identifier of the agent used by the player.
@@ -1492,6 +1821,12 @@ models:
               arguments:
                 to: ref('dims_agents')
                 field: agent_id
+      - name: agent_name
+        description: >
+          Standardized name of the agent.
+        data_type: string
+        data_tests:
+          - not_null
       - name: map_id
         description: >
           Identifier of the map on which the agent was used.
@@ -1502,10 +1837,15 @@ models:
               arguments:
                 to: ref('dims_maps')
                 field: map_id
+      - name: map_name
+        description: >
+          Standardized name of the map.
+        data_type: string
+        data_tests:
+          - not_null
       - name: agent_played
         description: >
           Number of games in which the player used the agent on the map.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1514,7 +1854,6 @@ models:
       - name: total_win
         description: >
           Number of games won by the player while using the agent on the map.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1523,7 +1862,6 @@ models:
       - name: agent_wr
         description: >
           Win rate of the player when using the agent on the map.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1533,7 +1871,6 @@ models:
       - name: avg_r
         description: >
           Average player rating when using the agent on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1542,7 +1879,6 @@ models:
       - name: avg_acs
         description: >
           Average Combat Score when using the agent on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1551,7 +1887,6 @@ models:
       - name: avg_k
         description: >
           Average kills per game when using the agent on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1560,7 +1895,6 @@ models:
       - name: avg_d
         description: >
           Average deaths per game when using the agent on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1569,7 +1903,6 @@ models:
       - name: avg_a
         description: >
           Average assists per game when using the agent on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1578,12 +1911,10 @@ models:
       - name: avg_kd
         description: >
           Average kill-to-death ratio when using the agent on the map.
-          Values must be integers and must be float.
         data_type: float64
       - name: avg_kast
         description: >
           Average KAST percentage when using the agent on the map.
-          Values range from to 0 to 100 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1593,7 +1924,6 @@ models:
       - name: avg_adr
         description: >
           Average damage per round when using the agent on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1602,7 +1932,6 @@ models:
       - name: avg_hs
         description: >
           Average headshot percentage when using the agent on the map.
-          Values range from to 0 to 100 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1612,7 +1941,6 @@ models:
       - name: avg_fk
         description: >
           Average first kills per game when using the agent on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1621,7 +1949,6 @@ models:
       - name: avg_fd
         description: >
           Average first deaths per game when using the agent on the map.
-          Values must be positive and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1630,7 +1957,6 @@ models:
       - name: avg_fkfd
         description: >
           Average first-kill to first-death ratio when using the agent on the map.
-          Values must be float.
         data_type: float64
   
   - name: agents_maps_performance
@@ -1638,6 +1964,9 @@ models:
       Agent-level map performance model summarizing agent presence, selection,
       and win performance on each map.
       Grain: one row per agent per map.
+    config:
+      contract:
+        enforced: true
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -1655,6 +1984,12 @@ models:
               arguments:
                 to: ref('dims_agents')
                 field: agent_id
+      - name: agent_name
+        description: >
+          Standardized name of the agent.
+        data_type: string
+        data_tests:
+          - not_null
       - name: map_id
         description: >
           Identifier of the map.
@@ -1665,10 +2000,15 @@ models:
               arguments:
                 to: ref('dims_maps')
                 field: map_id
+      - name: map_name
+        description: >
+          Standardized name of the map.
+        data_type: string
+        data_tests:
+          - not_null
       - name: presence_count
         description: >
           Number of player-agent appearances of the agent on the map.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1677,7 +2017,6 @@ models:
       - name: map_played
         description: >
           Number of games in which the map was played within the relevant agent statistics.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1686,7 +2025,6 @@ models:
       - name: pick_count
         description: >
           Number of times the agent was selected on the map.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1695,7 +2033,6 @@ models:
       - name: total_win
         description: >
           Number of wins recorded by the agent on the map.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1704,7 +2041,6 @@ models:
       - name: pick_rate
         description: >
           Proportion of eligible agent selections represented by the agent on the map.
-          Values must be non-negative and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1714,7 +2050,6 @@ models:
       - name: win_rate
         description: >
           Win rate associated with the agent on the map.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1724,7 +2059,6 @@ models:
       - name: presence_rate
         description: >
           Proportion of relevant games in which the agent was present on the map.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1737,6 +2071,9 @@ models:
       Agent-level performance model summarizing agent selection frequency
       and win performance across the dataset.
       Grain: one row per agent.
+    config:
+      contract:
+        enforced: true
     columns:
       - name: agent_id
         description: >
@@ -1749,10 +2086,15 @@ models:
               arguments:
                 to: ref('dims_agents')
                 field: agent_id
+      - name: agent_name
+        description: >
+          Standardized name of the agent.
+        data_type: string
+        data_tests:
+          - not_null
       - name: pick_count
         description: >
           Total number of times the agent was selected.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1761,7 +2103,6 @@ models:
       - name: total_games
         description: >
           Total number of games included in the agent's performance calculation.
-          Values must be non-negative and must be integers.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1770,7 +2111,6 @@ models:
       - name: pick_rate
         description: >
           Proportion of agent selections represented by this agent across the relevant games.
-          Values must be non-negative and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
@@ -1780,7 +2120,6 @@ models:
       - name: win_rate
         description: >
           Win rate associated with the agent across the relevant games.
-          Values range from 0 to 1 and must be float.
         data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
