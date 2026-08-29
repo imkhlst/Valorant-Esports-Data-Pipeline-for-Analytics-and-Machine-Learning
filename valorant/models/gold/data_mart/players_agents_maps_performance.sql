@@ -3,9 +3,12 @@
 ) }}
 
 SELECT
-    player_id,
-    agent_id,
-    map_id,
+    f.player_id,
+    p.player_name,
+    f.agent_id,
+    a.agent_name,
+    f.map_id,
+    m.map_name,
     COUNT(map_id) AS agent_played,
     SUM(is_win) AS total_win,
     1.0 * SUM(is_win) / COUNT(map_id) AS agent_wr,

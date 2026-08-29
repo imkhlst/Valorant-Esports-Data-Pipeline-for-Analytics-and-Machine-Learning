@@ -35,17 +35,21 @@ map_count AS(
 ),
 match_count AS (
     SELECT
-        map_id,
+        f.map_id,
+        m.map_name,
         SUM(total_round) AS total_round,
         SUM(home_atk_score + away_atk_score) AS atk_side_score,
         SUM(home_def_score + away_def_score) AS def_side_score,
         (SELECT COUNT(DISTINCT match_id) FROM {{ ref('fact_games') }}) AS total_matches
-    FROM {{ ref('fact_games') }}
+    FROM {{ ref('fact_games') }} f
+    JOIN {{ ref('dims_maps') }} m
+    ON f.map_id = m.map_id
     GROUP BY map_id
 )
 
 SELECT
     m.map_id,
+    m.map_name,
     map_played,
     ot_played,
     1.0 * ot_played / NULLIF(map_played) AS ot_rate,

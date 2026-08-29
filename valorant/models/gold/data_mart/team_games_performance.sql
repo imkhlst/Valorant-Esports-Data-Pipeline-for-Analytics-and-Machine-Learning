@@ -13,6 +13,7 @@ SELECT
     m.map_name,
     home_team_id AS team_id,
     te.team_name,
+    te.team_alias,
     
     CASE
         WHEN home_ot_score + away_ot_score > 0
@@ -49,6 +50,7 @@ SELECT
     m.map_name,
     away_team_id AS team_id,
     te.team_name,
+    te.team_alias,
     
     CASE
         WHEN home_ot_score + away_ot_score > 0

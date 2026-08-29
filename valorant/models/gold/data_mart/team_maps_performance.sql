@@ -29,8 +29,11 @@ WITH team_pick_ban AS(
 ),
 team_map_count AS(
     SELECT
-        team_id,
-        map_id,
+        p.team_id,
+        t.team_name,
+        t.team_alias,
+        p.map_id,
+        m.map_name,
         COUNT(*) AS map_played,
         SUM(is_ot) AS ot_played,
         SUM(is_win) AS maps_win,
@@ -43,7 +46,11 @@ team_map_count AS(
         AVG(semi_eco_wr) AS avg_semi_eco_wr,
         AVG(semi_buy_wr) AS avg_semi_buy_wr,
         AVG(full_buy_wr) AS avg_full_buy_wr
-    FROM {{ ref('team_games_performance') }}
+    FROM {{ ref('team_games_performance') }} p
+    JOIN {{ ref('dims_teams') }} t
+    ON p.team_id = t.team_id
+    JOIN {{ ref('dims_maps') }} m
+    ON p.map_id = m.map_id
     GROUP BY
         team_id,
         map_id
@@ -58,7 +65,10 @@ team_count AS (
 
 SELECT
     m.team_id,
+    m.team_name,
+    m.team_alias,
     m.map_id,
+    m.map_name,
     map_played,
     ot_played,
     1.0 * ot_played / NULLIF(map_played) AS ot_rate,

@@ -3,8 +3,10 @@
 ) }}
 
 SELECT
-    agent_id,
+    p.agent_id,
+    a.agent_name,
     p.map_id,
+    dm.map_name,
     COUNT(DISTINCT game_id) AS presence_count,
     m.map_played,
     COUNT(agent_id) AS pick_count,
@@ -15,6 +17,10 @@ SELECT
 FROM {{ ref('fact_players') }} p
 JOIN {{ ref('maps_performance') }} m
 ON p.map_id = m.map_id
+JOIN {{ ref('dims_agents') }} a
+ON p.agent_id = a.agent_id
+JOIN {{ ref('dims_maps') }} dm
+ON p.map_id = dm.map_id
 WHERE mod = 'avg'
 GROUP BY
     agent_id,
