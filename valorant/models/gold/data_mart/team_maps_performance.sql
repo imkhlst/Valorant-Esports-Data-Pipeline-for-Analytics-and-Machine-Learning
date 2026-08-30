@@ -38,7 +38,6 @@ team_map_count AS(
         SUM(is_ot) AS ot_played,
         SUM(is_win) AS maps_win,
         AVG(game_duration) AS avg_game_duration,
-        AVG(normalized_score_diff) AS avg_normalized_score_diff,
         AVG(atk_wr) AS avg_atk_wr,
         AVG(def_wr) AS avg_def_wr,
         AVG(pstl_wr) AS avg_pstl_wr,
@@ -52,8 +51,11 @@ team_map_count AS(
     JOIN {{ ref('dims_maps') }} m
     ON p.map_id = m.map_id
     GROUP BY
-        team_id,
-        map_id
+        p.team_id,
+        t.team_name,
+        t.team_alias,
+        p.map_id,
+        m.map_name
 ),
 team_count AS (
     SELECT
@@ -71,7 +73,7 @@ SELECT
     m.map_name,
     map_played,
     ot_played,
-    1.0 * ot_played / NULLIF(map_played) AS ot_rate,
+    1.0 * ot_played / NULLIF(map_played, 0) AS ot_rate,
     maps_win,
 
     1.0 * maps_win / map_played AS map_wr,
@@ -84,7 +86,6 @@ SELECT
     1.0 * p.pick_count / NULLIF(p.pick_count + p.ban_count, 0) AS map_pick_preference,
 
     avg_game_duration,
-    avg_normalized_score_diff,
     avg_atk_wr,
     avg_def_wr,
     avg_pstl_wr,

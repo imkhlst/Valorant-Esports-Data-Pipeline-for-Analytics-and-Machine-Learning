@@ -14,4 +14,5 @@ JOIN {{ ref('dims_agents') }} a
 ON f.agent_id = a.agent_id
 WHERE mod = 'avg'
 GROUP BY
-    agent_id
+    f.agent_id,
+    a.agent_name

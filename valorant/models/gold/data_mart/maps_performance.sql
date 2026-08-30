@@ -44,15 +44,17 @@ match_count AS (
     FROM {{ ref('fact_games') }} f
     JOIN {{ ref('dims_maps') }} m
     ON f.map_id = m.map_id
-    GROUP BY map_id
+    GROUP BY 
+        f.map_id,
+        m.map_name
 )
 
 SELECT
     m.map_id,
-    m.map_name,
+    map_name,
     map_played,
     ot_played,
-    1.0 * ot_played / NULLIF(map_played) AS ot_rate,
+    1.0 * ot_played / NULLIF(map_played, 0) AS ot_rate,
 
     p.pick_count,
     p.ban_count,

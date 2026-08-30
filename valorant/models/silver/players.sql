@@ -80,5 +80,5 @@ SELECT
         ELSE NULL
     END AS fkfd
 FROM {{ ref('stg_players') }} p
-JOIN {{ ref('stg_game_overview') }} o
-ON p.match_id = o.match_id
+JOIN {{ ref('stg_games_overview') }} o
+ON p.game_id = o.game_id

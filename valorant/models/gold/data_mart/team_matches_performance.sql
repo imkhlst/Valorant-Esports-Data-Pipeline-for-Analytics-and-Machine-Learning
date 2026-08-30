@@ -4,13 +4,15 @@
 
 SELECT
     f.tour_id,
-    t.tour_name,
-    t.tour_region,
+    tu.tour_name,
+    tu.tour_region,
     match_id,
     match_date,
     match_datetime,
     bracket,
     home_team_id AS team_id,
+    te.team_name,
+    te.team_alias,
     bo,
     patch,
     home_score AS score,
@@ -22,18 +24,22 @@ SELECT
     home_n_last_wr AS n_last_match_wr,
     is_home_win AS is_win
 FROM {{ ref('fact_matches') }} f
-JOIN {{ ref('dims_tours') }} t
-ON f.tour_id = t.tour_id
+JOIN {{ ref('dims_tours') }} tu
+ON f.tour_id = tu.tour_id
+JOIN {{ ref('dims_teams') }} te
+ON f.home_team_id = te.team_id
 UNION ALL
 SELECT
     f.tour_id,
-    t.tour_name,
-    t.tour_region
+    tu.tour_name,
+    tu.tour_region,
     match_id,
     match_date,
     match_datetime,
     bracket,
     away_team_id,
+    te.team_name,
+    te.team_alias,
     bo,
     patch,
     away_score,
@@ -45,10 +51,12 @@ SELECT
     away_n_last_wr,
 
     CASE
-        WHEN is_win = 1
+        WHEN is_home_win = 1
         THEN 0
         ELSE 1
     END AS is_win
 FROM {{ ref('fact_matches') }} f
-JOIN {{ ref('dims_tours') }} t
-ON f.tour_id = t.tour_id
+JOIN {{ ref('dims_tours') }} tu
+ON f.tour_id = tu.tour_id
+JOIN {{ ref('dims_teams') }} te
+ON f.away_team_id = te.team_id
