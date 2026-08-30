@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir ~/.dbt
           
-          cat > ~/.dbt/profile.yml << 'EOF'
+          cat > ~/.dbt/profiles.yml << 'EOF'
           valorant:
             target: ci
             outputs:
