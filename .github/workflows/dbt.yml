@@ -24,9 +24,6 @@ jobs:
       - name: Install dbt
         run: pip install dbt-bigquery==1.12.0
 
-      - name: Install dbt Packages
-        run: dbt deps
-
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
         with:
@@ -51,8 +48,14 @@ jobs:
                 type: bigquery
           EOF
 
+      - name: Install dbt Packages
+        working-directory: ./valorant
+        run: dbt deps
+
       - name: Check dbt Connection
+        working-directory: ./valorant
         run: dbt debug --target ci
 
       - name: Run dbt build
+        working-directory: ./valorant
         run: dbt build --target ci
