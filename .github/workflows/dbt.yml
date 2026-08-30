@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -24,7 +24,7 @@ jobs:
       - name: Install dbt
         run: pip install dbt-bigquery==1.12.0
 
-      - name: Install dbt packages
+      - name: Install dbt Packages
         run: dbt deps
 
       - name: Authenticate to Google Cloud
@@ -33,7 +33,7 @@ jobs:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-      - name: Create dbt profile
+      - name: Create dbt Profile
         run: |
           mkdir ~/.dbt
           
@@ -51,7 +51,7 @@ jobs:
                 type: bigquery
           EOF
 
-      - name: Check dbt connection
+      - name: Check dbt Connection
         run: dbt debug --target ci
 
       - name: Run dbt build
