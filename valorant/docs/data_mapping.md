@@ -1,6 +1,6 @@
 # Data Mapping
 
-Version: 1.2
+Version: 1.3
 
 ## Bronze → Staging
 
@@ -416,8 +416,8 @@ Version: 1.2
 | fact_matches | away_n_last_win | team_matches_performance | n_last_win | Direct mapping | Away team n-last match win recorded |
 | fact_matches | home_n_last_match | team_matches_performance | n_last_match | Direct mapping | Home team n-last match recorded |
 | fact_matches | away_n_last_match | team_matches_performance | n_last_match | Direct mapping | Away team n-last match recorded |
-| fact_matches | home_n_last_wr | team_matches_performance | n_last_wr | Direct mapping | Home team n-last match win rate |
-| fact_matches | away_n_last_wr | team_matches_performance | n_last_wr | Direct mapping | Away team n-last match win rate |
+| fact_matches | home_n_last_wr | team_matches_performance | n_last_match_wr | Direct mapping | Home team n-last match win rate |
+| fact_matches | away_n_last_wr | team_matches_performance | n_last_match_wr | Direct mapping | Away team n-last match win rate |
 | fact_matches | is_home_win | team_matches_performance | is_win | Direct mapping & Domain validation | Boolean represent home team win status |
 
 ### team_games_performance
@@ -439,7 +439,6 @@ Version: 1.2
 | fact_games | home_ot_score & away_ot_score | team_games_performance | is_ot | Business logic | Binary indicator equal to 1 when the game went to overtime |
 | fact_games | is_home_win | team_games_performance | is_win | Direct mapping & Domain validation | Binary indicator equal to 1 when the team won the game |
 | fact_games | game_duration | team_games_performance | game_duration | Direct mapping | Duration of the game in seconds |
-| fact_games | normalized_score_diff | team_games_performance | normalized_score_diff | Direct mapping & Negation transformation | Normalized score difference from the perspective of the team |
 | fact_games | home_atk_score & away_def_score | team_games_performance | atk_wr | Derived metric | Attacking-side round win rate of the team |
 | fact_games | away_atk_score & home_def_score | team_games_performance | atk_wr | Derived metric | Attacking-side round win rate of the team |
 | fact_games | home_def_score & away_atk_score | team_games_performance | def_wr | Derived metric | Defending-side round win rate of the team |
@@ -465,6 +464,7 @@ Version: 1.2
 | dims_maps | map_name | team_maps_performance | map_name | Dimension Lookup | Standardized name of the map |
 | team_games_performance | All source model columns | team_maps_performance | map_played | Aggregation (COUNT) | Total map played by team |
 | team_games_performance | is_ot | team_maps_performance | ot_played | Aggregation (SUM) | Total Overtime played on the map by team |
+| team_games_performance | is_ot & All sourcer model columns | team_maps_performance | ot_rate | Aggregation (SUM & COUNT) + Derived metric | Overtime rate on the map by team |
 | team_games_performance| All source model columns & is_ot | maps_performance | ot_rate | Aggregation (SUM & COUNT DISTINCT) + Derived metric | Overtime rate played on the map by team |
 | team_games_performance | is_win | team_maps_performance | maps_win | Aggregation (SUM) | Total win on the map by team |
 | team_games_performance | is_win & All source model columns | team_maps_performance | map_wr | Aggregation (COUNT & SUM) + Derived metric | Map win rate by team on the map |
@@ -474,7 +474,6 @@ Version: 1.2
 | fact_map_vetos & team_games_performance | action & match_id | team_maps_performance | ban_rate | Business logic + Aggregation (COUNT) | Map ban rate by team |
 | team_games_performance | action | team_maps_performance | map_pick_preference | Business logic + Derived metric | Map pick rate by team when the map is not picked by opponent and banned by both team |
 | team_games_performance | game_duration | team_games_performance | avg_game_duration | Aggregation (AVG) | Duration aggregation of game on the map by team |
-| team_games_performance | normalized_score_diff | team_games_performance | avg_normalized_score_diff | Aggregation (AVG) | Normalized aggregation score difference from the perspective of the team |
 | team_games_performance | atk_wr | team_games_performance | avg_atk_wr | Aggregation (AVG) | Aggregation of attacking-side round win rate of the team on the map |
 | team_games_performance | def_wr | team_games_performance | avg_def_wr | Aggregation (AVG) | Aggregation of defending-side round win rate of the team on the map |
 | team_games_performance | pstl_wr | team_games_performance | avg_pstl_wr | Aggregation (AVG) | Aggregation of pistol-round win rate of the team on the map |
