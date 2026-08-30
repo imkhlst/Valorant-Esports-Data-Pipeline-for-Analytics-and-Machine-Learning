@@ -1,4 +1,4 @@
-version: 1.2
+version: 1.3
 
 models:
   - name: dims_tours
@@ -198,7 +198,7 @@ models:
       - name: match_datetime
         description: >
           Date and time at which the match took place.
-        data_type: timestamp
+        data_type: datetime
         data_tests:
           - not_null
       - name: bracket
@@ -433,8 +433,8 @@ models:
           - not_null
           - relationships:
                 arguments:
-                  to: ref('matches')
-                  field: match_id
+                  to: ref('fact_matches')
+                  field: tour_id
       - name: match_id
         description: >
           Identifier of the match containing the game.
@@ -443,7 +443,7 @@ models:
           - not_null
           - relationships:
               arguments:
-                to: ref('matches')
+                to: ref('games_overview')
                 field: match_id
       - name: game_id
         description: >
@@ -466,7 +466,7 @@ models:
       - name: match_datetime
         description: >
           Date and time at which the match containing the game took place.
-        data_type: timestamp
+        data_type: datetime
         data_tests:
           - not_null
       - name: home_team_id
@@ -940,7 +940,7 @@ models:
       - name: match_datetime
         description: >
           Date and time at which the match was played.
-        data_type: timestamp
+        data_type: datetime
         data_tests:
           - not_null
       - name: map_id
@@ -1155,7 +1155,7 @@ models:
       - name: match_datetime
         description: >
           Date and time when the match took place.
-        data_type: timestamp
+        data_type: datetime
         data_tests:
           - not_null
       - name: bracket
@@ -1248,7 +1248,7 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
-      - name: n_last_wr
+      - name: n_last_match_wr
         description: >
           Recent win rate of the team based on the available previous matches.
         data_type: float64
@@ -1400,15 +1400,6 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
-      - name: normalized_score_diff
-        description: >
-          Normalized score difference from the perspective of the team.
-        data_type: float64
-        data_tests:
-          - dbt_utils.accepted_range:
-              arguments:
-                min_value: -1
-                max_value: 1
       - name: atk_wr
         description: >
           Attacking-side round win rate of the team.
@@ -1542,6 +1533,15 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
+      - name: ot_rate
+        description: >
+          Rate of games that went to overtime on the map.
+        data_type: float
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
       - name: maps_win
         description: >
           Number of map-level wins recorded by the team.
@@ -1610,15 +1610,6 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
-      - name: avg_normalized_score_diff
-        description: >
-          Average normalized score difference of the team on the map.
-        data_type: float64
-        data_tests:
-          - dbt_utils.accepted_range:
-              arguments:
-                min_value: -1
-                max_value: 1
       - name: avg_atk_wr
         description: >
           Attacking-side round win rate of the team by map.
@@ -1720,6 +1711,31 @@ models:
       - name: ot_played
         description: >
           Total number of games played on the map that went to overtime.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: ot_rate
+        description: >
+          Rate of games that went to overtime on the map.
+        data_type: float
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: pick_count
+        description: >
+          Number of times all team picked the map.
+        data_type: int64
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: ban_count
+        description: >
+          Number of times all team banned the map.
         data_type: int64
         data_tests:
           - dbt_utils.accepted_range:
