@@ -1,6 +1,6 @@
 # Data Dictionary
 
-Version : 1.2
+Version : 1.3
 
 ## Silver Models
 
@@ -20,7 +20,7 @@ Version : 1.2
 | `tour_id` | integer | No | None | Tournament FK | `2379` |
 | `match_id` | integer | No | `Unique` | Match identifier | `87370` |
 | `match_date` | date | No | None | Match calendar date | `2025-04-06` |
-| `match_datetime` | timestamp | No | None | Match timestamp | `2025-04-06T04:00:00` |
+| `match_datetime` | datetime | No | None | Match timestamp | `2025-04-06T04:00:00` |
 | `bracket` | string | No | None | Match bracket | `Group Stage: Week 3` |
 | `home_name` | string | No | None | Home team name | `Paper Rex` |
 | `home_alias` | string | No | None | Home team alias | `PRX` |
@@ -57,7 +57,7 @@ Version : 1.2
 | `match_id` | integer | No | None | Match FK | `107942` |
 | `game_id` | integer | No | None | Game identifier | `258358` |
 | `match_date` | date | No | None | Match calendar date | `2026-04-08` |
-| `match_datetime` | timestamp | No | None | Match timestamp | `2026-04-08T11:00:00` |
+| `match_datetime` | datetime | No | None | Match timestamp | `2026-04-08T11:00:00` |
 | `game_map` | string | No | None | Map name played | `Pearl` |
 | `game_duration` | integer | No | Must be `>= 0` when present | Duration games in seconds | `3482` |
 | `home_score` | integer | No | Must be `>= 0` | Total rounds won by the home team in the game | `14` |
@@ -85,7 +85,7 @@ Version : 1.2
 | `match_id` | integer | No | None | Match FK | `77172` |
 | `game_id` | integer | No | None | Game identifier | `178835` |
 | `match_date` | date | No | None | Match Calendar date | `2024-07-21` |
-| `match_datetime` | timestamp | No | None | Match timestamp | `2024-07-21T17:00:00` |
+| `match_datetime` | datetime | No | None | Match timestamp | `2024-07-21T17:00:00` |
 | `home_pstl_win` | integer | Yes | Must be in range `0` and `2` when present | Number of pistol rounds won by the home team | `2` |
 | `away_pstl_win` | integer | Yes | Must be in range `0` and `2` when present | Number of pistol rounds won by the away team | `0` |
 | `home_eco_round` | integer | Yes | Must be `>= 0` when present | Number of eco rounds won by the home team | `2` |
@@ -120,7 +120,7 @@ Version : 1.2
 |---|---|---|---|---|---|
 | `game_id` | integer | No | None | Game FK | `196430` |
 | `match_date` | date | No | None | Match calendar date | `2024-07-21` |
-| `match_datetime` | timestamp | No | None | Match timestamp | `2024-07-21T17:00:00` |
+| `match_datetime` | datetime | No | None | Match timestamp | `2024-07-21T17:00:00` |
 | `player_name` | string | No | None | Name of the player | `Jemkin` |
 | `team_alias` | string | No | None | Alias of the team represented by the player in the game | `RRQ` |
 | `nationality` | string | No | None | Nationality associated with the player | `Russia` |
@@ -244,7 +244,7 @@ Version : 1.2
 | `tour_id` | integer | No | None | Tournament FK | `1998` |
 | `match_id` | integer | No | `Unique` | Match identifier | `71902` |
 | `match_date` | date | No | None | Match calendar date | `2024-04-04` |
-| `match_datetime` | timestamp | No | None | Match timestamp | `2025-04-06T11:00:00` |
+| `match_datetime` | datetime | No | None | Match timestamp | `2025-04-06T11:00:00` |
 | `bracket` | string | No | None | Match bracket | `Regular Season: Week 1` |
 | `home_team_id` | integer | No | None | Team FK | `49` |
 | `away_team_id` | integer | No | None | Team FK | `36` |
@@ -287,7 +287,7 @@ Version : 1.2
 | `match_id` | integer | No | None | Match FK | `71657` |
 | `game_id` | integer | No | `Unique` | Unique identifier of the game | `163433` |
 | `match_date` | date | No | None | Match calendar date | `2024-05-04` |
-| `match_datetime` | timestamp | No | None | Match timestamp | `2024-05-04T19:20:00` |
+| `match_datetime` | datetime | No | None | Match timestamp | `2024-05-04T19:20:00` |
 | `home_team_id` | integer | No | None | Team FK | `30` |
 | `away_team_id` | integer | No | None | Team FK | `32` |
 | `map_id` | integer | No | None | Map FK | `4` |
@@ -366,7 +366,7 @@ Version : 1.2
 | `match_id` | integer | No | None | Match FK | `59970` |
 | `game_id` | integer | No | None | Game FK | `134551` |
 | `match_date` | date | No | None | Match calendar date | `2024-05-04` |
-| `match_datetime` | timestamp | No | None | Match timestamp | `2024-05-04T19:20:00` |
+| `match_datetime` | datetime | No | None | Match timestamp | `2024-05-04T19:20:00` |
 | `map_id` | integer | No | None | Map FK | `10` |
 | `player_id` | integer | No | None | Player FK | `66` |
 | `team_id` | integer | No | None | Team FK | `1` |
@@ -404,7 +404,7 @@ Version : 1.2
 | `tour_region` | string | No | None | Regional scope of the tournament | `EMEA` |
 | `match_id` | integer | No | None | Match FK | `71902` |
 | `match_date` | date | No | None | Match calendar date | `2024-04-04` |
-| `match_datetime` | timestamp | No | None | Match timestamp | `2025-04-06T11:00:00` |
+| `match_datetime` | datetime | No | None | Match timestamp | `2025-04-06T11:00:00` |
 | `bracket` | string | No | None | Match bracket | `Regular Season: Week 1` |
 | `team_id` | integer | No | None | Team FK | `49` |
 | `team_name` | string | No | None | Standardized full name of the team | `Team Vitality` |
@@ -417,7 +417,7 @@ Version : 1.2
 | `h2h_score` | integer | No | Must be `>= 0` | Home team game win score against away team | `0` |
 | `n_last_win` | integer | No | Must be in range `0` and `5` | home team n-last match win recorded | `3` |
 | `n_last_match` | integer | No |Must be in range `0` and `5` | home team n-last match recorded | `5` |
-| `n_last_wr` | float | Yes | Must be in range `0` and `1` and can be NULL when denominator `home_n_last_match` is zero | home team n-last match win rate | `0.6` |
+| `n_last_match_wr` | float | Yes | Must be in range `0` and `1` and can be NULL when denominator `home_n_last_match` is zero | home team n-last match win rate | `0.6` |
 | `is_win` | integer | No | Must be in range `0` and `1` and can be NULL when denominator `away_n_last_match` is zero | away team n-last match win rate | `0` |
 
 ### team_games_performance
@@ -446,7 +446,6 @@ Version : 1.2
 | `is_ot` | integer | No | Must be in range `0` and `1` | Binary indicator equal to 1 when the game went to overtime | `1` |
 | `is_win` | integer | No | Must be in range `0` and `1` | Binary indicator equal to 1 when the team won the game | `1` |
 | `game_duration` | integer | Yes | Must be `>= 0` when present | Duration of the game in seconds | `3456` |
-| `normalized_score_diff` | float | No | Must be in range `-1` and `1` | Normalized score difference from the perspective of the team | `0.08` |
 | `atk_wr` | float | Yes | Must be in range `0` and `1` | Attacking-side round win rate of the team | `0.38` |
 | `def_wr` | float | Yes | Must be in range `0` and `1` | Defending-side round win rate of the team | `0.69` |
 | `pstl_wr` | float | Yes | Must be in range `0` and `1` | Pistol-round win rate of the team | `0.0` |
@@ -475,7 +474,7 @@ Version : 1.2
 | `map_name` | string | No | None | Standardized name of the map | `Breeze` |
 | `map_played` | integer | No | None | Total map played by team | `6` |
 | `ot_played` | integer | No | Must be in range `0` and `1` | Total Overtime played on the map by team | `1` |
-| `ot_rate` | float | No | Must be in range `0` and `1` | Overtime rate played on the map by team | `` |
+| `ot_rate` | float | No | Must be in range `0` and `1` | Overtime rate played on the map by team | `0.33333...` |
 | `maps_win` | integer | No | Must be in range `0` and `1` | Total win on the map by team | `3` |
 | `map_wr` | integer | Yes | Must be `>= 0` when present | Map win rate by team on the map | `0.5` |
 | `pick_count` | integer | No | Must be in range `-1` and `1` | Total map pick by team over total team matches | `2` |
@@ -484,7 +483,6 @@ Version : 1.2
 | `ban_rate` | float | Yes | Must be in range `0` and `1` | Map ban rate by team | `0.1` |
 | `map_pick_preference` | float | Yes | Must be in range `0` and `1` | Map pick rate by team when the map is not picked by opponent and banned by both team | `0.29` |
 | `avg_game_duration` | float | Yes | Must be in range `0` and `1` | Duration aggregation of game on the map by team | `2938.33` |
-| `avg_normalized_score_diff` | float | Yes | Must be in range `0` and `1` | Normalized aggregation score difference from the perspective of the team | `0.01` |
 | `avg_atk_wr` | float | Yes | Must be in range `0` and `1` | Aggregation of attacking-side round win rate of the team on the map | `0.46` |
 | `avg_def_wr` | float | Yes | Must be in range `0` and `1` | Aggregation of defending-side round win rate of the team on the map | `0.54` |
 | `avg_pstl_wr` | float | Yes | Must be in range `0` and `1` | Aggregation of pistol-round win rate of the team on the map | `0.33` |
