@@ -1,7 +1,7 @@
 name: Run dbt CI
 
 on:
-  pull_request:
+  push_request:
     branches: [main]
 
 permissions:
