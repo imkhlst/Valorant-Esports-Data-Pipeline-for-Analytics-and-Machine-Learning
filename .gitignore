@@ -1,0 +1,7 @@
+
+test_gcs.py
+data/
+target/
+dbt_packages/
+logs/
+.env
