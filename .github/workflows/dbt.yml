@@ -1,4 +1,4 @@
-name: Run dbt CI
+name: Run dbt CI 
 
 on:    
   pull_request:
