@@ -248,7 +248,7 @@ models:
       - name: game_duration
         description: >
           Duration of the game in seconds.
-        data_type: int64
+        data_type: float64
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
