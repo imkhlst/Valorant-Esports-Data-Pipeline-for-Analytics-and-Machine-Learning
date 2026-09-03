@@ -1,4 +1,4 @@
-SELECT 
+SELECT
     SAFE_CAST(e.match_id AS INT64) AS match_id,
     SAFE_CAST(game_id AS INT64) AS game_id,
     
