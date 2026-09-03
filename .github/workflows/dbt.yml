@@ -77,11 +77,11 @@ jobs:
         run: dbt build --target ci
       
       - name: Check dbt Connection - Production
-        if: github.event_name == 'push' && github.ref == 'refs/head/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: ./valorant
         run: dbt debug --target prod
 
       - name: Run dbt build - Production
-        if: github.event_name == 'push' && github.ref == 'refs/head/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: ./valorant
         run: dbt build -- target prod
