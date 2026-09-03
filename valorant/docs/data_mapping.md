@@ -1,95 +1,109 @@
 # Data Mapping
 
-Version: 1.3
+Version: 1.4
 
-## Bronze → Staging
+## Bronze → Silver
 
-### stg_tours
-
-| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
-|---|---|---|---|---|---|
-| valorant-project-2026.bronze.tours | tour_id | stg_tours | tour_id | INT conversion | Tournament unique identifier |
-| valorant-project-2026.bronze.tours | tour_name | stg_tours | tour_name | STR conversion | Official name of the tournament |
-| valorant-project-2026.bronze.tours | tour_tag | stg_tours | tour_tag | STR conversion |  Short tag or abbreviation used to identify the tournament |
-| valorant-project-2026.bronze.tours | tour_stage | stg_tours | tour_stage | STR conversion |  Competetion stage of the tournament |
-| valorant-project-2026.bronze.tours | tour_region | stg_tours | tour_region | STR conversion | Regional scope of the tournament |
-| valorant-project-2026.bronze.tours | tour_status | stg_tours | tour_status | STR conversion | Current or recorded status of the tournament |
-
-### stg_matches
+### matches
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| valorant-project-2026.bronze.matches | tour_id | stg_matches | tour_id | INT conversion | Tournament FK |
-| valorant-project-2026.bronze.matches | match_id | stg_matches | match_id | INT conversion | Match unique identifier |
-| valorant-project-2026.bronze.matches | date | stg_matches | match_date | DATE conversion | Calendar date on which the match took place |
-| valorant-project-2026.bronze.matches | date | stg_matches | match_datetime | Datetime parsing | Date and time when the match took place |
-| valorant-project-2026.bronze.matches | bracket | stg_matches | bracket | STR conversion | Tournament bracket or stage position in which the match was played |
-| valorant-project-2026.bronze.matches | home_name | stg_matches | home_name | STR conversion | Home team name |
-| valorant-project-2026.bronze.matches | home_alias | stg_matches | home_alias | STR conversion | Home team alias |
-| valorant-project-2026.bronze.matches | away_name | stg_matches | away_name | STR conversion | Away team name |
-| valorant-project-2026.bronze.matches | away_alias | stg_matches | away_alias | STR conversion | Away team alias |
-| valorant-project-2026.bronze.matches | bo | stg_matches | bo | STR conversion | Best-of-series match |
-| valorant-project-2026.bronze.matches | patch | stg_matches | patch | STR conversion | Patch version played |
-| valorant-project-2026.bronze.matches | home_score | stg_matches | home_score | INT conversion | home team match win score |
-| valorant-project-2026.bronze.matches | away_score | stg_matches | away_score | INT conversion | away team match win score |
-| valorant-project-2026.bronze.matches | home_h2h_win | stg_matches | home_h2h_win | INT conversion | home team match win against away team |
-| valorant-project-2026.bronze.matches | away_h2h_win | stg_matches | away_h2h_win | INT conversion | away team match win against home team |
-| valorant-project-2026.bronze.matches | home_h2h_score | stg_matches | home_h2h_score | INT conversion | home team match win score against away team |
-| valorant-project-2026.bronze.matches | away_h2h_score | stg_matches | away_h2h_score | INT conversion | away team match win score against home team |
-| valorant-project-2026.bronze.matches | home_n_last_win | stg_matches | home_n_last_win | INT conversion | home team n-last match win |
-| valorant-project-2026.bronze.matches | away_n_last_win | stg_matches | away_n_last_win | INT conversion | away team n-last match win |
-| valorant-project-2026.bronze.matches | home_n_last_match | stg_matches | home_n_last_match | INT conversion | home team n-last match recorded |
-| valorant-project-2026.bronze.matches | away_n_last_match | stg_matches | away_n_last_match | INT conversion | away team n-last match recorded |
-| valorant-project-2026.bronze.matches | home_n_last_wr | stg_matches | home_n_last_wr | FLOAT conversion | home team n-last match win rate |
-| valorant-project-2026.bronze.matches | away_n_last_wr | stg_matches | away_n_last_wr | FLOAT conversion | away team n-last match win rate |
+| valorant-project-2026.bronze.matches | tour_id | matches | tour_id | Direct mapping | Tournament FK |
+| valorant-project-2026.bronze.matches | match_id | matches | match_id | Direct mapping | Match identifier |
+| valorant-project-2026.bronze.matches | match_date | matches | match_date | Direct mapping | Match calendar date |
+| valorant-project-2026.bronze.matches | match_datetime | matches | match_datetime | Direct mapping | Match timestamp |
+| valorant-project-2026.bronze.matches | bracket | matches | bracket | Direct mapping | Match bracket |
+| valorant-project-2026.bronze.matches | home_name | matches | home_name | Direct mapping | Home team name |
+| valorant-project-2026.bronze.matches | home_alias | matches | home_alias | Direct mapping | Home team alias |
+| valorant-project-2026.bronze.matches | away_name | matches | away_name | Direct mapping | Away team name |
+| valorant-project-2026.bronze.matches | away_alias | matches | away_alias | Direct mapping | Away team alias |
+| valorant-project-2026.bronze.matches | bo | matches | bo | Direct mapping | Best-of-series match |
+| valorant-project-2026.bronze.matches | patch | matches | patch | Direct mapping | Patch version played |
+| valorant-project-2026.bronze.matches | home_score | matches | home_score | Domain validation | home team match win score |
+| valorant-project-2026.bronze.matches | away_score | matches | away_score | Domain validation | away team match win score |
+| valorant-project-2026.bronze.matches | home_h2h_win | matches | home_h2h_win | Domain validation | home team match win against away team |
+| valorant-project-2026.bronze.matches | away_h2h_win | matches | away_h2h_win | Domain validation | away team match win against home team |
+| valorant-project-2026.bronze.matches | home_h2h_score | matches | home_h2h_score | Domain validation | home team game win score against away team |
+| valorant-project-2026.bronze.matches | away_h2h_score | matches | away_h2h_score | Domain validation | away team game win score against home team |
+| valorant-project-2026.bronze.matches | home_n_last_win | matches | home_n_last_win | Domain validation | home team n-last match win recorded |
+| valorant-project-2026.bronze.matches | away_n_last_win | matches | away_n_last_win | Domain validation | away team n-last match win recorded |
+| valorant-project-2026.bronze.matches | home_n_last_match | matches | home_n_last_match | Domain validation | home team n-last match recorded |
+| stg_valorant-project-2026.bronze.matchesmatches | away_n_last_match | matches | away_n_last_match | Domain validation | away team n-last match recorded |
+| valorant-project-2026.bronze.matches | home_n_last_wr | matches | home_n_last_wr | Domain validation | home team n-last match win rate |
+| valorant-project-2026.bronze.matches | away_n_last_wr | matches | away_n_last_wr | Domain validation | away team n-last match win rate |
 
-### stg_games_overview
-
-| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
-|---|---|---|---|---|---|
-| valorant-project-2026.bronze.games_overview | match_id | stg_games_overview | match_id | INT conversion | Match FK |
-| valorant-project-2026.bronze.games_overview | game_id | stg_games_overview | game_id | INT conversion |  Unique identifier of the game |
-| valorant-project-2026.bronze.matches | date | stg_games_overview | match_date | DATE conversion | Calendar date on which the match took place |
-| valorant-project-2026.bronze.matches | date | stg_games_overview | match_datetime | Datetime parsing | Date and time when the match took place |
-| valorant-project-2026.bronze.games_overview | game_map | stg_games_overview | game_map | STR conversion & Missing-value handling | Map on which the game was played |
-| valorant-project-2026.bronze.games_overview | game_duration | stg_games_overview | game_duration | Time parsing | Duration of the game in seconds |
-| valorant-project-2026.bronze.games_overview | home_score | stg_games_overview | home_score | INT conversion | Total rounds won by the home team in the game |
-| valorant-project-2026.bronze.games_overview | away_score | stg_games_overview | away_score | INT conversion | Total rounds won by the away team in the game |
-| valorant-project-2026.bronze.games_overview | home_atk_score | stg_games_overview | home_atk_score | INT conversion | Number of regulation and overtime-adjusted rounds won by the home team while attacking |
-| valorant-project-2026.bronze.games_overview | away_atk_score | stg_games_overview | away_atk_score | INT conversion | Number of regulation and overtime-adjusted rounds won by the away team while attacking |
-| valorant-project-2026.bronze.games_overview | home_def_score | stg_games_overview | home_def_score | INT conversion | Number of regulation and overtime-adjusted rounds won by the home team while defending |
-| valorant-project-2026.bronze.games_overview | away_def_score | stg_games_overview | away_def_score | INT conversion | Number of regulation and overtime-adjusted rounds won by the away team while defending |
-| valorant-project-2026.bronze.games_overview | home_ot_score | stg_games_overview | home_ot_score | INT conversion | Number of overtime rounds won by the home team |
-| valorant-project-2026.bronze.games_overview | away_ot_score | stg_games_overview | away_ot_score | INT conversion | Number of overtime rounds won by the away team |
-
-### stg_games_economy
+### games_overview
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| valorant-project-2026.bronze.games_economy | match_id | stg_games_economy | match_id | INT conversion | Match FK |
-| valorant-project-2026.bronze.games_economy | game_id | stg_games_economy | game_id | INT conversion |  Unique identifier of the game |
-| valorant-project-2026.bronze.matches | date | stg_games_economy | match_date | DATE conversion | Calendar date on which the match took place |
-| valorant-project-2026.bronze.matches | date | stg_games_economy | match_datetime | Datetime parsing | Date and time when the match took place |
-| valorant-project-2026.bronze.games_economy | home_pstl_win | stg_games_economy | home_pstl_win | INT conversion | Number of pistol rounds won by the home team |
-| valorant-project-2026.bronze.games_economy | away_pstl_win | stg_games_economy | away_pstl_win | INT conversion | Number of pistol rounds won by the away team |
-| valorant-project-2026.bronze.games_economy | home_eco_round | stg_games_economy | home_eco_round | INT conversion | Number of eco rounds played by the home team |
-| valorant-project-2026.bronze.games_economy | away_eco_round | stg_games_economy | away_eco_round | INT conversion | Number of eco rounds played by the away team |
-| valorant-project-2026.bronze.games_economy | home_eco_win | stg_games_economy | home_eco_win | INT conversion | Number of eco win played by the home team |
-| valorant-project-2026.bronze.games_economy | away_eco_win | stg_games_economy | away_eco_win | INT conversion | Number of eco win played by the away team|
-| valorant-project-2026.bronze.games_economy | home_semi_eco_round | stg_games_economy | home_semi_eco_round | INT conversion | Number of semi eco rounds played by the home team |
-| valorant-project-2026.bronze.games_economy | away_semi_eco_round | stg_games_economy | away_semi_eco_round | INT conversion | Number of semi eco rounds played by the away team |
-| valorant-project-2026.bronze.games_economy | home_semi_eco_win | stg_games_economy | home_semi_eco_win | INT conversion | Number of semi eco rounds win by the home team |
-| valorant-project-2026.bronze.games_economy | away_semi_eco_win | stg_games_economy | away_semi_eco_win | INT conversion | Number of semi eco rounds win by the away team |
-| valorant-project-2026.bronze.games_economy | home_semi_buy_round | stg_games_economy | home_semi_buy_round | INT conversion | Number of semi buy rounds played by the home team |
-| valorant-project-2026.bronze.games_economy | away_semi_buy_round | stg_games_economy | away_semi_buy_round | INT conversion | Number of semi buy rounds played by the away team |
-| valorant-project-2026.bronze.games_economy | home_semi_buy_win | stg_games_economy | home_semi_buy_win | INT conversion | Number of semi buy win played by the home team |
-| valorant-project-2026.bronze.games_economy | away_semi_buy_win | stg_games_economy | away_semi_buy_win | INT conversion | Number of semi buy win played by the away team |
-| valorant-project-2026.bronze.games_economy | home_full_buy_round | stg_games_economy | home_full_buy_round | INT conversion | Number of full buy rounds played by the home team |
-| valorant-project-2026.bronze.games_economy | away_full_buy_round | stg_games_economy | away_full_buy_round | INT conversion | Number of full buy rounds played by the away team |
-| valorant-project-2026.bronze.games_economy | home_full_buy_win | stg_games_economy | home_full_buy_win | INT conversion | Number of full buy win played by the home team |
-| valorant-project-2026.bronze.games_economy | away_full_buy_win | stg_games_economy | away_full_buy_win | INT conversion | Number of full buy win played by the away team |
+| valorant-project-2026.bronze.games_overview | match_id | games_overview | match_id | Direct mapping | Match FK |
+| valorant-project-2026.bronze.games_overview | game_id | games_overview | game_id | Direct mapping |  Unique identifier of the game |
+| valorant-project-2026.bronze.matches | date | games_overview | match_date | Direct mapping | Calendar date on which the match took place |
+| valorant-project-2026.bronze.matches | date | games_overview | match_datetime | Direct mapping | Date and time when the match took place |
+| valorant-project-2026.bronze.games_overview | game_map | games_overview | game_map | Direct mapping | Map on which the game was played |
+| valorant-project-2026.bronze.games_overview | game_duration | games_overview | game_duration | Domain validation | Duration of the game in seconds |
+| valorant-project-2026.bronze.games_overview | home_score | games_overview | home_score | Domain validation | Total rounds won by the home team in the game |
+| valorant-project-2026.bronze.games_overview | away_score | games_overview | away_score | Domain validation | Total rounds won by the away team in the game |
+| valorant-project-2026.bronze.games_overview | home_atk_score | games_overview | home_atk_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the home team while attacking |
+| valorant-project-2026.bronze.games_overview | away_atk_score | games_overview | away_atk_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the away team while attacking |
+| valorant-project-2026.bronze.games_overview | home_def_score | games_overview | home_def_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the home team while defending |
+| valorant-project-2026.bronze.games_overview | away_def_score | games_overview | away_def_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the away team while defending |
+| valorant-project-2026.bronze.games_overview | home_ot_score | games_overview | home_ot_score | Domain validation | Number of overtime rounds won by the home team |
+| valorant-project-2026.bronze.games_overview | away_ot_score | games_overview | away_ot_score | Domain validation | Number of overtime rounds won by the away team |
 
-### stg_map_vetos
+### games_economy
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| valorant-project-2026.bronze.games_economy | match_id | games_economy | match_id | Direct mapping | Match FK |
+| valorant-project-2026.bronze.games_economy | game_id | games_economy | game_id | Direct mapping |  Unique identifier of the game |
+| valorant-project-2026.bronze.matches | date | games_economy | match_date | Direct mapping | Calendar date on which the match took place |
+| valorant-project-2026.bronze.matches | date | games_economy | match_datetime | Direct mapping | Date and time when the match took place |
+| valorant-project-2026.bronze.games_economy | home_pstl_win | games_economy | home_pstl_win | Domain validation | Number of pistol rounds won by the home team |
+| valorant-project-2026.bronze.games_economy | away_pstl_win | games_economy | away_pstl_win | Domain validation | Number of pistol rounds won by the away team |
+| valorant-project-2026.bronze.games_economy | home_eco_round | games_economy | home_eco_round | Domain validation | Number of eco rounds played by the home team |
+| valorant-project-2026.bronze.games_economy | away_eco_round | games_economy | away_eco_round | Domain validation | Number of eco rounds played by the away team |
+| valorant-project-2026.bronze.games_economy | home_eco_win | games_economy | home_eco_win | Domain validation | Number of eco win played by the home team |
+| valorant-project-2026.bronze.games_economy | away_eco_win | games_economy | away_eco_win | Domain validation | Number of eco win played by the away team|
+| valorant-project-2026.bronze.games_economy | home_semi_eco_round | games_economy | home_semi_eco_round | Domain validation | Number of semi eco rounds played by the home team |
+| valorant-project-2026.bronze.games_economy | away_semi_eco_round | games_economy | away_semi_eco_round | Domain validation | Number of semi eco rounds played by the away team |
+| valorant-project-2026.bronze.games_economy | home_semi_eco_win | games_economy | home_semi_eco_win | Domain validation | Number of semi eco rounds win by the home team |
+| valorant-project-2026.bronze.games_economy | away_semi_eco_win | games_economy | away_semi_eco_win | Domain validation | Number of semi eco rounds win by the away team |
+| valorant-project-2026.bronze.games_economy | home_semi_buy_round | games_economy | home_semi_buy_round | Domain validation | Number of semi buy rounds played by the home team |
+| valorant-project-2026.bronze.games_economy | away_semi_buy_round | games_economy | away_semi_buy_round | Domain validation | Number of semi buy rounds played by the away team |
+| valorant-project-2026.bronze.games_economy | home_semi_buy_win | games_economy | home_semi_buy_win | Domain validation | Number of semi buy win played by the home team |
+| valorant-project-2026.bronze.games_economy | away_semi_buy_win | games_economy | away_semi_buy_win | Domain validation | Number of semi buy win played by the away team |
+| valorant-project-2026.bronze.games_economy | home_full_buy_round | games_economy | home_full_buy_round | Domain validation | Number of full buy rounds played by the home team |
+| valorant-project-2026.bronze.games_economy | away_full_buy_round | games_economy | away_full_buy_round | Domain validation | Number of full buy rounds played by the away team |
+| valorant-project-2026.bronze.games_economy | home_full_buy_win | games_economy | home_full_buy_win | Domain validation | Number of full buy win played by the home team |
+| valorant-project-2026.bronze.games_economy | away_full_buy_win | games_economy | away_full_buy_win | Domain validation | Number of full buy win played by the away team |
+
+### players
+
+| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
+|---|---|---|---|---|---|
+| valorant-project-2026.bronze.players | game_id | players | game_id | Direct mapping | Game FK |
+| valorant-project-2026.bronze.games_overview | date | players | match_date | Direct mapping | Match calendar date |
+| valorant-project-2026.bronze.games_overview | datetime | players | match_dateime | Direct mapping | Match timestamp |
+| valorant-project-2026.bronze.players | name | players | player_name | Direct mapping | Name of the player |
+| valorant-project-2026.bronze.players | team_alias | players | team_alias | Direct mapping | Alias of the team represented by the player in the game |
+| valorant-project-2026.bronze.players | nationality | players | nationality | Direct mapping | Nationality associated with the player |
+| valorant-project-2026.bronze.players | agent | players | agent | Direct mapping | Agent selected by the player for the game |
+| valorant-project-2026.bronze.players | mod | players | mod | Direct mapping | Statistical aggregation mode indicating whether the player statistics |
+| valorant-project-2026.bronze.players | r | players | r | Domain validation | Player rating for the game |
+| valorant-project-2026.bronze.players | acs | players | acs | Domain validation | Average Combat Score (ACS) achieved by the player in the game |
+| valorant-project-2026.bronze.players | k | players | k | Domain validation | Number of kills recorded by the player in the game |
+| valorant-project-2026.bronze.players | d | players | d | Domain validation | Number of deaths recorded by the player in the game |
+| valorant-project-2026.bronze.players | a | players | a | Domain validation | Number of assists recorded by the player in the game |
+| valorant-project-2026.bronze.players | kd | players | kd | Domain validation | Kill-to-death diff of the player in the game |
+| valorant-project-2026.bronze.players | kast | players | kast | Domain validation | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded |
+| valorant-project-2026.bronze.players | adr | players | adr | Domain validation | Average Damage per Round (ADR) achieved by the player |
+| valorant-project-2026.bronze.players | hs | players | hs | Domain validation | Percentage of the player's kills that were headshots |
+| stg_plvalorant-project-2026.bronze.playersayers | fk | players | fk | Domain validation | Number of first kills recorded by the player |
+| valorant-project-2026.bronze.players | fd | players | fd | Domain validation | Number of first deaths recorded by the player |
+| valorant-project-2026.bronze.players | fkfd | players | fkfd | Domain validation | First-kill to first-death diff of the player |
+
+### map_vetos
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
@@ -97,131 +111,6 @@ Version: 1.3
 | valorant-project-2026.bronze.map_vetos | map_name | stg_map_vetos | map_name | STR conversion | Name of the map involved in the veto action |
 | valorant-project-2026.bronze.map_vetos | team_alias | stg_map_vetos | team_alias | STR conversion | Alias of the team performing the veto action |
 | valorant-project-2026.bronze.map_vetos | action | stg_map_vetos | action | STR conversion | Type of map veto action performed |
-
-### stg_players
-
-| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
-|---|---|---|---|---|---|
-| valorant-project-2026.bronze.players | game_id | stg_players | game_id | INT conversion | game FK |
-| valorant-project-2026.bronze.players | name | stg_players | player_name | STR conversion | Name of the player |
-| valorant-project-2026.bronze.players | team_alias | stg_players | team_alias | STR conversion | Alias of the team represented by the player in the game |
-| valorant-project-2026.bronze.players | nationality | stg_players | nationality | STR conversion | Nationality associated with the player |
-| valorant-project-2026.bronze.players | agent | stg_players | agent | STR conversion | Agent selected by the player for the game |
-| valorant-project-2026.bronze.players | mod | stg_players | mod | STR conversion | Statistical aggregation mode indicating whether the player statistics |
-| valorant-project-2026.bronze.players | r | stg_players | r | FLOAT conversion | Player rating for the game |
-| valorant-project-2026.bronze.players | acs | stg_players | acs | INT conversion | Average Combat Score (ACS) achieved by the player in the game |
-| valorant-project-2026.bronze.players | k | stg_players | k | INT conversion | Number of kills recorded by the player in the game |
-| valorant-project-2026.bronze.players | d | stg_players | d | INT conversion | Number of deaths recorded by the player in the game |
-| valorant-project-2026.bronze.players | a | stg_players | a | INT conversion | Number of assists recorded by the player in the game |
-| valorant-project-2026.bronze.players | kd | stg_players | kd | INT conversion | Kill-to-death diff of the player in the game |
-| valorant-project-2026.bronze.players | kast | stg_players | kast | INT conversion | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded|
-| valorant-project-2026.bronze.players | adr | stg_players | adr | INT conversion | Average Damage per Round (ADR) achieved by the player|
-| valorant-project-2026.bronze.players | hs | stg_players | hs | INT conversion | Percentage of the player's kills that were headshots |
-| valorant-project-2026.bronze.players | fk | stg_players | fk | INT conversion | Number of first kills recorded by the player |
-| valorant-project-2026.bronze.players | fd | stg_players | fd | INT conversion | Number of first deaths recorded by the player |
-| valorant-project-2026.bronze.players | fkfd | stg_players | fkfd | INT conversion | First-kill to first-death diff of the player |
-
-
-## Staging → Silver
-
-### matches
-
-| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
-|---|---|---|---|---|---|
-| stg_matches | tour_id | matches | tour_id | Direct mapping | Tournament FK |
-| stg_matches | match_id | matches | match_id | Direct mapping | Match identifier |
-| stg_matches | match_date | matches | match_date | Direct mapping | Match calendar date |
-| stg_matches | match_datetime | matches | match_datetime | Direct mapping | Match timestamp |
-| stg_matches | bracket | matches | bracket | Direct mapping | Match bracket |
-| stg_matches | home_name | matches | home_name | Direct mapping | Home team name |
-| stg_matches | home_alias | matches | home_alias | Direct mapping | Home team alias |
-| stg_matches | away_name | matches | away_name | Direct mapping | Away team name |
-| stg_matches | away_alias | matches | away_alias | Direct mapping | Away team alias |
-| stg_matches | bo | matches | bo | Direct mapping | Best-of-series match |
-| stg_matches | patch | matches | patch | Direct mapping | Patch version played |
-| stg_matches | home_score | matches | home_score | Domain validation | home team match win score |
-| stg_matches | away_score | matches | away_score | Domain validation | away team match win score |
-| stg_matches | home_h2h_win | matches | home_h2h_win | Domain validation | home team match win against away team |
-| stg_matches | away_h2h_win | matches | away_h2h_win | Domain validation | away team match win against home team |
-| stg_matches | home_h2h_score | matches | home_h2h_score | Domain validation | home team game win score against away team |
-| stg_matches | away_h2h_score | matches | away_h2h_score | Domain validation | away team game win score against home team |
-| stg_matches | home_n_last_win | matches | home_n_last_win | Domain validation | home team n-last match win recorded |
-| stg_matches | away_n_last_win | matches | away_n_last_win | Domain validation | away team n-last match win recorded |
-| stg_matches | home_n_last_match | matches | home_n_last_match | Domain validation | home team n-last match recorded |
-| stg_matches | away_n_last_match | matches | away_n_last_match | Domain validation | away team n-last match recorded |
-| stg_matches | home_n_last_wr | matches | home_n_last_wr | Domain validation | home team n-last match win rate |
-| stg_matches | away_n_last_wr | matches | away_n_last_wr | Domain validation | away team n-last match win rate |
-
-### games_overview
-
-| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
-|---|---|---|---|---|---|
-| stg_games_overview | match_id | games_overview | match_id | Direct mapping | Match FK |
-| stg_games_overview | game_id | games_overview | game_id | Direct mapping |  Unique identifier of the game |
-| stg_games_overview | date | games_overview | match_date | Direct mapping | Calendar date on which the match took place |
-| stg_games_overview | date | games_overview | match_datetime | Direct mapping | Date and time when the match took place |
-| stg_games_overview | game_map | games_overview | game_map | Direct mapping | Map on which the game was played |
-| stg_games_overview | game_duration | games_overview | game_duration | Domain validation | Duration of the game in seconds |
-| stg_games_overview | home_score | games_overview | home_score | Domain validation | Total rounds won by the home team in the game |
-| stg_games_overview | away_score | games_overview | away_score | Domain validation | Total rounds won by the away team in the game |
-| stg_games_overview | home_atk_score | games_overview | home_atk_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the home team while attacking |
-| stg_games_overview | away_atk_score | games_overview | away_atk_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the away team while attacking |
-| stg_games_overview | home_def_score | games_overview | home_def_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the home team while defending |
-| stg_games_overview | away_def_score | games_overview | away_def_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the away team while defending |
-| stg_games_overview | home_ot_score | games_overview | home_ot_score | Domain validation | Number of overtime rounds won by the home team |
-| stg_games_overview | away_ot_score | games_overview | away_ot_score | Domain validation | Number of overtime rounds won by the away team |
-
-### games_economy
-
-| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
-|---|---|---|---|---|---|
-| stg_games_economy | match_id | games_economy | match_id | Direct mapping | Match FK |
-| stg_games_economy | game_id | games_economy | game_id | Direct mapping |  Unique identifier of the game |
-| stg_games_economy | date | games_economy | match_date | Direct mapping | Calendar date on which the match took place |
-| stg_games_economy | date | games_economy | match_datetime | Direct mapping | Date and time when the match took place |
-| stg_games_economy | home_pstl_win | games_economy | home_pstl_win | Domain validation | Number of pistol rounds won by the home team |
-| stg_games_economy | away_pstl_win | games_economy | away_pstl_win | Domain validation | Number of pistol rounds won by the away team |
-| stg_games_economy | home_eco_round | games_economy | home_eco_round | Domain validation | Number of eco rounds played by the home team |
-| stg_games_economy | away_eco_round | games_economy | away_eco_round | Domain validation | Number of eco rounds played by the away team |
-| stg_games_economy | home_eco_win | games_economy | home_eco_win | Domain validation | Number of eco win played by the home team |
-| stg_games_economy | away_eco_win | games_economy | away_eco_win | Domain validation | Number of eco win played by the away team|
-| stg_games_economy | home_semi_eco_round | games_economy | home_semi_eco_round | Domain validation | Number of semi eco rounds played by the home team |
-| stg_games_economy | away_semi_eco_round | games_economy | away_semi_eco_round | Domain validation | Number of semi eco rounds played by the away team |
-| stg_games_economy | home_semi_eco_win | games_economy | home_semi_eco_win | Domain validation | Number of semi eco rounds win by the home team |
-| stg_games_economy | away_semi_eco_win | games_economy | away_semi_eco_win | Domain validation | Number of semi eco rounds win by the away team |
-| stg_games_economy | home_semi_buy_round | games_economy | home_semi_buy_round | Domain validation | Number of semi buy rounds played by the home team |
-| stg_games_economy | away_semi_buy_round | games_economy | away_semi_buy_round | Domain validation | Number of semi buy rounds played by the away team |
-| stg_games_economy | home_semi_buy_win | games_economy | home_semi_buy_win | Domain validation | Number of semi buy win played by the home team |
-| stg_games_economy | away_semi_buy_win | games_economy | away_semi_buy_win | Domain validation | Number of semi buy win played by the away team |
-| stg_games_economy | home_full_buy_round | games_economy | home_full_buy_round | Domain validation | Number of full buy rounds played by the home team |
-| stg_games_economy | away_full_buy_round | games_economy | away_full_buy_round | Domain validation | Number of full buy rounds played by the away team |
-| stg_games_economy | home_full_buy_win | games_economy | home_full_buy_win | Domain validation | Number of full buy win played by the home team |
-| stg_games_economy | away_full_buy_win | games_economy | away_full_buy_win | Domain validation | Number of full buy win played by the away team |
-
-### players
-
-| Source Model | Source Field | Target Model | Target Field | Transformation | Description |
-|---|---|---|---|---|---|
-| stg_players | game_id | players | game_id | Direct mapping | Game FK |
-| stg_game_overview | date | players | match_date | Direct mapping | Match calendar date |
-| stg_game_overview | datetime | players | match_dateime | Direct mapping | Match timestamp |
-| stg_players | name | players | player_name | Direct mapping | Name of the player |
-| stg_players | team_alias | players | team_alias | Direct mapping | Alias of the team represented by the player in the game |
-| stg_players | nationality | players | nationality | Direct mapping | Nationality associated with the player |
-| stg_players | agent | players | agent | Direct mapping | Agent selected by the player for the game |
-| stg_players | mod | players | mod | Direct mapping | Statistical aggregation mode indicating whether the player statistics |
-| stg_players | r | players | r | Domain validation | Player rating for the game |
-| stg_players | acs | players | acs | Domain validation | Average Combat Score (ACS) achieved by the player in the game |
-| stg_players | k | players | k | Domain validation | Number of kills recorded by the player in the game |
-| stg_players | d | players | d | Domain validation | Number of deaths recorded by the player in the game |
-| stg_players | a | players | a | Domain validation | Number of assists recorded by the player in the game |
-| stg_players | kd | players | kd | Domain validation | Kill-to-death diff of the player in the game |
-| stg_players | kast | players | kast | Domain validation | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded |
-| stg_players | adr | players | adr | Domain validation | Average Damage per Round (ADR) achieved by the player |
-| stg_players | hs | players | hs | Domain validation | Percentage of the player's kills that were headshots |
-| stg_players | fk | players | fk | Domain validation | Number of first kills recorded by the player |
-| stg_players | fd | players | fd | Domain validation | Number of first deaths recorded by the player |
-| stg_players | fkfd | players | fkfd | Domain validation | First-kill to first-death diff of the player |
 
 ## Silver → Gold
 

@@ -1,12 +1,12 @@
 SELECT
-    p.game_id,
+    SAFE_CAST(p.game_id AS INT64) AS game_id,
     o.match_date,
     o.match_datetime,
-    player_name,
-    team_alias,
-    nationality,
-    agent,
-    mod,
+    SAFE_CAST(name AS STRING) AS player_name,
+    SAFE_CAST(team_alias AS STRING) AS team_alias,
+    SAFE_CAST(nationality AS STRING) AS nationality,
+    SAFE_CAST(agent AS STRING) AS agent,
+    SAFE_CAST(mod AS STRING) AS mod,
 
     CASE
         WHEN SAFE_CAST(r AS FLOAT64) > 0
@@ -79,6 +79,6 @@ SELECT
         THEN SAFE_CAST(fkfd AS INT64)
         ELSE NULL
     END AS fkfd
-FROM {{ ref('stg_players') }} p
-JOIN {{ ref('stg_games_overview') }} o
-ON p.game_id = o.game_id
+FROM {{ source('bronze', 'players') }} p
+JOIN {{ ref('games_overview') }} o
+ON SAFE_CAST(p.game_id AS INT64) = o.game_id

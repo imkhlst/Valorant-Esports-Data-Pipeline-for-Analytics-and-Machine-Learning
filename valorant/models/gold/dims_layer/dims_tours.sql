@@ -1,23 +1,23 @@
 SELECT
-    tour_id,
-    tour_name,
-    tour_tag,
+    SAFE_CAST(tour_id AS INT64) AS tour_id,
+    SAFE_CAST(tour_name AS STRING) AS tour_name,
+    SAFE_CAST(tour_tag AS STRING) AS tour_tag,
 
     CASE
-        WHEN tour_stage NOT IN (
+        WHEN SAFE_CAST(tour_stage AS STRING) NOT IN (
             'Stage 1',
             'Stage 2',
             'Champions'
         )
         THEN 'Masters'
-        ELSE tour_stage
+        ELSE SAFE_CAST(tour_stage AS STRING)
     END AS tour_stage,
 
     CASE
-        WHEN tour_region = 'Masters'
+        WHEN SAFE_CAST(tour_region AS STRING) = 'Masters'
         THEN 'World'
-        ELSE tour_region
+        ELSE SAFE_CAST(tour_region AS STRING)
     END AS tour_region,
 
-    tour_status
-FROM {{ ref('stg_tours') }}
+    SAFE_CAST(tour_status AS STRING) AS tour_status
+FROM {{ source('bronze', 'tours') }}
