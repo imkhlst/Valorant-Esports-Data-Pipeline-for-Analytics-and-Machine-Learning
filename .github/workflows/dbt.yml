@@ -84,4 +84,4 @@ jobs:
       - name: Run dbt build - Production
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: ./valorant
-        run: dbt build -- target prod
+        run: dbt build --target prod
