@@ -18,7 +18,7 @@ jobs:
         run: |
           docker run --rm \
           valorant-project \
-          python -c "import pipeline.scraper_pipeline; print('Scraper container OK')"
+          python -c "import pipeline.scrape_pipeline; print('Scraper container OK')"
 
       # - name: Run Scraper
       #   run: |
