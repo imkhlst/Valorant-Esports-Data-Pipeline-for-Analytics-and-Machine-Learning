@@ -107,7 +107,7 @@ class TournamentScraper:
                 progress = get_progress(i, len(queue), progress)
                 processed.add(url)
 
-            save_json(data=matches_page, filename="tours")
+            save_file(data=matches_page, filename="tours", format="json")
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scraping_tournament_info completed in {duration}s.")
@@ -125,9 +125,7 @@ class TournamentScraper:
         logging.info("Initialize scrape_tournament_info ...")
         tour_info, matches_page, stats_page, agents_page = self.scrape_tournament_info(tour_list=tour_list)
         tour_df = pd.DataFrame([asdict(t) for t in tour_info])
-        path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\tour.parquet"
-        tour_df.to_parquet(path, index=False)
-        logging.info(f"Data has been save in {path}")
+        save_file(data=tour_df, file_name="tours", format="parquet")
 
         end_time = datetime.now()
         duration = end_time - start_time

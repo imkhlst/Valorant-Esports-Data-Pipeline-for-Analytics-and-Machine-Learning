@@ -1,13 +1,15 @@
+import os
 import pandas as pd
 import numpy as np
 import time
 import random
 import re
 import requests
+import json
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from constants.scraper_contants import *
+from constants.scraper_constants import *
 from logger import logging
 
 def absolute(url: str, BASE_URL: str = BASE_URL):
@@ -38,33 +40,69 @@ def get_soup(
     return None
 
 def get_value(
-        soup,
-        selector: str,
-        select_option: bool = False):
-    list_result = []
+    soup,
+    selector,
+    attr=None,
+    multiple=False
+):
     try:
-        if select_option == True:
-            container = soup.select_one(selector)
-        else:
-            container = soup.select(selector)
+        if multiple:
+            elements = soup.select(selector)
 
-        # Need to fix
-        if not container:
-            logging.warning(f"{selector} does not exist.")
-        elif len(container) > 1:
-            for i in range(len(container)):
-                value = container[i].get_text().strip()
-                if "\n" or "\t" in value:
-                    value = re.sub(r"[\n\t]", "", value)
-                list_result.append(value)
-        elif len(container) == 1:
-            value = container.get_text().strip()
-            if "\n" or "\t" in value:
-                value = re.sub(r"[\n\t]", "", value)
-        else:
-            logging.warning("length of container must be greater than zero.")
+            results = []
 
-        return list_result if len(container) > 1 else value
-    
+            for el in elements:
+                text = el.get(attr) if attr != "text" or attr != None else el.get_text() if attr == "text" else el
+
+                if text:
+                    text = re.sub(r"[\n\t]", "", text).strip()
+
+                results.append(text)
+
+            return results
+
+        else:
+            element = soup.select_one(selector)
+
+            if not element:
+                return None
+
+            text = element.get(attr) if attr != "text" or attr != None else element.get_text() if attr == "text" else element
+
+            if text:
+                text = re.sub(r"[\n\t]", "", text).strip()
+
+            return text
+
     except Exception as e:
-        logging.error(f"Error occurs when running get_value method: {e}")
+        logging.error(f"get_value error: {e}")
+        return None
+
+def get_progress(current_unit: int, total_unit: int, current_progress: int):
+    new_progress = round((current_unit + 1) / total_unit, 0)
+    if current_progress <= new_progress:
+        print(f"{new_progress} of Completion")
+        return new_progress
+
+def load_json(file_path: str):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+
+    return data
+
+def save_file(data: list|pd.DataFrame, file_name: str, format: str):
+    if format == "json":
+        dir_path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\link"
+        os.makedirs(dir_path, exist_ok=True)
+        file_path = dir_path + f"\{file_name}"
+        with open(f"{file_name}.{format}", "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=4)
+        
+        logging.info(f"Data has been save in {file_path}.{format}")
+
+    else:
+        dir_path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw"
+        os.makedirs(dir_path, exist_ok=True)
+        file_path = dir_path + f"\{file_name}"
+        data.to_parquet(path=f"{file_path}.{format}", index=False)
+        logging.info(f"Data has been save in {file_path}.{format}")

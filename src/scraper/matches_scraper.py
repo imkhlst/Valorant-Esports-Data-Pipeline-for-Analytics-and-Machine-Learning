@@ -206,7 +206,7 @@ class MatchesScraper:
                 logging.info(f"Match info and map veto has been added.")
                 processed.add(url)
 
-            save_json(data=tab_list, filename="matches")
+            save_file(data=tab_list, filename="matches", format="json")
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scrape_matches_info completed in {duration}s")
@@ -228,14 +228,10 @@ class MatchesScraper:
         matches_info, map_veto, tab_list = self.scrape_matches_info(match_list=matches_list)
 
         matches_df = pd.DataFrame([asdict(m) for m in matches_info])
-        path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\matches.parquet"
-        matches_df.to_parquet(path, index=False)
-        logging.info(f"Data has been save in {path}")
+        save_file(data=matches_df, file_name="matches", format="parquet")
 
         map_veto_df = pd.DataFrame([asdict(m) for m in map_veto])
-        path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\map_vetos.parquet"
-        map_veto_df.to_parquet(path, index=False)
-        logging.info(f"Data has been save in {path}")
+        save_file(data=map_veto_df, file_name="map_vetos", format="parquet")
 
         end_time = datetime.now()
         duration = end_time - start_time
