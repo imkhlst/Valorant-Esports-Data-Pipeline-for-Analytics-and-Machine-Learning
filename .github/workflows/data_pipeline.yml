@@ -1,0 +1,64 @@
+name: Run Data Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t valorant-project .
+
+      - name: Validate Scraper Container
+        run: |
+          docker run --rm \
+          valorant-project \
+          python -c "import pipeline.scraper_pipeline; print('Scraper container OK')"
+
+      # - name: Run Scraper
+      #   run: |
+      #     docker run --rm \
+      #     -v "${{ github.workspace }}/data/raw:/valorant/data/raw" \
+      #     valorant-project \
+      #     python -m pipeline.scraper_pipeline
+
+  #     - name: Upload scraping output
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: scraped-data
+  #         path: data/raw/
+
+  # gcp:
+  #   needs: scrape
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
+      
+  #     - name: Download Scraping output
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: scraped-data
+  #         path: data/raw/
+
+  #     - name: Authenticate to Google Cloud
+  #       uses: google-github-actions/auth@v3
+  #       with:
+  #         workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+  #         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+  #     - name: Build Docker Image
+  #       run: docker build -t valorant-project .
+
+  #     - name: Run GCP pipeline
+  #       run: |
+  #         docker run --rm \
+  #         -v "${{ github.workspace }}/data/raw:/valorant/data/raw" \
+  #         valorant-project \
+  #         python -m pipeline.gcp_pipeline

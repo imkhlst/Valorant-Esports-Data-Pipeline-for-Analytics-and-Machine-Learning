@@ -18,3 +18,12 @@ REGION_KEYWORD = [
     "americas",
     "china"
 ]
+
+FILE_NAME = [
+    "tours",
+    "matches",
+    "games_overview",
+    "games_economy",
+    "map_vetos",
+    "players"
+]

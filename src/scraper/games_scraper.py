@@ -264,19 +264,13 @@ class GamesScraper:
         
         game_overview, game_economy, player_stats = self.scrape_game_info(tab_list=tab_list)
         games_overview_df = pd.DataFrame([asdict(o) for o in game_overview])
-        path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\games_overview.parquet"
-        games_overview_df.to_parquet(path, index=False)
-        logging.info(f"Data has been save in {path}")
+        save_file(data=games_overview_df, file_name="games_overview", format="parquet")
 
         games_economy_df = pd.DataFrame([asdict(o) for o in game_economy])
-        path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\games_economy.parquet"
-        games_economy_df.to_parquet(path, index=False)
-        logging.info(f"Data has been save in {path}")
+        save_file(data=games_economy_df, file_name="games_economy", format="parquet")
 
         players_df = pd.DataFrame([asdict(p) for p in player_stats])
-        path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw\players.parquet"
-        players_df.to_parquet(path, index=False)
-        logging.info(f"Data has been save in {path}")
+        save_file(data=players_df, file_name="players", format="parquet")
 
         end_time = datetime.now()
         duration = end_time - start_time
