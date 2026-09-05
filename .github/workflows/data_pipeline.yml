@@ -24,12 +24,6 @@ jobs:
         run: |
           mkdir -p data/raw
           echo "artifact test" > data/raw/test.txt
-      
-      - name: Upload raw data artifact 
-        uses: actions/upload-artifact@v4
-        with:
-          name: raw-data
-          path: data/raw/
 
       # - name: Run scraper
       #   run: |
