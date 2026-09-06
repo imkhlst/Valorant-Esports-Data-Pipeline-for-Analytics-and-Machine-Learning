@@ -20,10 +20,10 @@ REGION_KEYWORD = [
 ]
 
 FILE_NAME = [
-    "tours",
-    "matches",
-    "games_overview",
-    "games_economy",
-    "map_vetos",
-    "players"
+    "tours1",
+    "matches1",
+    "games_overview1",
+    "games_economy1",
+    "map_vetos1",
+    "players1"
 ]
