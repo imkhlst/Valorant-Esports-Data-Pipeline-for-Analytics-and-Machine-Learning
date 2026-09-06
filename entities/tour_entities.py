@@ -1,6 +1,6 @@
 from dataclasses import dataclass, asdict
 
-@dataclass
+@dataclass(frozen=True)
 class Tour:
     tour_id: str
     tour_name: str

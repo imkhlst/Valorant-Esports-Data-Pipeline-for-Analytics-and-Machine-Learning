@@ -1,7 +1,7 @@
 from dataclasses import dataclass, asdict
 from typing import Optional
 
-@dataclass
+@dataclass(frozen=True)
 class PlayerStats:
     game_id: str
     name: str

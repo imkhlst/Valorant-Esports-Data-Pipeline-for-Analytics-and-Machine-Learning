@@ -50,11 +50,14 @@ class MatchesScraper:
     def scrape_matches_list(self, match_page: list) -> list:
         start_time = datetime.now()
         processed = set()
-        queue = list(match_page) if isinstance(match_page, (list, set)) else [match_page]
+        queue = list(match_page) if not isinstance(match_page, list) else match_page
         print(f"Queue: {queue[0]}, ... {len(queue)} more.")
         try:
             matches_list = []
             for item in queue:
+                if len(matches_list) > 0:
+                    break
+
                 tour_id, url = item[0], item[1]
                 if url in processed:
                     logging.info(f"{url} has been processed.")
@@ -80,14 +83,17 @@ class MatchesScraper:
     def scrape_matches_info(self, match_list: list):
         start_time = datetime.now()
         processed = set()
-        queue = list(match_list) if isinstance(match_list, (set, list)) else [match_list]
-        print(f"Queue: {queue[0]}, ... {len(queue)} more.")
+        queue = list(match_list) if not isinstance(match_list, list) else match_list
+        print(f"Queue: {queue[0]}, ... {len(queue) - 1} more." if len(queue) > 1 else f"Queue: {queue}")
         try:
             matches_info = []
             map_veto = []
             tab_list = []
             progress = 0
+            print(f"{progress}% of Completion")
             for i, item in enumerate(queue):
+                if len(matches_info) > 0:
+                    break
                 tour_id, url = item[0], item[1]
                 if url in processed:
                     logging.info(f"{url} has been processed.")
@@ -136,20 +142,25 @@ class MatchesScraper:
                 logging.info(f"Found {bo_info} match score (home) {home_score} vs {away_score} (away).")
 
                 h2h = get_value(soup=soup, selector=".match-h2h-matches-score", attr="text", multiple=True)
-                home_h2h_win, home_h2h_score = 0, 0
-                away_h2h_win, away_h2h_score = 0, 0
-                for value in h2h:
-                    home_h2h_score += int(value[0])
-                    away_h2h_score += int(value[1])
-                    if int(value[0]) > int(value[1]):
-                        home_h2h_win += 1
-                    else:
-                        away_h2h_win += 1
+                if h2h:
+                    home_h2h_win, home_h2h_score = 0, 0
+                    away_h2h_win, away_h2h_score = 0, 0
+                    for value in h2h:
+                        home_h2h_score += int(value[0])
+                        away_h2h_score += int(value[1])
+                        if int(value[0]) > int(value[1]):
+                            home_h2h_win += 1
+                        else:
+                            away_h2h_win += 1
+
+                else:
+                    home_h2h_win, home_h2h_score = None, None
+                    away_h2h_win, away_h2h_score = None, None
                         
                 logging.info(f"Head to Head score (home) {home_h2h_score}({home_h2h_win}) vs {away_h2h_score}({away_h2h_win}) (away).")
 
                 last_match = get_value(soup=soup, selector=".wf-card.mod-dark.match-histories", multiple=True)
-                if len(last_match) > 0:
+                if last_match:
                     home_last_match = get_value(soup=last_match[0], selector=".match-histories-item-result", attr="class", multiple=True)
                     away_last_match = get_value(soup=last_match[1], selector=".match-histories-item-result", attr="class", multiple=True)
                     home_n_last_match_win, away_n_last_match_win = 0, 0
@@ -164,12 +175,12 @@ class MatchesScraper:
                             away_n_last_match_win += 1
                         else:
                             continue
+
+                    logging.info(f"n-last match win (home) {home_n_last_match_win} vs {away_n_last_match_win} (away).")
                         
                 else:
-                    home_n_last_match_win = home_n_last_match = away_n_last_match_win = away_n_last_match = 0
-                    logging.info(f"{value} unindentified.")
-                
-                logging.info(f"n-last match win (home) {home_n_last_match_win} vs {away_n_last_match_win} (away).")
+                    home_n_last_match_win = home_n_last_match = away_n_last_match_win = away_n_last_match = None
+                    logging.info(f"n-last match not recorded.")
 
                 match = Match(
                     tour_id=tour_id,
@@ -202,11 +213,12 @@ class MatchesScraper:
 
                 vetos = self.scrape_map_veto(soup=soup, match_id=match_id)
                 map_veto.extend(vetos)
-                progress = get_progress(i, len(queue), progress)
+                new_progress = get_progress(current_unit=i, total_unit=len(queue), current_progress=progress)
+                progress += new_progress
                 logging.info(f"Match info and map veto has been added.")
                 processed.add(url)
 
-            save_file(data=tab_list, filename="matches", format="json")
+            save_file(data=tab_list, file_name="matches", format="json")
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scrape_matches_info completed in {duration}s")
@@ -228,10 +240,10 @@ class MatchesScraper:
         matches_info, map_veto, tab_list = self.scrape_matches_info(match_list=matches_list)
 
         matches_df = pd.DataFrame([asdict(m) for m in matches_info])
-        save_file(data=matches_df, file_name="matches", format="parquet")
+        save_file(data=matches_df, file_name="matches1", format="parquet")
 
         map_veto_df = pd.DataFrame([asdict(m) for m in map_veto])
-        save_file(data=map_veto_df, file_name="map_vetos", format="parquet")
+        save_file(data=map_veto_df, file_name="map_vetos1", format="parquet")
 
         end_time = datetime.now()
         duration = end_time - start_time

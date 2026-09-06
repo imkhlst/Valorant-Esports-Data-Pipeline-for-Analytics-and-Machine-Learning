@@ -216,16 +216,19 @@ class GamesScraper:
     def scrape_game_info(self, tab_list: list):
         start_time = datetime.now()
         processed = set()
-        queue = list(tab_list) if isinstance(tab_list, (set, list)) else [tab_list]
-        print(f"Queue: {queue[0]}, ... {len(queue)} more.")
+        queue = list(tab_list) if not isinstance(tab_list, list) else tab_list
+        print(f"Queue: {queue[0]}, ... {len(queue)} more." if len(queue) > 1 else f"Queue: {queue}")
         try:
             game_overview = []
             game_economy = []
             player_stats = []
             progress = 0
+            print(f"{progress}% of Completion")
             for i, item in enumerate(queue):
                 match_id, tabs = item[0], item[1]
                 econ_tab, overview_tab = tabs[0], tabs[1]
+                if len(game_overview) > 0:
+                    break
                 if overview_tab in processed:
                     logging.info(f"{overview_tab} already processed.")
                     continue
@@ -241,7 +244,8 @@ class GamesScraper:
                 game_overview.extend(overview)
                 game_economy.extend(game_econ)
                 
-                progress = get_progress(i, len(queue), progress)
+                new_progress = get_progress(current_unit=i, total_unit=len(queue), current_progress=progress)
+                progress += new_progress
                 processed.add(overview_tab)
                 processed.add(econ_tab)
 
@@ -264,13 +268,13 @@ class GamesScraper:
         
         game_overview, game_economy, player_stats = self.scrape_game_info(tab_list=tab_list)
         games_overview_df = pd.DataFrame([asdict(o) for o in game_overview])
-        save_file(data=games_overview_df, file_name="games_overview", format="parquet")
+        save_file(data=games_overview_df, file_name="games_overview1", format="parquet")
 
         games_economy_df = pd.DataFrame([asdict(o) for o in game_economy])
-        save_file(data=games_economy_df, file_name="games_economy", format="parquet")
+        save_file(data=games_economy_df, file_name="games_economy1", format="parquet")
 
         players_df = pd.DataFrame([asdict(p) for p in player_stats])
-        save_file(data=players_df, file_name="players", format="parquet")
+        save_file(data=players_df, file_name="players1", format="parquet")
 
         end_time = datetime.now()
         duration = end_time - start_time

@@ -1,7 +1,7 @@
 from dataclasses import dataclass, asdict
 from typing import Optional
 
-@dataclass
+@dataclass(frozen=True)
 class MapVeto:
     match_id: str
     map_name: str

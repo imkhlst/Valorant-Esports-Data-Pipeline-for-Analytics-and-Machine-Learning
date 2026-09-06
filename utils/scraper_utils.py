@@ -6,7 +6,9 @@ import random
 import re
 import requests
 import json
+import pyarrow
 
+from pathlib import Path
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from constants.scraper_constants import *
@@ -48,13 +50,10 @@ def get_value(
     try:
         if multiple:
             elements = soup.select(selector)
-
             results = []
-
             for el in elements:
-                text = el.get(attr) if attr != "text" or attr != None else el.get_text() if attr == "text" else el
-
-                if text:
+                text = el.get(attr) if attr != "text" and attr != None else el.get_text() if attr == "text" else el
+                if attr == "text":
                     text = re.sub(r"[\n\t]", "", text).strip()
 
                 results.append(text)
@@ -63,13 +62,11 @@ def get_value(
 
         else:
             element = soup.select_one(selector)
-
             if not element:
                 return None
 
-            text = element.get(attr) if attr != "text" or attr != None else element.get_text() if attr == "text" else element
-
-            if text:
+            text = element.get(attr) if attr != "text" and attr != None else element.get_text() if attr == "text" else element
+            if attr == "text":
                 text = re.sub(r"[\n\t]", "", text).strip()
 
             return text
@@ -79,10 +76,14 @@ def get_value(
         return None
 
 def get_progress(current_unit: int, total_unit: int, current_progress: int):
-    new_progress = round((current_unit + 1) / total_unit, 0)
-    if current_progress <= new_progress:
-        print(f"{new_progress} of Completion")
+    new_progress = int((current_unit + 1) / total_unit)
+    if current_progress < new_progress:
+        if new_progress // 10 == 0:
+            print(f"{new_progress}% of Completion")
         return new_progress
+        
+    else:
+        return 0
 
 def load_json(file_path: str):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -92,17 +93,21 @@ def load_json(file_path: str):
 
 def save_file(data: list|pd.DataFrame, file_name: str, format: str):
     if format == "json":
-        dir_path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\link"
+        if not isinstance(data, list):
+                data = list(data)
+        dir_path = Path("data") / "link"
         os.makedirs(dir_path, exist_ok=True)
-        file_path = dir_path + f"\{file_name}"
-        with open(f"{file_name}.{format}", "w", encoding="utf-8") as file:
+        file_path = dir_path / f"{file_name}.{format}"
+        with open(file_path, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4)
         
-        logging.info(f"Data has been save in {file_path}.{format}")
+        logging.info(f"Data has been save in {file_path}")
 
     else:
-        dir_path = r"E:\Valorant-Esports-Data-Pipeline-for-Analytics-and-Machine-Learning\data\raw"
+        if not isinstance(data, pd.DataFrame):
+            data = pd.DataFrame(data)
+        dir_path = Path("data") / "raw"
         os.makedirs(dir_path, exist_ok=True)
-        file_path = dir_path + f"\{file_name}"
-        data.to_parquet(path=f"{file_path}.{format}", index=False)
-        logging.info(f"Data has been save in {file_path}.{format}")
+        file_path = dir_path / f"{file_name}.{format}"
+        data.to_parquet(path=file_path, index=False)
+        logging.info(f"Data has been save in {file_path}")

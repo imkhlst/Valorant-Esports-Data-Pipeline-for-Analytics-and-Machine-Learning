@@ -2,7 +2,7 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from typing import Optional
 
-@dataclass
+@dataclass(frozen=True)
 class GameOverview:
     match_id: str
     game_id: str
@@ -17,7 +17,7 @@ class GameOverview:
     home_ot_score: int
     away_ot_score: int
 
-@dataclass
+@dataclass(frozen=True)
 class GameEconomy:
     match_id: str
     game_id: str

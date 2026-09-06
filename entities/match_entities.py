@@ -2,7 +2,7 @@ from datetime import datetime
 from dataclasses import dataclass, asdict, field
 from typing import Optional
 
-@dataclass
+@dataclass(frozen=True)
 class Match:
     tour_id: str
     match_id: str
