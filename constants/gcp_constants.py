@@ -1,6 +1,6 @@
 from pathlib import Path
 
-BUCKET_NAME = "valorant-data"
+BUCKET_NAME = "valorant-raw-data"
 
 DATASET_NAME = [
     "bronze",
