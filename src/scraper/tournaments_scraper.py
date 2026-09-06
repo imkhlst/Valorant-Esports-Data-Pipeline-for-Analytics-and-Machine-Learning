@@ -29,7 +29,7 @@ class TournamentScraper:
                 url = absolute(url=el)
 
             soup = get_soup(url=url)
-            elements = get_value(soup=soup, selector=".events-container-col a", multiple=True)
+            elements = get_value(soup=soup, selector=".wf-card.mod-flex.event-item", multiple=True)
             for el in elements:
                 href = el.get("href")
                 url = absolute(url=href)
@@ -49,15 +49,18 @@ class TournamentScraper:
         start_time = datetime.now()
         processed = set()
         queue = list(tour_list) if isinstance(tour_list, (set, list)) else [tour_list]
-        print(f"Queue: {queue[0]}, ... {len(queue)} more.")
+        print(f"Queue: {queue[0]}, ... {len(queue)} more." if len(queue) > 1 else f"Queue: {queue}")
         try:
             tour_info = []
             matches_page = set()
             stats_page = set()
             agents_page = set()
             progress = 0
+            print(f"{progress}% of Completion")
             for i, item in enumerate(queue):
                 status, url = item[0], item[1]
+                if len(matches_page) > 0:
+                    break
                 if url in processed:
                     logging.info(f"{url} has been processed.")
                     continue
@@ -95,7 +98,7 @@ class TournamentScraper:
                 for el in elements:
                     content_url = absolute(url=el)
                     if "matches" in el:
-                        content_url = content_url.replace(content_url[-4:], "All")
+                        content_url = content_url.replace(content_url[-4:], "all")
                         matches_page.add((tour_id, content_url))
                     elif "stats" in el:
                         stats_page.add((tour_id, content_url))
@@ -104,14 +107,15 @@ class TournamentScraper:
                     else:
                         continue
 
-                progress = get_progress(i, len(queue), progress)
+                new_progress = get_progress(current_unit=i, total_unit=len(queue), current_progress=progress)
+                progress += new_progress
                 processed.add(url)
-
-            save_file(data=matches_page, filename="tours", format="json")
+            
+            save_file(data=matches_page, file_name="tours", format="json")
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scraping_tournament_info completed in {duration}s.")
-            return list(tour_info), list(matches_page), list(stats_page), list(agents_page)
+            return tour_info, matches_page, stats_page, agents_page
         
         except Exception as e:
             logging.error(f"Error Occurs when running scrape_tournament_info: {e}")
@@ -125,7 +129,7 @@ class TournamentScraper:
         logging.info("Initialize scrape_tournament_info ...")
         tour_info, matches_page, stats_page, agents_page = self.scrape_tournament_info(tour_list=tour_list)
         tour_df = pd.DataFrame([asdict(t) for t in tour_info])
-        save_file(data=tour_df, file_name="tours", format="parquet")
+        save_file(data=tour_df, file_name="tours1", format="parquet")
 
         end_time = datetime.now()
         duration = end_time - start_time

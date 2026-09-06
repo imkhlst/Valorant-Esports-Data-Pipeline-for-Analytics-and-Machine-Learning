@@ -3,4 +3,5 @@ google-cloud-storage
 google-cloud-bigquery
 numpy
 pandas
+pyarrow
 requests
