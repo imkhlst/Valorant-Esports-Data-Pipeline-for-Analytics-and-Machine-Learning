@@ -6,10 +6,11 @@ from constants.scraper_constants import FILE_NAME
 
 def create_bucket(
         bucket_name: str = BUCKET_NAME,
+        project_id: str = PROJECT_ID,
         location: str = LOCATION
 ):
     logging.info(f"Creating a new Storage bucket ...")
-    client = storage.Client()
+    client = storage.Client(project=project_id)
 
     bucket = client.bucket(bucket_name)
     bucket.location = location
@@ -23,7 +24,7 @@ def create_dataset(
         location: str = LOCATION
 ):
     logging.info(f"Creating a new BigQuery dataset ...")
-    client = bigquery.Client(project_id=project_id)
+    client = bigquery.Client(project=project_id)
     
     if isinstance(dataset_name, list):
         for i in dataset_name:
@@ -46,10 +47,11 @@ def upload_data(
         file_name: str | list = FILE_NAME,
         bucket_name: str = BUCKET_NAME,
         blob_name: str = BLOB_NAME,
+        project_id: str = PROJECT_ID,
         local_data_dir_path: str = LOCAL_DATA_DIR_PATH
 ):
     logging.info(f"Uploading data into storage bucket ...")
-    client = storage.Client()
+    client = storage.Client(project=project_id)
     bucket = client.bucket(bucket_name)
     if isinstance(file_name, list):
         for i in file_name:
@@ -69,7 +71,7 @@ def load_table(
         gcs_data_dir_path: str = GCS_DATA_DIR_PATH
 ):
     logging.info(f"Loading table into BigQuery dataset ...")
-    client = bigquery.Client(project_id=project_id)
+    client = bigquery.Client(project=project_id)
     job_config = bigquery.LoadJobConfig(
             autodetect=True,
             source_format=bigquery.SourceFormat.PARQUET,
