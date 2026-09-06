@@ -31,25 +31,34 @@ def create_dataset(
         project_id: str = PROJECT_ID,
         location: str = LOCATION
 ):
-    logging.info(f"Creating a new BigQuery dataset ...")
     client = bigquery.Client(project=project_id)
     
-    if isinstance(dataset_name, list):
-        for i in dataset_name:
-            dataset_id = f"{project_id}.{i}"
-            dataset = bigquery.Dataset(dataset_id)
-            dataset.location = location
+    if not isinstance(dataset_name, list):
+        
+        dataset_name = [dataset_name]
 
-            client.create_dataset(dataset)
-            logging.info(f"Created dataset {dataset_id} in {location}")
-
-    else:
-        dataset_id = f"{project_id}.{dataset_name}"
+    for i in dataset_name:
+        dataset_id = f"{project_id}.{i}"
         dataset = bigquery.Dataset(dataset_id)
         dataset.location = location
 
-        client.create_dataset(dataset)
-        logging.info(f"Success! created dataset {dataset_id} in {location}")
+        try:
+            logging.info(f"Checking BigQuery dataset ...")
+
+            client.get_dataset(dataset_id)
+
+            logging.info(f"Dataset {dataset_id} already exists.")
+
+            return dataset
+        
+        except Exception:
+            logging.info(f"Dataset {dataset_id} does not exists. Creating ...")
+
+            new_dataset = client.create_dataset(dataset)
+
+            logging.info(f"Created dataset {dataset_id} in {location}")
+
+            return new_dataset
 
 def upload_data(
         file_name: str | list = FILE_NAME,
