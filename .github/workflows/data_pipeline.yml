@@ -65,11 +65,6 @@ jobs:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-      - name: Check Google credentials
-        run:
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS"
-          gcloud auth list
-
       - name: Build Docker Image
         run: docker build -t valorant-project .
 
@@ -83,5 +78,7 @@ jobs:
         run: |
           docker run --rm \
           -v "${{ github.workspace }}/data/raw:/valorant-project/data/raw" \
+          -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
+          -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
           valorant-project \
           python -m pipeline.gcp_pipeline
