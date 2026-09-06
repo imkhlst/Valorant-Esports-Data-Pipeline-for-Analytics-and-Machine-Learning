@@ -9,14 +9,22 @@ def create_bucket(
         project_id: str = PROJECT_ID,
         location: str = LOCATION
 ):
-    logging.info(f"Creating a new Storage bucket ...")
-    client = storage.Client(project=project_id)
+    logging.info(f"Checking Storage bucket {bucket_name} ...")
 
+    client = storage.Client(project=project_id)
     bucket = client.bucket(bucket_name)
+
+    if bucket.exists():
+        logging.info(f"Bucket {bucket_name} already exists.")
+        return bucket
+
+    logging.info(f"Bucket {bucket_name} does not exists. Creating ...")
+    
     bucket.location = location
     new_bucket = client.create_bucket(bucket)
 
     logging.info(f"Success! created bucket {bucket_name} in {location}")
+    return new_bucket
 
 def create_dataset(
         dataset_name: str | list = DATASET_NAME,
