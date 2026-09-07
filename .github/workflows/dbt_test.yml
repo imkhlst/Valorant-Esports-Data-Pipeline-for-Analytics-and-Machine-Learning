@@ -54,7 +54,7 @@ jobs:
         run: |
           docker run --rm \
           -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
-          -v "$HOME/.dbt:root/.dbt:ro" \
+          -v "$HOME/.dbt:/root/.dbt:ro" \
           -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
           -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
           valorant-project \
