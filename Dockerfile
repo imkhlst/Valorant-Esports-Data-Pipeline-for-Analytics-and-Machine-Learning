@@ -13,4 +13,6 @@ COPY pipeline/ ./pipeline/
 COPY src/ ./src/
 COPY utils/ ./utils/
 
+COPY valorant/ ./dbt/
+
 CMD ["python", "-m", "pipeline.scraper_pipeline"]

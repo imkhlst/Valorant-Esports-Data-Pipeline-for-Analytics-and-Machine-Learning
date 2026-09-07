@@ -1,7 +1,8 @@
-beautifulsoup4
-google-cloud-storage
-google-cloud-bigquery
-numpy
-pandas
-pyarrow
-requests
+beautifulsoup4 == 4.14.2
+google-cloud-storage == 3.1.1
+google-cloud-bigquery == 3.43
+dbt-bigquery == 1.12
+numpy == 2.4.4
+pandas == 2.3.2
+pyarrow == 25.0.1
+requests == 2.34.2
