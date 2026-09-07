@@ -1,4 +1,4 @@
-name: Run Data Pipeline
+name: Run dbt Pipeline
 
 on:
   workflow_dispatch:
