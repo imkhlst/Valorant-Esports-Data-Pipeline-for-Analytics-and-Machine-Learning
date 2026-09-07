@@ -1,0 +1,71 @@
+name: Run dbt Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dbt:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      
+      - name: Build Docker images
+        run: docker build -t valorant-project .
+
+      - name: Create dbt Profile
+        run: |
+          mkdir ~/.dbt
+          
+          cat > ~/.dbt/profiles.yml << 'EOF'
+          valorant:
+            target: prod
+            outputs:
+              prod:
+                dataset: dbt_prod
+                location: asia-southeast2
+                method: oauth
+                priority: interactive
+                project: valorant-project-2026
+                threads: 4
+                type: bigquery
+          EOF
+
+      # - name: Install dbt packages
+      #   run: |
+      #     docker run --rm \
+      #     -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
+      #     -v "$HOME/.dbt:/root/.dbt:ro" \
+      #     valorant-project \
+      #     sh -c "cd /valorant-project/dbt && dbt deps"
+      
+      - name: Check dbt Connection
+        run: |
+          docker run --rm \
+          -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
+          -v "$HOME/.dbt:root/.dbt:ro" \
+          -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
+          -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
+          valorant-project \
+          sh -c "cd /valorant-project/dbt && dbt debug"
+
+      # - name: Run dbt build
+      #   run: |
+      #     docker run --rm \
+      #     -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
+      #     -v "$HOME/.dbt:root/.dbt:ro" \
+      #     -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
+      #     -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
+      #     valorant-project \
+      #     sh -c "cd /valorant-project/dbt && dbt build"
