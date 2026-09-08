@@ -1,3 +1,4 @@
+import pandas as pd
 from logger import logging
 from pathlib import Path
 from google.cloud import storage, bigquery
@@ -32,10 +33,7 @@ def create_dataset(
         location: str = LOCATION
 ):
     client = bigquery.Client(project=project_id)
-    
-    if not isinstance(dataset_name, list):
-        
-        dataset_name = [dataset_name]
+    dataset_name = dataset_name if isinstance(dataset_name, list) else [dataset_name]
 
     for i in dataset_name:
         dataset_id = f"{project_id}.{i}"
@@ -70,16 +68,13 @@ def upload_data(
     logging.info(f"Uploading data into storage bucket ...")
     client = storage.Client(project=project_id)
     bucket = client.bucket(bucket_name)
-    if isinstance(file_name, list):
-        for i in file_name:
-            blob = bucket.blob(f"{blob_name}/{i}.parquet")
-            blob.upload_from_filename(f"{Path(local_data_dir_path)}/{i}.parquet")
-            logging.info(f"Uploaded {i} into {bucket_name}")
 
-    else:
-        blob = bucket.blob(f"{blob_name}/{file_name}.parquet")
-        blob.upload_from_filename(f"{Path(local_data_dir_path)}/{file_name}.parquet")
-        logging.info(f"Success! uploaded {file_name} into {bucket_name}")
+    file_name = file_name if isinstance(file_name, list) else [file_name]
+
+    for i in file_name:
+        blob = bucket.blob(f"{blob_name}/{i}.parquet")
+        blob.upload_from_filename(f"{Path(local_data_dir_path)}/{i}.parquet")
+        logging.info(f"Success! Uploaded {i} into {bucket_name}")
 
 def load_table(
         dataset_name: str,
@@ -94,28 +89,12 @@ def load_table(
             source_format=bigquery.SourceFormat.PARQUET,
             write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
         )
-    
-    if isinstance(file_name, list):
-        for i in file_name:
-            table_id = f"{project_id}.{dataset_name}.{i}"
-            gcs_uri = f"gs://{gcs_data_dir_path}/{i}.parquet"
 
-            logging.info(f"Starting load job for {gcs_uri} ...")
+    file_name = file_name if isinstance(file_name, list) else [file_name]
 
-            load_job = client.load_table_from_uri(
-                gcs_uri,
-                table_id,
-                job_config=job_config
-            )
-
-            load_job.result()
-            
-            destination_table = client.get_table(table_id)
-            print(f"Success! Loaded {destination_table.num_rows} rows into {table_id}")
-
-    else:
-        table_id = f"{project_id}.{dataset_name}.{file_name}"
-        gcs_uri = f"gs://{gcs_data_dir_path}/{file_name}.parquet"
+    for name in file_name:
+        table_id = f"{project_id}.{dataset_name}.{name}"
+        gcs_uri = f"gs://{gcs_data_dir_path}/{name}.parquet"
 
         logging.info(f"Starting load job for {gcs_uri} ...")
 
@@ -129,3 +108,29 @@ def load_table(
         
         destination_table = client.get_table(table_id)
         print(f"Success! Loaded {destination_table.num_rows} rows into {table_id}")
+
+def merge_table(
+        file_name: str | list = FILE_NAME,
+        project_id: str = PROJECT_ID,
+):
+    logging.info(f"Merging table from staging into bronze ...")
+    client = bigquery.Client(project=project_id)
+
+    try:
+        file_name = file_name if isinstance(file_name, list) else [file_name]
+        
+        for name in file_name:
+            logging.info(f"Start merging table {name} ...")
+
+            sql_path = Path("src/query") / f"{name}_incremental_load.sql"
+
+            with open(sql_path, "r", encoding="utf-8") as file:
+                sql = file.read()
+
+            client.query(sql).result()
+
+            logging.info(f"Successfully merged table {name}.")
+
+    except Exception as e:
+        logging.error(f"Failed merge table: {e}")
+        raise
