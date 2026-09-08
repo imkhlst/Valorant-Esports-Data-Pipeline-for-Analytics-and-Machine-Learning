@@ -6,6 +6,6 @@ from typing import Optional
 class MapVeto:
     match_id: str
     map_name: str
+    scraped_at: datetime
     team_name: Optional[str] = None
     action: Optional[str] = "decider"
-    scraped_at: datetime
