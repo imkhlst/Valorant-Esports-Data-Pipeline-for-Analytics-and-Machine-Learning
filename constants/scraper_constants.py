@@ -32,7 +32,7 @@ FILE_NAME = [
 ]
 
 try:
-    EXIST_TOUR_DATA = pd.read_parquet(Path("data/raw/final/matches.parquet"))
+    EXIST_TOUR_DATA = pd.read_parquet(Path("data/raw/final/tours.parquet"))
     if EXIST_TOUR_DATA.empty:
         EXIST_TOUR_DATA = []
 

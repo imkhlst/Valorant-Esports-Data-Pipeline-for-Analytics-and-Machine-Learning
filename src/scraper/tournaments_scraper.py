@@ -39,7 +39,7 @@ class TournamentScraper:
             elements = get_value(soup=soup, selector=".wf-card.mod-flex.event-item", multiple=True)
             for el in elements:
                 href = el.get("href")
-                tour_id = int(href.split("/")[2])
+                tour_id = href.split("/")[2]
                 url = absolute(url=href)
                 status = get_value(soup=el, selector=".event-item-desc-item-status", attr="text")
                 tour_list.add((status, tour_id, url))
