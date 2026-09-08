@@ -31,14 +31,16 @@ class MatchesScraper:
                         match_id=match_id,
                         team_name=map_split[0],
                         action=map_split[1].lower(),
-                        map_name=map_split[2]
+                        map_name=map_split[2],
+                        scraped_at=datetime.now()
                     )
                     vetos.add(veto)
 
                 else:
                     veto = MapVeto(
                         match_id=match_id,
-                        map_name=map_split[0]
+                        map_name=map_split[0],
+                        scraped_at=datetime.now()
                     )
                     logging.info(f"Found decider map: {map_split[0]}")
                     vetos.add(veto)
