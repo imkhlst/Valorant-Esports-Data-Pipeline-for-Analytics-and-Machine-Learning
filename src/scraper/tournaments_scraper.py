@@ -5,10 +5,17 @@ from entities.tour_entities import *
 from logger import logging
 
 class TournamentScraper:
-    def __init__(self, base_url: str = BASE_URL, region_keyword: list = REGION_KEYWORD, stage_keyword: list = STAGE_KEYWORD):
+    def __init__(
+            self,
+            base_url: str = BASE_URL,
+            region_keyword: list = REGION_KEYWORD,
+            stage_keyword: list = STAGE_KEYWORD,
+            exist_tour_data: list = EXIST_TOUR_DATA
+    ):
         self.base_url = base_url
         self.stage_keyword = stage_keyword
         self.region_keyword = region_keyword
+        self.exist_tour_data = exist_tour_data
 
     def scrape_tournament_list(self):
         start_time = datetime.now()
@@ -32,9 +39,10 @@ class TournamentScraper:
             elements = get_value(soup=soup, selector=".wf-card.mod-flex.event-item", multiple=True)
             for el in elements:
                 href = el.get("href")
+                tour_id = href.split("/")[1]
                 url = absolute(url=href)
                 status = get_value(soup=el, selector=".event-item-desc-item-status", attr="text")
-                tour_list.add((status, url))
+                tour_list.add((status, tour_id, url))
 
             end_time = datetime.now()
             duration = end_time - start_time
@@ -58,13 +66,60 @@ class TournamentScraper:
             progress = 0
             print(f"{progress}% of Completion")
             for i, item in enumerate(queue):
-                status, url = item[0], item[1]
-                if len(matches_page) > 0:
-                    break
+                logging.info("Check status ...")
+                status, current_toud_id, url = item[0].lower(), item[1], item[2]
+                
                 if url in processed:
                     logging.info(f"{url} has been processed.")
                     continue
 
+                if current_toud_id in self.exist_tour_id["tour_id"]:
+
+                    existing_status = (
+                        self.exist_tour_data.loc[
+                            self.exist_tour_data["tour_id"] == current_toud_id,
+                            "tour_status"
+                        ]
+                        .iloc[0]
+                        .lower()
+                    )
+                    if status == existing_status:
+                        logging.info(f"Tournament {current_toud_id} already exists and status is unchanged ({status}).")
+                        if status == "completed":
+                            logging.info(f"Skip scraping.")
+                            continue
+                        logging.info(f"Start re-scraping ...")
+
+                    elif status == "upcoming":
+                        logging.info(f"Tournament {current_toud_id} already exists but is {status}. Skip scraping.")
+                        continue
+
+                    elif status != existing_status:
+                        logging.info(
+                            f"Tournament {current_toud_id} already exists but is status changed."
+                            f"from {existing_status} to {status}."
+                            f"Start re-scraping ..."
+                        )
+
+                    else:
+                        raise ValueError(f"Status unrecognized. Found: {status.capitalize()}.")
+
+                else:
+                    if status == "upcoming":
+                        logging.info(f"New tournament {current_toud_id} but tournament is {status}. Skip scraping.")
+                        continue
+
+                    elif status in ["ongoing", "complete"]:
+                        logging.info(
+                            f"New Tournament {current_toud_id} and tournament is {status}."
+                            f"Start scraping ..."
+                        )
+
+                    else:
+                        raise ValueError(
+                            f"Status unrecognized. Found: {status.capitalize()}"
+                        )
+                
                 soup = get_soup(url=url)
                 tour_id = url.split("/")[4]
                 tag = get_value(soup=soup, selector=".event-header-main-bc a[href]", attr="text")
@@ -85,11 +140,12 @@ class TournamentScraper:
                     tour_tag=tag,
                     tour_stage=stage,
                     tour_region=region,
-                    tour_status=status
+                    tour_status=status,
+                    scraped_at= datetime.now()
                 )
                 tour_info.append(tour)
                 
-                if status.lower() == "upcoming" or status.lower() == "ongoing":
+                if status.lower() in ["upcoming", "ongoing"]:
                     logging.info(f"{status} tournaments confirmed. Tournament must be completed to scrape matches list.")
                     processed.add(url)
                     continue
@@ -124,7 +180,7 @@ class TournamentScraper:
     def run(self):
         start_time = datetime.now()
         
-        logging.info("Initialization scrape_tournament_list ...")
+        logging.info("Initialize scrape_tournament_list ...")
         tour_list = self.scrape_tournament_list()
         logging.info("Initialize scrape_tournament_info ...")
         tour_info, matches_page, stats_page, agents_page = self.scrape_tournament_info(tour_list=tour_list)

@@ -1,3 +1,4 @@
+from datetime import datetime
 from dataclasses import dataclass, asdict
 
 @dataclass(frozen=True)
@@ -8,3 +9,4 @@ class Tour:
     tour_stage: str
     tour_region: str
     tour_status: str
+    scraped_at: datetime

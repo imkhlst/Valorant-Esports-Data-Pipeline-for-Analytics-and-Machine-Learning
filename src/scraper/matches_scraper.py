@@ -12,16 +12,20 @@ class MatchesScraper:
     def scrape_map_veto(self, soup, match_id: str,):
         start_time = datetime.now()
         logging.info("Initialize scrape_map_veto ...")
+
         try:
             map_order_container = get_value(soup=soup, selector=".match-header-note", attr="text", multiple=True)
+
             if map_order_container[-1] is None:
                 logging.info(f"Map selection not found.")
                 return None
 
             map_order = map_order_container[-1].split(";")
             vetos = set()
+
             for map in map_order:
                 map_split = map.strip().split(" ")
+
                 if map_split[1].strip() == "ban" or map_split[1].strip() == "pick":
                     veto = MapVeto(
                         match_id=match_id,
@@ -30,6 +34,7 @@ class MatchesScraper:
                         map_name=map_split[2]
                     )
                     vetos.add(veto)
+
                 else:
                     veto = MapVeto(
                         match_id=match_id,
@@ -52,20 +57,29 @@ class MatchesScraper:
         processed = set()
         queue = list(match_page) if not isinstance(match_page, list) else match_page
         print(f"Queue: {queue[0]}, ... {len(queue)} more.")
+
         try:
             matches_list = []
-            for item in queue:
-                if len(matches_list) > 0:
-                    break
 
+            for item in queue:
                 tour_id, url = item[0], item[1]
+
                 if url in processed:
                     logging.info(f"{url} has been processed.")
                     continue
 
                 soup = get_soup(url=url)
-                match_href = get_value(soup=soup, selector=".wf-module-item.match-item", attr="href", multiple=True)
-                for href in match_href:
+                matches = get_value(soup=soup, selector=".wf-module-item.match-item", multiple=True)
+
+                for match in matches:
+                    match_status = get_value(soup=match, selector=".ml-status", attr="text")
+                    teams = get_value(soup=match, selector=".flag", attr="text", multiple=True)
+
+                    if match_status.lower() != "completed":
+                        logging.info(f"Match {teams[0]} Vs {teams[1]} is not conducted yet. Skip Scraping.")
+                        continue
+
+                    href = match.get("href")
                     match_url = absolute(url=href)
                     matches_list.append((tour_id, match_url))
                 
@@ -85,42 +99,48 @@ class MatchesScraper:
         processed = set()
         queue = list(match_list) if not isinstance(match_list, list) else match_list
         print(f"Queue: {queue[0]}, ... {len(queue) - 1} more." if len(queue) > 1 else f"Queue: {queue}")
+
         try:
             matches_info = []
             map_veto = []
             tab_list = []
             progress = 0
             print(f"{progress}% of Completion")
+
             for i, item in enumerate(queue):
-                if len(matches_info) > 0:
-                    break
                 tour_id, url = item[0], item[1]
+
                 if url in processed:
                     logging.info(f"{url} has been processed.")
                     continue
 
                 soup = get_soup(url=url)
                 bracket = get_value(soup=soup, selector=".match-header-event-series", attr="text")
+
                 if "showmatch" in bracket.lower():
                     continue
+
                 match_id = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="data-match-id")
                 tab_elements = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="href", multiple=True)
                 tab_url = [absolute(url=i) for i in tab_elements]
                 tab_list.append([match_id, sorted(tab_url)])
                 date = get_value(soup=soup, selector=".moment-tz-convert", attr="data-utc-ts")
                 patch_info = get_value(soup=soup, selector=".match-header-date", attr="text")
+
                 if "patch" in patch_info.lower():
                     patch = patch_info.split("Patch")[-1].strip()
+
                 else:
                     patch = None
 
                 logging.info(f"Found {match_id}, {bracket}, {date}, and {patch}.")
-                
+
                 home_href = get_value(soup=soup, selector=".match-header-link.wf-link-hover.mod-1", attr="href")
                 home_url = absolute(url=home_href)
                 home_soup = get_soup(url=home_url)
                 home_info = get_value(soup=home_soup, selector=".wf-title", attr="text", multiple=True)
                 home_name = home_alias = home_info[0]
+
                 if len(home_info) > 1:
                     home_alias = home_info[1]
 
@@ -129,6 +149,7 @@ class MatchesScraper:
                 away_soup = get_soup(url=away_url)
                 away_info = get_value(soup=away_soup, selector=".wf-title", attr="text", multiple=True)
                 away_name = away_alias = away_info[0]
+
                 if len(away_info) > 1:
                     away_alias = away_info[1]
 
@@ -138,10 +159,10 @@ class MatchesScraper:
                 score_info = get_value(soup=soup, selector=".sp-hide span", attr="text", multiple=True)
                 home_score = int(score_info[0])
                 away_score = int(score_info[-1])
-                
                 logging.info(f"Found {bo_info} match score (home) {home_score} vs {away_score} (away).")
 
                 h2h = get_value(soup=soup, selector=".match-h2h-matches-score", attr="text", multiple=True)
+
                 if h2h:
                     home_h2h_win, home_h2h_score = 0, 0
                     away_h2h_win, away_h2h_score = 0, 0
@@ -206,16 +227,18 @@ class MatchesScraper:
                     home_n_last_match=home_n_last_match,
                     home_n_last_win=home_n_last_match_win,
                     away_n_last_match=away_n_last_match,
-                    away_n_last_win=away_n_last_match_win
+                    away_n_last_win=away_n_last_match_win,
+                    scraped_at= datetime.now()
                 )
-
                 matches_info.append(match)
 
                 vetos = self.scrape_map_veto(soup=soup, match_id=match_id)
                 map_veto.extend(vetos)
+                logging.info(f"Match info and map veto has been added.")
+
                 new_progress = get_progress(current_unit=i, total_unit=len(queue), current_progress=progress)
                 progress += new_progress
-                logging.info(f"Match info and map veto has been added.")
+
                 processed.add(url)
 
             save_file(data=tab_list, file_name="matches", format="json")
@@ -230,12 +253,14 @@ class MatchesScraper:
     
     def run(self, match_pages):
         start_time = datetime.now()
-
+        
         logging.info("Initialize scrape_matches_list ...")
+
         if not isinstance(match_pages, (set, list)):
             match_pages = load_json(match_pages)
         
         matches_list = self.scrape_matches_list(match_page=match_pages)
+
         logging.info("Initialize scrape_matches_info ...")
         matches_info, map_veto, tab_list = self.scrape_matches_info(match_list=matches_list)
 

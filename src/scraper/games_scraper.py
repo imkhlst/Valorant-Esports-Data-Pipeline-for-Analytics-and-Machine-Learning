@@ -41,7 +41,8 @@ class GamesScraper:
                             hs=int(stats_list[8 + ((len(stats_list) // 5) * i)].replace("%", "")) if stats_list[8 + ((len(stats_list) // 5) * i)] != "" else None,
                             fk=int(stats_list[9 + ((len(stats_list) // 5) * i)]) if stats_list[9 + ((len(stats_list) // 5) * i)] != "" else None,
                             fd=int(stats_list[10 + ((len(stats_list) // 5) * i)]) if stats_list[10 + ((len(stats_list) // 5) * i)] != "" else None,
-                            fkfd=int(stats_list[11 + ((len(stats_list) // 5) * i)]) if stats_list[11 + ((len(stats_list) // 5) * i)] != "" else None
+                            fkfd=int(stats_list[11 + ((len(stats_list) // 5) * i)]) if stats_list[11 + ((len(stats_list) // 5) * i)] != "" else None,
+                            scraped_at= datetime.now()
                         )
                         stats_info.append(stats)
                     logging.info(f"Found player info: {names[0]}, {flags[0]}, {team_aliases[0]}, {agents[0]}, {mod}")
@@ -128,7 +129,8 @@ class GamesScraper:
                     home_def_score=home_def_score,
                     away_def_score=away_def_score,
                     home_ot_score=home_ot_score,
-                    away_ot_score=away_ot_score
+                    away_ot_score=away_ot_score,
+                    scraped_at= datetime.now()
                 )
                 game_overview.append(overview)
 
@@ -199,7 +201,8 @@ class GamesScraper:
                     home_full_buy_round=int(home_stats[7]),
                     away_full_buy_round=int(away_stats[7]),
                     home_full_buy_win=int(home_stats[8]),
-                    away_full_buy_win=int(away_stats[8])
+                    away_full_buy_win=int(away_stats[8]),
+                    scraped_at= datetime.now()
                 )
                 game_econ.append(econ)
             

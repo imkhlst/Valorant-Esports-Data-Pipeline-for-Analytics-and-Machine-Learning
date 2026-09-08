@@ -1,3 +1,4 @@
+from datetime import datetime
 from dataclasses import dataclass, asdict
 from typing import Optional
 
@@ -7,3 +8,4 @@ class MapVeto:
     map_name: str
     team_name: Optional[str] = None
     action: Optional[str] = "decider"
+    scraped_at: datetime

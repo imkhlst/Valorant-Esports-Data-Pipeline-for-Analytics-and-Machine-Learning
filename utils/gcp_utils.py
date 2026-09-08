@@ -82,9 +82,9 @@ def upload_data(
         logging.info(f"Success! uploaded {file_name} into {bucket_name}")
 
 def load_table(
+        dataset_name: str,
         file_name: str | list = FILE_NAME,
         project_id: str = PROJECT_ID,
-        dataset_name: str | list = DATASET_NAME,
         gcs_data_dir_path: str = GCS_DATA_DIR_PATH
 ):
     logging.info(f"Loading table into BigQuery dataset ...")
@@ -97,7 +97,7 @@ def load_table(
     
     if isinstance(file_name, list):
         for i in file_name:
-            table_id = f"{project_id}.{dataset_name[0]}.{i}"
+            table_id = f"{project_id}.{dataset_name}.{i}"
             gcs_uri = f"gs://{gcs_data_dir_path}/{i}.parquet"
 
             logging.info(f"Starting load job for {gcs_uri} ...")
@@ -114,7 +114,7 @@ def load_table(
             print(f"Success! Loaded {destination_table.num_rows} rows into {table_id}")
 
     else:
-        table_id = f"{project_id}.{dataset_name[0]}.{file_name}"
+        table_id = f"{project_id}.{dataset_name}.{file_name}"
         gcs_uri = f"gs://{gcs_data_dir_path}/{file_name}.parquet"
 
         logging.info(f"Starting load job for {gcs_uri} ...")

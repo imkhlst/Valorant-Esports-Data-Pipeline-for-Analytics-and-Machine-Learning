@@ -1,3 +1,6 @@
+import pandas as pd
+from pathlib import Path
+
 BASE_URL = "https://www.vlr.gg"
 
 HEADERS = {
@@ -27,3 +30,11 @@ FILE_NAME = [
     "map_vetos1",
     "players1"
 ]
+
+try:
+    EXIST_TOUR_DATA = pd.read_parquet(Path("data/raw/final/matches.parquet"))
+    if EXIST_TOUR_DATA.empty:
+        EXIST_TOUR_DATA = []
+
+except Exception:
+    EXIST_TOUR_DATA = []
