@@ -230,8 +230,6 @@ class GamesScraper:
             for i, item in enumerate(queue):
                 match_id, tabs = item[0], item[1]
                 econ_tab, overview_tab = tabs[0], tabs[1]
-                if len(game_overview) > 0:
-                    break
                 if overview_tab in processed:
                     logging.info(f"{overview_tab} already processed.")
                     continue
