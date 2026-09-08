@@ -271,13 +271,13 @@ class GamesScraper:
         
         game_overview, game_economy, player_stats = self.scrape_game_info(tab_list=tab_list)
         games_overview_df = pd.DataFrame([asdict(o) for o in game_overview])
-        save_file(data=games_overview_df, file_name="games_overview1", format="parquet")
+        save_file(data=games_overview_df, file_name="games_overview", format="parquet")
 
         games_economy_df = pd.DataFrame([asdict(o) for o in game_economy])
-        save_file(data=games_economy_df, file_name="games_economy1", format="parquet")
+        save_file(data=games_economy_df, file_name="games_economy", format="parquet")
 
         players_df = pd.DataFrame([asdict(p) for p in player_stats])
-        save_file(data=players_df, file_name="players1", format="parquet")
+        save_file(data=players_df, file_name="players", format="parquet")
 
         end_time = datetime.now()
         duration = end_time - start_time

@@ -253,7 +253,7 @@ class MatchesScraper:
     
     def run(self, match_pages):
         start_time = datetime.now()
-        
+
         logging.info("Initialize scrape_matches_list ...")
 
         if not isinstance(match_pages, (set, list)):
@@ -265,10 +265,10 @@ class MatchesScraper:
         matches_info, map_veto, tab_list = self.scrape_matches_info(match_list=matches_list)
 
         matches_df = pd.DataFrame([asdict(m) for m in matches_info])
-        save_file(data=matches_df, file_name="matches1", format="parquet")
+        save_file(data=matches_df, file_name="matches", format="parquet")
 
         map_veto_df = pd.DataFrame([asdict(m) for m in map_veto])
-        save_file(data=map_veto_df, file_name="map_vetos1", format="parquet")
+        save_file(data=map_veto_df, file_name="map_vetos", format="parquet")
 
         end_time = datetime.now()
         duration = end_time - start_time

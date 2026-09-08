@@ -185,7 +185,7 @@ class TournamentScraper:
         logging.info("Initialize scrape_tournament_info ...")
         tour_info, matches_page, stats_page, agents_page = self.scrape_tournament_info(tour_list=tour_list)
         tour_df = pd.DataFrame([asdict(t) for t in tour_info])
-        save_file(data=tour_df, file_name="tours1", format="parquet")
+        save_file(data=tour_df, file_name="tours", format="parquet")
 
         end_time = datetime.now()
         duration = end_time - start_time
