@@ -16,11 +16,13 @@ class GameOverview:
     away_def_score: int
     home_ot_score: int
     away_ot_score: int
+    scraped_at: datetime
 
 @dataclass(frozen=True)
 class GameEconomy:
     match_id: str
     game_id: str
+    scraped_at: datetime
     home_pstl_win: Optional[int] = None
     away_pstl_win: Optional[int] = None
     home_eco_round: Optional[int] = None

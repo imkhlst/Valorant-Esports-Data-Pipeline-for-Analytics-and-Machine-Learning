@@ -3,6 +3,7 @@ from pathlib import Path
 BUCKET_NAME = "valorant-raw-data"
 
 DATASET_NAME = [
+    "staging",
     "bronze",
     "dbt_dev",
     "dbt_ci",

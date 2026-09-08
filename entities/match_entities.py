@@ -27,5 +27,7 @@ class Match:
     away_n_last_win: int
     home_n_last_match: int
     away_n_last_match: int
+    
+    scraped_at: datetime
 
     patch: Optional[str] = None
