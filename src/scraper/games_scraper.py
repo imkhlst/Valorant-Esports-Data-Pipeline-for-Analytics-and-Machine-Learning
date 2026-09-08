@@ -55,7 +55,7 @@ class GamesScraper:
         
         except Exception as e:
             logging.error(f"Error occurs whe running scrape_player_stat: {e}")
-            print(f"Error occurs whe running scrape_player_stat: {e}")
+            raise
             
     def scrape_game_overview(self, match_id: str, overview_url: str) -> list:
         start_time = datetime.now()
@@ -145,7 +145,7 @@ class GamesScraper:
         
         except Exception as e:
             logging.info(f"Error occurs when running scrape_game_overview: {e}")
-            print(f"Error occurs when running scrape_game_overview: {e}")
+            raise
     
     def scrape_game_economy(self, match_id: str, econ_url: str) -> list:
         start_time = datetime.now()
@@ -214,7 +214,7 @@ class GamesScraper:
         
         except Exception as e:
             logging.info(f"Error occurs when running scrape_game_economy: {e}")
-            print(f"Error occurs when running scrape_game_economy: {e}")
+            raise
 
     def scrape_game_info(self, tab_list: list):
         start_time = datetime.now()
@@ -258,7 +258,7 @@ class GamesScraper:
         
         except Exception as e:
             logging.info(f"Error occurs when running scrape_game_info: {e}")
-            print(f"Error occurs when running scrape_game_info: {e}")
+            raise
 
     def run(self, tab_list):
         start_time = datetime.now()

@@ -51,7 +51,7 @@ class TournamentScraper:
         
         except Exception as e:
             logging.error(f"Error Occurs when running scrape_tournament_list: {e}")
-            print(f"Error Occurs when running scrape_tournament_list: {e}")
+            raise
 
     def scrape_tournament_info(self, tour_list: list) -> list:
         start_time = datetime.now()
@@ -175,7 +175,7 @@ class TournamentScraper:
         
         except Exception as e:
             logging.error(f"Error Occurs when running scrape_tournament_info: {e}")
-            print(f"Error Occurs when running scrape_tournament_info: {e}")
+            raise
     
     def run(self):
         start_time = datetime.now()

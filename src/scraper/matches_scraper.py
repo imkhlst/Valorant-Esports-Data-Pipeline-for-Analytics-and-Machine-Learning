@@ -52,7 +52,7 @@ class MatchesScraper:
 
         except Exception as e:
             logging.error(f"Error occurs whe running scrape_map_veto: {e}")
-            print(f"Error occurs whe running scrape_map_veto: {e}")
+            raise
 
     def scrape_matches_list(self, match_page: list) -> list:
         start_time = datetime.now()
@@ -94,7 +94,7 @@ class MatchesScraper:
 
         except Exception as e:
             logging.error(f"Error occurs when running scrape_matches_list: {e}")
-            print(f"Error occurs when running scrape_matches_list: {e}")
+            raise 
     
     def scrape_matches_info(self, match_list: list):
         start_time = datetime.now()
@@ -251,7 +251,7 @@ class MatchesScraper:
         
         except Exception as e:
             logging.error(f"Error occurs when running scrape_matches_info: {e}")
-            print(f"Error occurs when running scrape_matches_info: {e}")
+            raise
     
     def run(self, match_pages):
         start_time = datetime.now()
