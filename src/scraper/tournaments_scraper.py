@@ -109,7 +109,7 @@ class TournamentScraper:
                         logging.info(f"New tournament {current_toud_id} but tournament is {status}. Skip scraping.")
                         continue
 
-                    elif status in ["ongoing", "complete"]:
+                    elif status in ["ongoing", "completed"]:
                         logging.info(
                             f"New Tournament {current_toud_id} and tournament is {status}."
                             f"Start scraping ..."
