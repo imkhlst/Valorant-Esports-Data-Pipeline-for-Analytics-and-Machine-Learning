@@ -73,7 +73,7 @@ class TournamentScraper:
                     logging.info(f"{url} has been processed.")
                     continue
 
-                if current_toud_id in self.exist_tour_id["tour_id"]:
+                if current_toud_id in self.exist_tour_data["tour_id"]:
 
                     existing_status = (
                         self.exist_tour_data.loc[
