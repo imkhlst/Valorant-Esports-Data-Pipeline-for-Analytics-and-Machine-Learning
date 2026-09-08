@@ -4,8 +4,7 @@ def main():
     create_bucket()
     create_dataset()
     upload_data()
-    
-    load_table()
+    load_table(dataset_name="bronze")
 
 if __name__ == "__main__":
     main()
