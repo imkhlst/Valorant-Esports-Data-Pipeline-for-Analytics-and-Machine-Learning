@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+from datetime import timedelta
 
 BASE_URL = "https://www.vlr.gg"
 
@@ -31,7 +32,7 @@ FILE_NAME = [
     "players1"
 ]
 
-MAX_RUNTIME = 4 * 60 * 60 + 45 *60
+MAX_RUNTIME = timedelta(hours=4, minutes=45)
 
 try:
     EXIST_TOUR_DATA = pd.read_parquet(Path("data/raw/final/tours.parquet"))
