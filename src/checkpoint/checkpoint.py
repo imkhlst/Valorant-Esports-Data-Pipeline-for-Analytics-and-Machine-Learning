@@ -62,6 +62,3 @@ class Checkpoint:
     def mark_completed(self, item_ids: list) -> None:
         self.completed_ids.add(item_ids)
         self.save(self.completed_ids)
-
-    def is_completed(self, status: bool = False) -> bool:
-        return status

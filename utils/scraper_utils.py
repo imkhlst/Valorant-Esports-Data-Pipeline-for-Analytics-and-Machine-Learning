@@ -138,6 +138,7 @@ def save_file(data: list|pd.DataFrame, file_name: str, format: str):
         logging.info(f"Data has been save in {file_path}")
 
 def save_pipeline( status: str, module: str, completed: bool = False, file_path: Path = "data/checkpoint/pipeline_state.json"):
+    os.makedirs("data/checkpoint/", exist_ok=True)
     state = {
         "status": status,
         "module": module,
