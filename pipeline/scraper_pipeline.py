@@ -5,11 +5,11 @@ from src.scraper.matches_scraper import MatchesScraper
 from src.scraper.games_scraper import GamesScraper
 
 def main():
-        checkpoint = load_json(
-            Path("data/checkpoint/pipeline_state.json")
-            ) if Path("data/checkpoint/pipeline_state.json").exists() else {
-                "status": "ongoing", "module": "tournaments", "completed": False
-                }
+        checkpoint = (
+            load_json(Path("data/checkpoint/pipeline_state.json"))
+            if Path("data/checkpoint/pipeline_state.json").exists()
+            else {"status": "ongoing", "module": "tournaments", "completed": False}
+        )
 
         if not checkpoint.completed and "tournaments" in checkpoint.module:
             tournament_scraper = TournamentScraper()
