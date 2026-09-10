@@ -208,7 +208,7 @@ class TournamentScraper:
         logging.info("Initialize scrape_tournament_list ...")
         tour_list = self.scrape_tournament_list()
         logging.info("Initialize scrape_tournament_info ...")
-        tour_info = self.scrape_tournament_info(tour_list=tour_list)
+        tour_info = self.scrape_tournament_info(tour_list=tour_list, start_time=start_time)
         tour_df = pd.DataFrame([asdict(t) for t in tour_info])
         save_file(data=tour_df, file_name="tours", format="parquet")
 

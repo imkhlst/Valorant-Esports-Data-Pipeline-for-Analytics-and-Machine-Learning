@@ -1,7 +1,10 @@
-name: Run GCP Pipeline
+name: GCP Pipeline
 
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Scraper Pipeline"]
+    type:
+    - completed
 
 permissions:
   contents: 'read'
@@ -9,8 +12,9 @@ permissions:
 
 jobs:
 
-  gcp:
+  gcp-run:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
