@@ -30,9 +30,11 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: scraper_state
-          path: .
           run-id: ${{ inputs.previous_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: |
+            data/raw/
+            data/checkpoint/
           
       - name: Build docker image
         run: docker build -t valorant-project .
@@ -58,13 +60,6 @@ jobs:
 
           echo "=== Checkpoint ==="
           find data/checkpoint -type f || true
-
-          echo ""
-          echo "=== Pipeline State ==="
-          if [ -f pipeline_state.json ]; then
-            cat pipeline_state.json
-          else
-            echo "pipeline_state.json not found!"
           fi
 
       - name: Upload scraper state
