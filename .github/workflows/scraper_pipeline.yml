@@ -46,9 +46,7 @@ jobs:
       - name: Run scraper pipeline
         run: |
           docker run --rm \
-          -v "${{ github.workspace }}/data/raw:/valorant-project/data/raw" \
-          -v "${{ github.workspace }}/data/checkpoint:/valorant-project/data/checkpoint" \
-          -v "${{ github.workspace }}/data/checkpoint/pipeline_state.json:/valorant-project/data/checkpoint/pipeline_state.json" \
+          -v "${{ github.workspace }}/data:/valorant-project/data" \
           valorant-project \
           python -m pipeline.scraper_pipeline
 
