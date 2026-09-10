@@ -1,10 +1,10 @@
 name: GCP Pipeline
 
-on:
-  workflow_run:
-    workflows: ["Scraper Pipeline"]
-    type:
-    - completed
+# on:
+  # workflow_run:
+    # workflows: ["Scraper Pipeline"]
+    # type:
+    # - completed
 
 permissions:
   contents: 'read'
