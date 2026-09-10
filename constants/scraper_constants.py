@@ -35,7 +35,7 @@ FILE_NAME = [
 MAX_RUNTIME = timedelta(hours=4, minutes=45)
 
 try:
-    EXIST_TOUR_DATA = pd.read_parquet(Path("data/raw/final/tours.parquet"))
+    EXIST_TOUR_DATA = pd.read_parquet(Path("data/raw/tours.parquet"))
 
 except Exception:
     EXIST_TOUR_DATA = pd.DataFrame(columns=["tour_id", "status"])

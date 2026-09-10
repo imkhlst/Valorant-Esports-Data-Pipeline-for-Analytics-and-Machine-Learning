@@ -86,11 +86,11 @@ class TournamentScraper:
                     logging.info(f"{url} has been processed.")
                     continue
 
-                if checkpoint.is_completed(current_toud_id):
+                if checkpoint.is_exist(current_toud_id):
                     logging.info(f"{current_toud_id} already exists.")
                     continue
 
-                if current_toud_id in self.exist_tour_data["tour_id"]:
+                if current_toud_id in self.exist_tour_data["tour_id"].values:
 
                     existing_status = (
                         self.exist_tour_data.loc[

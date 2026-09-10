@@ -264,7 +264,7 @@ class GamesScraper:
                 
                 overview, player_info, game_id = self.scrape_game_overview(match_id=match_id, overview_url=overview_tab)
 
-                if checkpoint.is_completed(game_id):
+                if checkpoint.is_exist(game_id):
                     continue
 
                 player_stats.extend(player_info)
