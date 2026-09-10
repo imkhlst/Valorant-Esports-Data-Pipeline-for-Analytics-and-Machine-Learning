@@ -60,7 +60,6 @@ jobs:
 
           echo "=== Checkpoint ==="
           find data/checkpoint -type f || true
-          fi
 
       - name: Upload scraper state
         if: always()
