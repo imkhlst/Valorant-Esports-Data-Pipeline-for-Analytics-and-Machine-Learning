@@ -85,7 +85,7 @@ def get_progress(current_unit: int, total_unit: int, current_progress: int):
     else:
         return 0
 
-def load_json(file_path: str):
+def load_json(file_path: Path):
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
 
@@ -131,7 +131,9 @@ def save_file(data: list|pd.DataFrame, file_name: str, format: str):
         new_data.to_parquet(path=file_path, index=False)
         logging.info(f"Data has been save in {file_path}")
 
-def save_pipeline( status: str, module: str, completed: bool = False, file_path: str = "data/checkpoint/pipeline_state.json"):
+def save_pipeline( status: str, module: str, completed: bool = False, file_path: Path = "data/checkpoint/pipeline_state.json"):
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    
     state = {
         "status": status,
         "module": module,
