@@ -269,7 +269,7 @@ class MatchesScraper:
                 checkpoint.mark_completed(match_id)
 
                 save_pipeline(
-                    status="completed",
+                    status="in_progress",
                     module="matches",
                     completed=True
                 )

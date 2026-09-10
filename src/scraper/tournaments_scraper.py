@@ -183,7 +183,7 @@ class TournamentScraper:
                 checkpoint.mark_completed(tour_id)
                 
                 save_pipeline(
-                    status="completed",
+                    status="in_progress",
                     module="tournaments",
                     completed=True
                 )

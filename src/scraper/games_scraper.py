@@ -285,7 +285,7 @@ class GamesScraper:
                 end_time = datetime.now()
 
                 save_pipeline(
-                    status= f"Success - completed",
+                    status="completed",
                     module="games",
                     completed=True
                 )
