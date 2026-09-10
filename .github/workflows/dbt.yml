@@ -1,4 +1,4 @@
-name: Run dbt CI
+name: dbt Pipeline
 
 on:
   push:
@@ -17,6 +17,7 @@ jobs:
 
   dbt-run:
     runs-on: ubuntu-latest
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       - name: Checkout Repository
