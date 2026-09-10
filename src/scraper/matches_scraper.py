@@ -56,7 +56,7 @@ class MatchesScraper:
             logging.error(f"Error occurs whe running scrape_map_veto: {e}")
             save_pipeline(
                 status="failed",
-                module="matches - map_vetos"
+                module="matches"
             )
             raise
 
@@ -270,7 +270,7 @@ class MatchesScraper:
 
                 save_pipeline(
                     status="in_progress",
-                    module="matches",
+                    module="games",
                     completed=True
                 )
 
