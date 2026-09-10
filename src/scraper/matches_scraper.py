@@ -3,6 +3,8 @@ from constants.scraper_constants import *
 from utils.scraper_utils import *
 from entities.match_entities import *
 from entities.map_veto_entities import *
+from entities.checkpoint_entities import *
+from src.checkpoint.checkpoint import *
 from logger import logging
 
 class MatchesScraper:
@@ -52,6 +54,10 @@ class MatchesScraper:
 
         except Exception as e:
             logging.error(f"Error occurs whe running scrape_map_veto: {e}")
+            save_pipeline(
+                status="failed",
+                module="matches - map_vetos"
+            )
             raise
 
     def scrape_matches_list(self, match_page: list) -> list:
@@ -96,8 +102,7 @@ class MatchesScraper:
             logging.error(f"Error occurs when running scrape_matches_list: {e}")
             raise 
     
-    def scrape_matches_info(self, match_list: list):
-        start_time = datetime.now()
+    def scrape_matches_info(self, match_list: list, start_time: datetime):
         processed = set()
         queue = list(match_list) if not isinstance(match_list, list) else match_list
         print(f"Queue: {queue[0]}, ... {len(queue) - 1} more." if len(queue) > 1 else f"Queue: {queue}")
@@ -110,12 +115,26 @@ class MatchesScraper:
             print(f"{progress}% of Completion")
 
             for i, item in enumerate(queue):
+                logging.info(f"Check Runtime ...")
+                end_time = datetime.now()
+
+                if end_time - start_time >= MAX_RUNTIME:
+                    save_pipeline(
+                        status="in_progress",
+                        module="matches"
+                    )
+                    logging.info(f"Timeout - scraper has been stopped.")
+                    break
+                
                 tour_id, url = item[0], item[1]
+
+                checkpoint = Checkpoint(Path("data/checkpoint/matches.json"))
+                checkpoint.load()
 
                 if url in processed:
                     logging.info(f"{url} has been processed.")
                     continue
-
+                
                 soup = get_soup(url=url)
                 bracket = get_value(soup=soup, selector=".match-header-event-series", attr="text")
 
@@ -123,6 +142,10 @@ class MatchesScraper:
                     continue
 
                 match_id = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="data-match-id")
+
+                if checkpoint.is_completed(match_id):
+                    continue
+
                 tab_elements = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="href", multiple=True)
                 tab_url = [absolute(url=i) for i in tab_elements]
                 tab_list.append([match_id, sorted(tab_url)])
@@ -243,14 +266,26 @@ class MatchesScraper:
 
                 processed.add(url)
 
+                checkpoint.mark_completed(match_id)
+
+                save_pipeline(
+                    status="completed",
+                    module="matches",
+                    completed=True
+                )
+
             save_file(data=tab_list, file_name="matches", format="json")
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scrape_matches_info completed in {duration}s")
-            return matches_info, map_veto, tab_list
+            return matches_info, map_veto
         
         except Exception as e:
             logging.error(f"Error occurs when running scrape_matches_info: {e}")
+            save_pipeline(
+                status="failed",
+                module="matches"
+            )
             raise
     
     def run(self, match_pages):
@@ -264,7 +299,7 @@ class MatchesScraper:
         matches_list = self.scrape_matches_list(match_page=match_pages)
 
         logging.info("Initialize scrape_matches_info ...")
-        matches_info, map_veto, tab_list = self.scrape_matches_info(match_list=matches_list)
+        matches_info, map_veto = self.scrape_matches_info(match_list=matches_list, start_time=start_time)
 
         matches_df = pd.DataFrame([asdict(m) for m in matches_info])
         save_file(data=matches_df, file_name="matches", format="parquet")
@@ -278,4 +313,3 @@ class MatchesScraper:
         print("="*50)
         print(f"Matches scraper pipeline completed in {duration}s")
         print("="*50)
-        return tab_list

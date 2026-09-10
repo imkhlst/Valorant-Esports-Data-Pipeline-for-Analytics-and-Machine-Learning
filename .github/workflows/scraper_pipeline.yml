@@ -1,0 +1,167 @@
+name: Run Scraping Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      previous_run_id:
+        description: "Previous workflow run ID"
+        required: false
+        default: ""
+        
+  # schedule:
+  #   cron: 0 6 1 * *
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download precious scrape state
+        if: ${{ inputs.previous_run_id != '' }}
+        uses: actions/download-artifact@v5
+        with:
+          name: scraper_state
+          path: .
+          run-id: ${{ inputs.previous_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Build docker image
+        run: docker build -t valorant-project .
+
+      - name: Validate scraper container
+        run: |
+          docker run --rm \
+          valorant-project \
+          python -c "import pipeline.scraper_pipeline; print('Scraper container OK')"
+
+      - name: Run scraper pipeline
+        run: |
+          docker run --rm \
+          -v "${{ github.workspace }}/data/raw:/valorant-project/data/raw" \
+          -v "${{ github.workspace }}/data/checkpoint:/valorant-project/data/checkpoint" \
+          -v "${{ github.workspace }}/data/checkpoint/pipeline_state.json:/valorant-project/data/checkpoint/pipeline_state.json" \
+          valorant-project \
+          python -m pipeline.scraper_pipeline
+
+      - name: Validate scraper_state
+        if: always()
+        run: |
+          echo "=== Raw Data ==="
+          find data/raw -type f || true
+
+          echo "=== Checkpoint ==="
+          find data/checkpoint -type f || true
+
+          echo ""
+          echo "=== Pipeline State ==="
+          if [ -f pipeline_state.json ]; then
+            cat pipeline_state.json
+          else
+            echo "pipeline_state.json not found!"
+          fi
+
+      - name: Upload scraper state
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper_state
+          path: |
+            data/raw/
+            data/checkpoint/
+            data/checkpoint/pipeline_state.json
+          if-no-files-found: error
+
+      - name: Read pipeline state
+        id: pipeline_state
+        if: success()
+        shell: bash
+        run: |
+          STATUS=$(python -c "
+          import json
+          with open('data/checkpoint/pipeline_state.json') as file:
+            state = json.load(file)
+          print(state['status'])
+          ")
+
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+      
+      - name: Trigger next scraping run
+        if: steps.pipeline_state.outputs.status == 'in_progress'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run scraper_pipeline.yml \
+          --ref main \
+          -f previous_run_id=${{ github.run_id }}
+
+  # dbt:
+  #   needs: gcp
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Authenticate to Google Cloud
+  #       uses: google-github-actions/auth@v3
+  #       with:
+  #         workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+  #         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      
+  #     - name: Build Docker images
+  #       run: docker build -t valorant-project .
+
+  #     - name: Create dbt Profile
+  #       run: |
+  #         mkdir ~/.dbt
+          
+  #         cat > ~/.dbt/profiles.yml << 'EOF'
+  #         valorant:
+  #           target: prod
+  #           outputs:
+  #             prod:
+  #               dataset: dbt_prod
+  #               location: asia-southeast2
+  #               method: oauth
+  #               priority: interactive
+  #               project: valorant-project-2026
+  #               threads: 4
+  #               type: bigquery
+  #         EOF
+
+  #     - name: Install dbt packages
+  #       run: |
+  #         docker run --rm \
+  #         -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
+  #         -v "$HOME/.dbt:/root/.dbt:ro" \
+  #         valorant-project \
+  #         sh -c "cd /valorant-project/dbt && dbt deps"
+      
+  #     - name: Check dbt Connection
+  #       run: |
+  #         docker run --rm \
+  #         -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
+  #         -v "$HOME/.dbt:/root/.dbt:ro" \
+  #         -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
+  #         -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
+  #         valorant-project \
+  #         sh -c "cd /valorant-project/dbt && dbt debug"
+
+  #     - name: Run dbt build
+  #       run: |
+  #         docker run --rm \
+  #         -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
+  #         -v "$HOME/.dbt:/root/.dbt:ro" \
+  #         -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
+  #         -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
+  #         valorant-project \
+  #         sh -c "cd /valorant-project/dbt && dbt build"
