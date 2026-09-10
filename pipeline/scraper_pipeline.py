@@ -11,15 +11,15 @@ def main():
             else {"status": "in_progress", "module": "tournaments", "completed": False}
         )
 
-        if not checkpoint.completed and "tournaments" in checkpoint.module:
+        if not checkpoint["completed"] and "tournaments" in checkpoint["module"]:
             tournament_scraper = TournamentScraper()
             tournament_scraper.run()
         
-        if not checkpoint.completed and "matches" in checkpoint.module:
+        if not checkpoint["completed"] and "matches" in checkpoint["module"]:
             match_scraper = MatchesScraper()
             match_scraper.run(match_pages=Path("data/link/tours.json"))
 
-        if not checkpoint.completed and "games" in checkpoint.module:
+        if not checkpoint["completed"] and "games" in checkpoint["module"]:
             game_scraper = GamesScraper()
             game_scraper.run(tab_list=Path("data/link/matches.json"))
 
