@@ -14,6 +14,7 @@ permissions:
   id-token: write
 
 jobs:
+
   dbt-run:
     runs-on: ubuntu-latest
     

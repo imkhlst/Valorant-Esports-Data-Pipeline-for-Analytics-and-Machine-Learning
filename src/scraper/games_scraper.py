@@ -311,7 +311,7 @@ class GamesScraper:
         if isinstance(tab_list, str):
             tab_list = load_json(tab_list)
         
-        game_overview, game_economy, player_stats = self.scrape_game_info(tab_list=tab_list)
+        game_overview, game_economy, player_stats = self.scrape_game_info(tab_list=tab_list, start_time=start_time)
         games_overview_df = pd.DataFrame([asdict(o) for o in game_overview])
         save_file(data=games_overview_df, file_name="games_overview", format="parquet")
 

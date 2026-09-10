@@ -1,4 +1,4 @@
-name: Run Scraping Pipeline
+name: Scraper Pipeline
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
 
-  scrape:
+  scrape-run:
     runs-on: ubuntu-latest
     timeout-minutes: 360
 
