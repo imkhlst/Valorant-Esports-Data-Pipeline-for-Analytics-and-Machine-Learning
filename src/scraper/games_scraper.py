@@ -59,7 +59,7 @@ class GamesScraper:
             logging.error(f"Error occurs whe running scrape_player_stat: {e}")
             save_pipeline(
                 status="failed",
-                module="games - player stat"
+                module="games"
             )
             raise
             
@@ -153,7 +153,7 @@ class GamesScraper:
             logging.info(f"Error occurs when running scrape_game_overview: {e}")
             save_pipeline(
                 status="failed",
-                module="games - game overview"
+                module="games"
             )
             raise
     
@@ -233,7 +233,7 @@ class GamesScraper:
     def scrape_game_info(self, tab_list: list, start_time: datetime):
         processed = set()
         queue = list(tab_list) if not isinstance(tab_list, list) else tab_list
-        print(f"Queue: {queue[0]}, ... {len(queue)} more." if len(queue) > 1 else f"Queue: {queue}")
+        print(f"Queue: {queue[0]}, ... {len(queue) -1 } more." if len(queue) > 1 else f"Queue: {queue}")
         try:
             game_overview = []
             game_economy = []
@@ -286,7 +286,7 @@ class GamesScraper:
 
                 save_pipeline(
                     status="completed",
-                    module="games",
+                    module=None,
                     completed=True
                 )
 

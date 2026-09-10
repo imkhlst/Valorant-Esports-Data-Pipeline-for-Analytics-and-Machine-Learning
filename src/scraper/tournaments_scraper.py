@@ -58,7 +58,7 @@ class TournamentScraper:
     def scrape_tournament_info(self, tour_list: list, start_time: datetime) -> list:
         processed = set()
         queue = list(tour_list) if isinstance(tour_list, (set, list)) else [tour_list]
-        print(f"Queue: {queue[0]}, ... {len(queue)} more." if len(queue) > 1 else f"Queue: {queue}")
+        print(f"Queue: {queue[0]}, ... {len(queue) - 1} more." if len(queue) > 1 else f"Queue: {queue}")
         try:
             tour_info = []
             matches_page = set()
@@ -183,8 +183,8 @@ class TournamentScraper:
                 checkpoint.mark_completed(tour_id)
                 
                 save_pipeline(
-                    status="in_progress",
-                    module="tournaments",
+                    status="completed",
+                    module="matches",
                     completed=True
                 )
             
