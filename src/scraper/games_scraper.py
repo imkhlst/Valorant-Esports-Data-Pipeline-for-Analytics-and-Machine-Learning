@@ -1,6 +1,8 @@
 from utils.scraper_utils import *
 from entities.game_entities import *
+from entities.checkpoint_entities import *
 from entities.player_stats_entities import *
+from src.checkpoint.checkpoint import *
 from logger import logging
 
 class GamesScraper:
@@ -55,6 +57,10 @@ class GamesScraper:
         
         except Exception as e:
             logging.error(f"Error occurs whe running scrape_player_stat: {e}")
+            save_pipeline(
+                status="failed",
+                module="games - player stat"
+            )
             raise
             
     def scrape_game_overview(self, match_id: str, overview_url: str) -> list:
@@ -141,10 +147,14 @@ class GamesScraper:
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scrape_game_overview completed in {duration}s")
-            return game_overview, player_info
+            return game_overview, player_info, game_id
         
         except Exception as e:
             logging.info(f"Error occurs when running scrape_game_overview: {e}")
+            save_pipeline(
+                status="failed",
+                module="games - game overview"
+            )
             raise
     
     def scrape_game_economy(self, match_id: str, econ_url: str) -> list:
@@ -214,10 +224,13 @@ class GamesScraper:
         
         except Exception as e:
             logging.info(f"Error occurs when running scrape_game_economy: {e}")
+            save_pipeline(
+                status="failed",
+                module="games - game economy"
+            )
             raise
 
-    def scrape_game_info(self, tab_list: list):
-        start_time = datetime.now()
+    def scrape_game_info(self, tab_list: list, start_time: datetime):
         processed = set()
         queue = list(tab_list) if not isinstance(tab_list, list) else tab_list
         print(f"Queue: {queue[0]}, ... {len(queue)} more." if len(queue) > 1 else f"Queue: {queue}")
@@ -228,13 +241,32 @@ class GamesScraper:
             progress = 0
             print(f"{progress}% of Completion")
             for i, item in enumerate(queue):
+                logging.info(f"Check Runtime ...")
+                end_time = datetime.now()
+
+                if end_time - start_time >= MAX_RUNTIME:
+                    save_pipeline(
+                        status="in_progress",
+                        module="games"
+                    )
+                    logging.info(f"Timeout - scraper has been stopped.")
+                    break
+
                 match_id, tabs = item[0], item[1]
                 econ_tab, overview_tab = tabs[0], tabs[1]
+
+                checkpoint = Checkpoint(Path("data/checkpoint/games.json"))
+                checkpoint.load()
+
                 if overview_tab in processed:
                     logging.info(f"{overview_tab} already processed.")
                     continue
+                
+                overview, player_info, game_id = self.scrape_game_overview(match_id=match_id, overview_url=overview_tab)
 
-                overview, player_info = self.scrape_game_overview(match_id=match_id, overview_url=overview_tab)
+                if checkpoint.is_completed(game_id):
+                    continue
+
                 player_stats.extend(player_info)
 
                 if econ_tab in processed:
@@ -250,6 +282,14 @@ class GamesScraper:
                 processed.add(overview_tab)
                 processed.add(econ_tab)
 
+                end_time = datetime.now()
+
+                save_pipeline(
+                    status="completed",
+                    module="games",
+                    completed=True
+                )
+
             logging.info(f"Game info and player stats has been added.")
             end_time = datetime.now()
             duration = end_time - start_time
@@ -258,6 +298,10 @@ class GamesScraper:
         
         except Exception as e:
             logging.info(f"Error occurs when running scrape_game_info: {e}")
+            save_pipeline(
+                status="failed",
+                module="games"
+            )
             raise
 
     def run(self, tab_list):

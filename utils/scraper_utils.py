@@ -92,22 +92,51 @@ def load_json(file_path: str):
     return data
 
 def save_file(data: list|pd.DataFrame, file_name: str, format: str):
+    new_data = data
+
     if format == "json":
         if not isinstance(data, list):
-                data = list(data)
+            new_data = list(data)
         dir_path = Path("data") / "link"
         os.makedirs(dir_path, exist_ok=True)
         file_path = dir_path / f"{file_name}.{format}"
+
+        if file_path.exists():
+            with open(file_path, "r", encoding="utf-8") as file:
+                old_data = json.load(file)
+
+        old_data.add(new_data)
+
         with open(file_path, "w", encoding="utf-8") as file:
-            json.dump(data, file, indent=4)
+            json.dump(old_data, file, indent=2)
         
         logging.info(f"Data has been save in {file_path}")
 
     else:
         if not isinstance(data, pd.DataFrame):
-            data = pd.DataFrame(data)
+            new_data = pd.DataFrame(data)
         dir_path = Path("data") / "raw"
         os.makedirs(dir_path, exist_ok=True)
         file_path = dir_path / f"{file_name}.{format}"
-        data.to_parquet(path=file_path, index=False)
+
+        if file_path.exists():
+            old_df = pd.read_parquet(file_path)
+            new_df = new_data
+
+            new_data = pd.concat(
+                [old_df, new_df],
+                ignore_index=True
+            )
+
+        new_data.to_parquet(path=file_path, index=False)
         logging.info(f"Data has been save in {file_path}")
+
+def save_pipeline( status: str, module: str, completed: bool = False, file_path: str = "data/checkpoint/pipeline_state.json"):
+    state = {
+        "status": status,
+        "module": module,
+        "completed": completed
+    }
+
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(state, file, indent=2)

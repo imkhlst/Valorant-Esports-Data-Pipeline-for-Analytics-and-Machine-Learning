@@ -2,6 +2,8 @@ from datetime import datetime
 from constants.scraper_constants import *
 from utils.scraper_utils import *
 from entities.tour_entities import *
+from entities.checkpoint_entities import *
+from src.checkpoint.checkpoint import *
 from logger import logging
 
 class TournamentScraper:
@@ -53,24 +55,39 @@ class TournamentScraper:
             logging.error(f"Error Occurs when running scrape_tournament_list: {e}")
             raise
 
-    def scrape_tournament_info(self, tour_list: list) -> list:
-        start_time = datetime.now()
+    def scrape_tournament_info(self, tour_list: list, start_time: datetime) -> list:
         processed = set()
         queue = list(tour_list) if isinstance(tour_list, (set, list)) else [tour_list]
         print(f"Queue: {queue[0]}, ... {len(queue)} more." if len(queue) > 1 else f"Queue: {queue}")
         try:
             tour_info = []
             matches_page = set()
-            stats_page = set()
-            agents_page = set()
             progress = 0
             print(f"{progress}% of Completion")
             for i, item in enumerate(queue):
+                logging.info(f"Check Runtime ...")
+                end_time = datetime.now()
+
+                if end_time - start_time >= MAX_RUNTIME:
+                    save_pipeline(
+                        status="in_progress",
+                        module="tournaments"
+                    )
+                    logging.info(f"Timeout - scraper has been stopped.")
+                    break
+
                 logging.info("Check status ...")
                 status, current_toud_id, url = item[0].lower(), item[1], item[2]
+
+                checkpoint = Checkpoint(Path("data/checkpoint/tours.json"))
+                checkpoint.load()
                 
                 if url in processed:
                     logging.info(f"{url} has been processed.")
+                    continue
+
+                if checkpoint.is_completed(current_toud_id):
+                    logging.info(f"{current_toud_id} already exists.")
                     continue
 
                 if current_toud_id in self.exist_tour_data["tour_id"]:
@@ -156,25 +173,33 @@ class TournamentScraper:
                     if "matches" in el:
                         content_url = content_url.replace(content_url[-4:], "all")
                         matches_page.add((tour_id, content_url))
-                    elif "stats" in el:
-                        stats_page.add((tour_id, content_url))
-                    elif "agents" in el:
-                        agents_page.add((tour_id, content_url))
                     else:
                         continue
 
                 new_progress = get_progress(current_unit=i, total_unit=len(queue), current_progress=progress)
                 progress += new_progress
                 processed.add(url)
+
+                checkpoint.mark_completed(tour_id)
+                
+                save_pipeline(
+                    status="in_progress",
+                    module="tournaments",
+                    completed=True
+                )
             
             save_file(data=matches_page, file_name="tours", format="json")
             end_time = datetime.now()
             duration = end_time - start_time
             logging.info(f"scraping_tournament_info completed in {duration}s.")
-            return tour_info, matches_page, stats_page, agents_page
+            return tour_info
         
         except Exception as e:
             logging.error(f"Error Occurs when running scrape_tournament_info: {e}")
+            save_pipeline(
+                status="failed",
+                module="tournaments"
+            )
             raise
     
     def run(self):
@@ -183,7 +208,7 @@ class TournamentScraper:
         logging.info("Initialize scrape_tournament_list ...")
         tour_list = self.scrape_tournament_list()
         logging.info("Initialize scrape_tournament_info ...")
-        tour_info, matches_page, stats_page, agents_page = self.scrape_tournament_info(tour_list=tour_list)
+        tour_info = self.scrape_tournament_info(tour_list=tour_list)
         tour_df = pd.DataFrame([asdict(t) for t in tour_info])
         save_file(data=tour_df, file_name="tours", format="parquet")
 
@@ -193,5 +218,3 @@ class TournamentScraper:
         print("="*50)
         print(f"Tournament scraper pipeline completed in {duration}s")
         print("="*50)
-
-        return matches_page, stats_page, agents_page

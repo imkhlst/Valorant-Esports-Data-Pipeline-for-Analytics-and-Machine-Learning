@@ -31,6 +31,8 @@ FILE_NAME = [
     "players1"
 ]
 
+MAX_RUNTIME = 4 * 60 * 60 + 45 *60
+
 try:
     EXIST_TOUR_DATA = pd.read_parquet(Path("data/raw/final/tours.parquet"))
 
