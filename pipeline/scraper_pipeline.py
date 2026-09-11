@@ -8,7 +8,7 @@ def main():
         checkpoint = (
             load_json(Path("data/checkpoint/pipeline_state.json"))
             if Path("data/checkpoint/pipeline_state.json").exists()
-            else {"pipeline_status": "in_progress", "module_name": "tournaments", "module_status": False}
+            else {"pipeline_status": "in_progress", "module_name": ["tournaments", "matches", "games"], "module_status": False}
         )
 
         if not checkpoint["module_status"] and "tournaments" in checkpoint["module_name"]:

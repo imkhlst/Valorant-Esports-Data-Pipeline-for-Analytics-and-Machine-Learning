@@ -76,7 +76,7 @@ jobs:
           import json
           with open('data/checkpoint/pipeline_state.json') as file:
             state = json.load(file)
-          print(state['status'])
+          print(state['pipeline_status'])
           ")
 
           echo "status=$STATUS" >> "$GITHUB_OUTPUT"

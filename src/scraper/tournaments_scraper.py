@@ -71,7 +71,7 @@ class TournamentScraper:
                 if end_time - start_time >= MAX_RUNTIME:
                     save_pipeline(
                         status="in_progress",
-                        module="tournaments"
+                        module=["tournaments", "matches", "games"]
                     )
                     logging.info(f"Timeout - scraper has been stopped.")
                     break
@@ -103,9 +103,19 @@ class TournamentScraper:
                     if status == existing_status:
                         logging.info(f"Tournament {current_toud_id} already exists and status is unchanged ({status}).")
                         if status == "completed":
-                            logging.info(f"Skip scraping.")
+                            logging.info(
+                                f"""
+                                Tournament {current_toud_id} already exists and status is unchanged ({status}).
+                                Skip scraping.
+                                """
+                            )
                             continue
-                        logging.info(f"Start re-scraping ...")
+                        logging.info(
+                            f"""
+                            Tournament {current_toud_id} already exists and status is unchanged ({status}).
+                            Start re-scraping.
+                            """
+                        )
 
                     elif status == "upcoming":
                         logging.info(f"Tournament {current_toud_id} already exists but is {status}. Skip scraping.")
@@ -113,9 +123,11 @@ class TournamentScraper:
 
                     elif status != existing_status:
                         logging.info(
-                            f"Tournament {current_toud_id} already exists but is status changed."
-                            f"from {existing_status} to {status}."
-                            f"Start re-scraping ..."
+                            f"""
+                            Tournament {current_toud_id} already exists but is status changed.
+                            from {existing_status} to {status}.
+                            Start re-scraping ...
+                            """
                         )
 
                     else:
@@ -123,13 +135,20 @@ class TournamentScraper:
 
                 else:
                     if status == "upcoming":
-                        logging.info(f"New tournament {current_toud_id} but tournament is {status}. Skip scraping.")
+                        logging.info(
+                            f"""
+                            New tournament {current_toud_id} but tournament is {status}.
+                            Skip scraping.
+                            """
+                        )
                         continue
 
                     elif status in ["ongoing", "completed"]:
                         logging.info(
-                            f"New Tournament {current_toud_id} and tournament is {status}."
-                            f"Start scraping ..."
+                            f"""
+                            New Tournament {current_toud_id} and tournament is {status}.
+                            Start scraping ...
+                            """
                         )
 
                     else:
@@ -140,6 +159,7 @@ class TournamentScraper:
                 soup = get_soup(url=url)
                 tour_id = url.split("/")[4]
                 tag = get_value(soup=soup, selector=".event-header-main-bc a[href]", attr="text")
+
                 if not any(i in self.stage_keyword for i in tag.lower().split(" ")):
                     processed.add(url)
                     continue
@@ -161,18 +181,24 @@ class TournamentScraper:
                     scraped_at= datetime.now()
                 )
                 tour_info.append(tour)
+            
+                logging.info(f"Tournament info has been added.")
                 
-                if status.lower() in ["upcoming", "ongoing"]:
+                if status.lower() == "upcoming":
                     logging.info(f"{status} tournaments confirmed. Tournament must be completed to scrape matches list.")
                     processed.add(url)
                     continue
 
                 elements = get_value(soup=soup, selector=".wf-nav a", attr="href", multiple=True)
+
                 for el in elements:
                     content_url = absolute(url=el)
+
                     if "matches" in el:
                         content_url = content_url.replace(content_url[-4:], "all")
                         matches_page.add((tour_id, content_url))
+                        logging.info(f"Match page has been added.")
+
                     else:
                         continue
 
@@ -184,7 +210,7 @@ class TournamentScraper:
                 
                 save_pipeline(
                     status="in_progress",
-                    module="matches"
+                    module=["matches", "games"]
                 )
             
             save_file(data=matches_page, file_name="tours", format="json")
@@ -197,7 +223,7 @@ class TournamentScraper:
             logging.error(f"Error Occurs when running scrape_tournament_info: {e}")
             save_pipeline(
                 status="failed",
-                module="tournaments"
+                module=["tournaments", "matches", "games"]
             )
             raise
     

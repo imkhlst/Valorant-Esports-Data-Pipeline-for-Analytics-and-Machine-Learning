@@ -56,7 +56,7 @@ class MatchesScraper:
             logging.error(f"Error occurs whe running scrape_map_veto: {e}")
             save_pipeline(
                 status="failed",
-                module="matches"
+                module=["matches", "games"]
             )
             raise
 
@@ -84,7 +84,7 @@ class MatchesScraper:
                     teams = get_value(soup=match, selector=".flag", attr="text", multiple=True)
 
                     if match_status.lower() != "completed":
-                        logging.info(f"Match {teams[0]} Vs {teams[1]} is not conducted yet. Skip Scraping.")
+                        logging.info(f"Match {teams[0]} Vs {teams[1]} is not finished yet. Skip Scraping.")
                         continue
 
                     href = match.get("href")
@@ -121,7 +121,7 @@ class MatchesScraper:
                 if end_time - start_time >= MAX_RUNTIME:
                     save_pipeline(
                         status="in_progress",
-                        module="matches"
+                        module=["matches", "games"]
                     )
                     logging.info(f"Timeout - scraper has been stopped.")
                     break
@@ -270,7 +270,7 @@ class MatchesScraper:
 
                 save_pipeline(
                     status="in_progress",
-                    module="games"
+                    module=["games"]
                 )
 
             save_file(data=tab_list, file_name="matches", format="json")
@@ -283,7 +283,7 @@ class MatchesScraper:
             logging.error(f"Error occurs when running scrape_matches_info: {e}")
             save_pipeline(
                 status="failed",
-                module="matches"
+                module=["matches", "games"]
             )
             raise
     

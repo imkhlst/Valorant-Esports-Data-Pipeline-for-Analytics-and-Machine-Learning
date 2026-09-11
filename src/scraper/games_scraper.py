@@ -59,7 +59,7 @@ class GamesScraper:
             logging.error(f"Error occurs whe running scrape_player_stat: {e}")
             save_pipeline(
                 status="failed",
-                module="games"
+                module=["games"]
             )
             raise
             
@@ -153,7 +153,7 @@ class GamesScraper:
             logging.info(f"Error occurs when running scrape_game_overview: {e}")
             save_pipeline(
                 status="failed",
-                module="games"
+                module=["games"]
             )
             raise
     
@@ -226,7 +226,7 @@ class GamesScraper:
             logging.info(f"Error occurs when running scrape_game_economy: {e}")
             save_pipeline(
                 status="failed",
-                module="games - game economy"
+                module=["games"]
             )
             raise
 
@@ -247,7 +247,7 @@ class GamesScraper:
                 if end_time - start_time >= MAX_RUNTIME:
                     save_pipeline(
                         status="in_progress",
-                        module="games"
+                        module=["games"]
                     )
                     logging.info(f"Timeout - scraper has been stopped.")
                     break
@@ -300,7 +300,7 @@ class GamesScraper:
             logging.info(f"Error occurs when running scrape_game_info: {e}")
             save_pipeline(
                 status="failed",
-                module="games"
+                module=["games"]
             )
             raise
 
