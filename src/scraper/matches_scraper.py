@@ -270,8 +270,7 @@ class MatchesScraper:
 
                 save_pipeline(
                     status="in_progress",
-                    module="games",
-                    completed=True
+                    module="games"
                 )
 
             save_file(data=tab_list, file_name="matches", format="json")

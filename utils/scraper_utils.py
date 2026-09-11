@@ -137,12 +137,12 @@ def save_file(data: list|pd.DataFrame, file_name: str, format: str):
         new_data.to_parquet(path=file_path, index=False)
         logging.info(f"Data has been save in {file_path}")
 
-def save_pipeline( status: str, module: str, completed: bool = False, file_path: Path = "data/checkpoint/pipeline_state.json"):
+def save_pipeline(status: str, module: str, completed: bool = False, file_path: Path = "data/checkpoint/pipeline_state.json"):
     os.makedirs("data/checkpoint/", exist_ok=True)
     state = {
-        "status": status,
-        "module": module,
-        "completed": completed
+        "pipeline_status": status,
+        "module_name": module,
+        "module_status": completed
     }
 
     save_json(state, file_path=file_path)

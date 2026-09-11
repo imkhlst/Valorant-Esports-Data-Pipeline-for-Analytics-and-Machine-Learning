@@ -183,9 +183,8 @@ class TournamentScraper:
                 checkpoint.mark_completed(tour_id)
                 
                 save_pipeline(
-                    status="completed",
-                    module="matches",
-                    completed=True
+                    status="in_progress",
+                    module="matches"
                 )
             
             save_file(data=matches_page, file_name="tours", format="json")
