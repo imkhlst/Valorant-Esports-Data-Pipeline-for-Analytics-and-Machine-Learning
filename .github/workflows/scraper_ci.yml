@@ -1,0 +1,85 @@
+name: Scraper - CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+
+  scrape-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download precious scrape state
+        if: ${{ inputs.previous_run_id != '' }}
+        uses: actions/download-artifact@v5
+        with:
+          name: scraper_state
+          run-id: ${{ inputs.previous_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: data/
+          
+      - name: Build docker image
+        run: docker build -t valorant-project .
+
+      - name: Validate scraper container
+        run: |
+          docker run --rm \
+          valorant-project \
+          python -c "import pipeline.scraper_pipeline; print('Scraper container OK')"
+
+      - name: Run scraper pipeline
+        run: |
+          docker run --rm \
+          -v "${{ github.workspace }}/data:/valorant-project/data" \
+          valorant-project \
+          python -m pipeline.scraper_pipeline --ci
+
+      - name: Validate scraper_state
+        if: always()
+        run: |
+          echo "=== Raw Data ==="
+          find data/raw -type f || true
+
+          echo "=== Checkpoint ==="
+          find data/checkpoint -type f || true
+
+      - name: Upload scraper state
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper_state
+          path: data/
+          if-no-files-found: error
+
+      - name: Read pipeline state
+        id: pipeline_state
+        if: success()
+        shell: bash
+        run: |
+          STATUS=$(python -c "
+          import json
+          with open('data/checkpoint/pipeline_state.json') as file:
+            state = json.load(file)
+          print(state['pipeline_status'])
+          ")
+
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+      
+      - name: Trigger next scraping run
+        if: steps.pipeline_state.outputs.status == 'in_progress'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run scraper_pipeline.yml \
+          --ref main \
+          -f previous_run_id=${{ github.run_id }}
