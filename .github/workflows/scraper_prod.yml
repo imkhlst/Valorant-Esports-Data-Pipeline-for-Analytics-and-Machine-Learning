@@ -1,4 +1,4 @@
-name: Scraper Pipeline
+name: Scraper - Production
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         default: ""
         
   # schedule:
-  #   cron: 0 6 1 * *
+  #   cron: 0 23 1 * *
 
 permissions:
   contents: read
@@ -48,7 +48,7 @@ jobs:
           docker run --rm \
           -v "${{ github.workspace }}/data:/valorant-project/data" \
           valorant-project \
-          python -m pipeline.scraper_pipeline
+          python -m pipeline.scraper_pipeline --prod
 
       - name: Validate scraper_state
         if: always()

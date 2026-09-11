@@ -75,16 +75,6 @@ def get_value(
         logging.error(f"get_value error: {e}")
         return None
 
-def get_progress(current_unit: int, total_unit: int, current_progress: int):
-    new_progress = int((current_unit + 1) / total_unit * 100)
-    if current_progress < new_progress:
-        if new_progress // 10 == 0:
-            print(f"{new_progress}% of Completion")
-        return new_progress
-        
-    else:
-        return 0
-
 def save_json(data, file_path: Path):
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=2)

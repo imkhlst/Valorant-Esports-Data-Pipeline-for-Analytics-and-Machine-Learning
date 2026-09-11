@@ -10,7 +10,6 @@ class GamesScraper:
         pass
 
     def scrape_player_stat(self, game_id: str,  soup: str):
-        start_time = datetime.now()
         logging.info("Initialize scrape_player_stat ...")
         try:
             stats_info = []
@@ -50,9 +49,6 @@ class GamesScraper:
                     logging.info(f"Found player info: {names[0]}, {flags[0]}, {team_aliases[0]}, {agents[0]}, {mod}")
                 
             logging.info(f"Stats info has been added.")
-            end_time = datetime.now()
-            duration = end_time - start_time
-            logging.info(f"scrape_player_stat completed in {duration}s")
             return stats_info
         
         except Exception as e:
@@ -64,7 +60,6 @@ class GamesScraper:
             raise
             
     def scrape_game_overview(self, match_id: str, overview_url: str) -> list:
-        start_time = datetime.now()
         logging.info(f"Initialize scraper_game_overview ...")
         try:
             game_overview = []
@@ -144,9 +139,6 @@ class GamesScraper:
                 player_info.extend(stats_info)
 
             logging.info(f"Game overview and player info has been added.")
-            end_time = datetime.now()
-            duration = end_time - start_time
-            logging.info(f"scrape_game_overview completed in {duration}s")
             return game_overview, player_info, game_id
         
         except Exception as e:
@@ -158,7 +150,6 @@ class GamesScraper:
             raise
     
     def scrape_game_economy(self, match_id: str, econ_url: str) -> list:
-        start_time = datetime.now()
         logging.info(f"Initialize scraper_game_economy ...")
         try:
             game_econ = []
@@ -194,6 +185,7 @@ class GamesScraper:
                 econ = GameEconomy(
                     match_id=match_id,
                     game_id=game_id,
+                    scraped_at= datetime.now(),
                     home_pstl_win=int(home_stats[0]),
                     away_pstl_win=int(away_stats[0]),
                     home_eco_round=int(home_stats[1]),
@@ -212,14 +204,10 @@ class GamesScraper:
                     away_full_buy_round=int(away_stats[7]),
                     home_full_buy_win=int(home_stats[8]),
                     away_full_buy_win=int(away_stats[8]),
-                    scraped_at= datetime.now()
                 )
                 game_econ.append(econ)
             
             logging.info(f"Home econ and away econ has been added.")
-            end_time = datetime.now()
-            duration = end_time - start_time
-            logging.info(f"scrape_game_economy completed in {duration}s")
             return game_econ
         
         except Exception as e:
@@ -230,7 +218,7 @@ class GamesScraper:
             )
             raise
 
-    def scrape_game_info(self, tab_list: list, start_time: datetime):
+    def scrape_game_info(self, tab_list: list, pipeline_start_time: datetime, mode: str):
         processed = set()
         queue = list(tab_list) if not isinstance(tab_list, list) else tab_list
         print(f"Queue: {queue[0]}, ... {len(queue) -1 } more." if len(queue) > 1 else f"Queue: {queue}")
@@ -238,13 +226,17 @@ class GamesScraper:
             game_overview = []
             game_economy = []
             player_stats = []
-            progress = 0
-            print(f"{progress}% of Completion")
-            for i, item in enumerate(queue):
-                logging.info(f"Check Runtime ...")
-                end_time = datetime.now()
 
-                if end_time - start_time >= MAX_RUNTIME:
+            for item in queue:
+            
+                if mode != "prod":
+                    if len(game_overview) > 0:
+                        break
+
+                logging.info(f"Check Runtime ...")
+                end_time_check = datetime.now()
+
+                if end_time_check - pipeline_start_time >= MAX_RUNTIME:
                     save_pipeline(
                         status="in_progress",
                         module=["games"]
@@ -277,12 +269,8 @@ class GamesScraper:
                 game_overview.extend(overview)
                 game_economy.extend(game_econ)
                 
-                new_progress = get_progress(current_unit=i, total_unit=len(queue), current_progress=progress)
-                progress += new_progress
                 processed.add(overview_tab)
                 processed.add(econ_tab)
-
-                end_time = datetime.now()
 
                 save_pipeline(
                     status="completed",
@@ -291,9 +279,6 @@ class GamesScraper:
                 )
 
             logging.info(f"Game info and player stats has been added.")
-            end_time = datetime.now()
-            duration = end_time - start_time
-            logging.info(f"scraper_game_info completed in {duration}s")
             return game_overview, game_economy, player_stats
         
         except Exception as e:
@@ -304,14 +289,14 @@ class GamesScraper:
             )
             raise
 
-    def run(self, tab_list):
-        start_time = datetime.now()
+    def run(self, tab_list, mode: str, pipeline_start_time: datetime):
+        module_start_time = datetime.now()
 
         logging.info(f"Initialize scraper_game_info ...")
-        if isinstance(tab_list, str):
+        if not isinstance(tab_list, (set, list)):
             tab_list = load_json(tab_list)
         
-        game_overview, game_economy, player_stats = self.scrape_game_info(tab_list=tab_list, start_time=start_time)
+        game_overview, game_economy, player_stats = self.scrape_game_info(tab_list=tab_list, pipeline_start_time=pipeline_start_time, mode=mode)
         games_overview_df = pd.DataFrame([asdict(o) for o in game_overview])
         save_file(data=games_overview_df, file_name="games_overview", format="parquet")
 
@@ -321,8 +306,8 @@ class GamesScraper:
         players_df = pd.DataFrame([asdict(p) for p in player_stats])
         save_file(data=players_df, file_name="players", format="parquet")
 
-        end_time = datetime.now()
-        duration = end_time - start_time
+        module_end_time = datetime.now()
+        duration = module_end_time - module_start_time
         logging.info(f"Games scraper pipeline completed in {duration}s")
         print("="*50)
         print(f"Games scraper pipeline completed in {duration}s")

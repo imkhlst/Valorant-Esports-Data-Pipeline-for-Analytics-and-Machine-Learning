@@ -55,23 +55,27 @@ class TournamentScraper:
             logging.error(f"Error Occurs when running scrape_tournament_list: {e}")
             raise
 
-    def scrape_tournament_info(self, tour_list: list, start_time: datetime) -> list:
+    def scrape_tournament_info(self, tour_list: list, pipeline_start_time: datetime, mode: str) -> list:
         processed = set()
         queue = list(tour_list) if isinstance(tour_list, (set, list)) else [tour_list]
         print(f"Queue: {queue[0]}, ... {len(queue) - 1} more." if len(queue) > 1 else f"Queue: {queue}")
         try:
             tour_info = []
             matches_page = set()
-            progress = 0
-            print(f"{progress}% of Completion")
-            for i, item in enumerate(queue):
-                logging.info(f"Check Runtime ...")
-                end_time = datetime.now()
 
-                if end_time - start_time >= MAX_RUNTIME:
+            for item in queue:
+
+                if mode != "prod":
+                    if len(tour_info) > 0:
+                        break
+
+                logging.info(f"Check Runtime ...")
+                end_time_check = datetime.now()
+                
+                if end_time_check - pipeline_start_time >= MAX_RUNTIME:
                     save_pipeline(
                         status="in_progress",
-                        module=["tournaments", "matches", "games"]
+                        module=["games"]
                     )
                     logging.info(f"Timeout - scraper has been stopped.")
                     break
@@ -202,8 +206,6 @@ class TournamentScraper:
                     else:
                         continue
 
-                new_progress = get_progress(current_unit=i, total_unit=len(queue), current_progress=progress)
-                progress += new_progress
                 processed.add(url)
 
                 checkpoint.mark_completed(tour_id)
@@ -214,9 +216,6 @@ class TournamentScraper:
                 )
             
             save_file(data=matches_page, file_name="tours", format="json")
-            end_time = datetime.now()
-            duration = end_time - start_time
-            logging.info(f"scraping_tournament_info completed in {duration}s.")
             return tour_info
         
         except Exception as e:
@@ -227,18 +226,18 @@ class TournamentScraper:
             )
             raise
     
-    def run(self):
-        start_time = datetime.now()
+    def run(self, mode: str, pipeline_start_time: datetime):
+        module_start_time = datetime.now()
         
         logging.info("Initialize scrape_tournament_list ...")
         tour_list = self.scrape_tournament_list()
         logging.info("Initialize scrape_tournament_info ...")
-        tour_info = self.scrape_tournament_info(tour_list=tour_list, start_time=start_time)
+        tour_info = self.scrape_tournament_info(tour_list=tour_list, pipeline_start_time=pipeline_start_time, mode=mode)
         tour_df = pd.DataFrame([asdict(t) for t in tour_info])
         save_file(data=tour_df, file_name="tours", format="parquet")
 
-        end_time = datetime.now()
-        duration = end_time - start_time
+        module_end_time = datetime.now()
+        duration = module_end_time - module_start_time
         logging.info(f"Tournament scraper pipeline completed in {duration}s")
         print("="*50)
         print(f"Tournament scraper pipeline completed in {duration}s")

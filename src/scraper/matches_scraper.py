@@ -11,8 +11,7 @@ class MatchesScraper:
     def __init__(self):
         pass
 
-    def scrape_map_veto(self, soup, match_id: str,):
-        start_time = datetime.now()
+    def scrape_map_veto(self, soup, match_id: str):
         logging.info("Initialize scrape_map_veto ...")
 
         try:
@@ -47,9 +46,6 @@ class MatchesScraper:
                     logging.info(f"Found decider map: {map_split[0]}")
                     vetos.add(veto)
 
-            end_time = datetime.now()
-            duration = end_time - start_time
-            logging.info(f"scrape_map_veto completed in {duration}s")
             return vetos
 
         except Exception as e:
@@ -61,7 +57,6 @@ class MatchesScraper:
             raise
 
     def scrape_matches_list(self, match_page: list) -> list:
-        start_time = datetime.now()
         processed = set()
         queue = list(match_page) if not isinstance(match_page, list) else match_page
         print(f"Queue: {queue[0]}, ... {len(queue)} more.")
@@ -93,16 +88,13 @@ class MatchesScraper:
                 
                 processed.add(url)
             
-            end_time = datetime.now()
-            duration = end_time - start_time
-            logging.info(f"scrape_matches_list completed in {duration}s")
             return matches_list
 
         except Exception as e:
             logging.error(f"Error occurs when running scrape_matches_list: {e}")
             raise 
     
-    def scrape_matches_info(self, match_list: list, start_time: datetime):
+    def scrape_matches_info(self, match_list: list, pipeline_start_time: datetime, mode: str):
         processed = set()
         queue = list(match_list) if not isinstance(match_list, list) else match_list
         print(f"Queue: {queue[0]}, ... {len(queue) - 1} more." if len(queue) > 1 else f"Queue: {queue}")
@@ -111,17 +103,20 @@ class MatchesScraper:
             matches_info = []
             map_veto = []
             tab_list = []
-            progress = 0
-            print(f"{progress}% of Completion")
 
-            for i, item in enumerate(queue):
+            for item in queue:
+
+                if mode != "prod":
+                    if len(matches_info) > 0:
+                        break
+
                 logging.info(f"Check Runtime ...")
-                end_time = datetime.now()
-
-                if end_time - start_time >= MAX_RUNTIME:
+                end_time_check = datetime.now()
+                
+                if end_time_check - pipeline_start_time >= MAX_RUNTIME:
                     save_pipeline(
                         status="in_progress",
-                        module=["matches", "games"]
+                        module=["games"]
                     )
                     logging.info(f"Timeout - scraper has been stopped.")
                     break
@@ -261,9 +256,6 @@ class MatchesScraper:
                 map_veto.extend(vetos)
                 logging.info(f"Match info and map veto has been added.")
 
-                new_progress = get_progress(current_unit=i, total_unit=len(queue), current_progress=progress)
-                progress += new_progress
-
                 processed.add(url)
 
                 checkpoint.mark_completed(match_id)
@@ -274,9 +266,6 @@ class MatchesScraper:
                 )
 
             save_file(data=tab_list, file_name="matches", format="json")
-            end_time = datetime.now()
-            duration = end_time - start_time
-            logging.info(f"scrape_matches_info completed in {duration}s")
             return matches_info, map_veto
         
         except Exception as e:
@@ -287,8 +276,8 @@ class MatchesScraper:
             )
             raise
     
-    def run(self, match_pages):
-        start_time = datetime.now()
+    def run(self, match_pages, mode: str, pipeline_start_time: datetime):
+        module_start_time = datetime.now()
 
         logging.info("Initialize scrape_matches_list ...")
 
@@ -298,7 +287,7 @@ class MatchesScraper:
         matches_list = self.scrape_matches_list(match_page=match_pages)
 
         logging.info("Initialize scrape_matches_info ...")
-        matches_info, map_veto = self.scrape_matches_info(match_list=matches_list, start_time=start_time)
+        matches_info, map_veto = self.scrape_matches_info(match_list=matches_list, pipeline_start_time=pipeline_start_time, mode=mode)
 
         matches_df = pd.DataFrame([asdict(m) for m in matches_info])
         save_file(data=matches_df, file_name="matches", format="parquet")
@@ -306,8 +295,8 @@ class MatchesScraper:
         map_veto_df = pd.DataFrame([asdict(m) for m in map_veto])
         save_file(data=map_veto_df, file_name="map_vetos", format="parquet")
 
-        end_time = datetime.now()
-        duration = end_time - start_time
+        module_end_time = datetime.now()
+        duration = module_end_time - module_start_time
         logging.info(f"Matches scraper pipeline completed in {duration}s")
         print("="*50)
         print(f"Matches scraper pipeline completed in {duration}s")
