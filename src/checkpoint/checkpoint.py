@@ -23,7 +23,7 @@ class CheckpointProtocol(Protocol):
 class Checkpoint:
     def __init__(self, checkpoint_path: Path):
         self.checkpoint_path = checkpoint_path
-        self.completed_ids: set[list[any]] = set()
+        self.completed_ids: set[str] = set()
 
     def load(self) -> set[str]:
 
@@ -56,8 +56,8 @@ class Checkpoint:
         with open(self.checkpoint_path, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=2)
 
-    def is_exist(self, item_ids: str) -> bool:
-        return any(item_ids in item[0] for item in self.completed_ids)
+    def is_exist(self, item_ids: str):
+        return item_ids in self.completed_ids
 
     def mark_completed(self, item_ids: list) -> None:
         self.completed_ids.add(item_ids)

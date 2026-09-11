@@ -76,7 +76,7 @@ def get_value(
         return None
 
 def get_progress(current_unit: int, total_unit: int, current_progress: int):
-    new_progress = int((current_unit + 1) / total_unit)
+    new_progress = int((current_unit + 1) / total_unit * 100)
     if current_progress < new_progress:
         if new_progress // 10 == 0:
             print(f"{new_progress}% of Completion")
@@ -95,7 +95,7 @@ def load_json(file_path: Path):
 
     return data
 
-def save_file(data: list|pd.DataFrame, file_name: str, format: str):
+def save_file(data: list | pd.DataFrame, file_name: str, format: str):
     new_data = data
 
     if format == "json":
