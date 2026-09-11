@@ -5,6 +5,12 @@ from entities.player_stats_entities import *
 from src.checkpoint.checkpoint import *
 from logger import logging
 
+import inspect
+
+print("GameEconomy class:", GameEconomy)
+print("GameEconomy file:", inspect.getfile(GameEconomy))
+print("GameEconomy signature:", inspect.signature(GameEconomy))
+
 class GamesScraper:
     def __init__(self):
         pass
@@ -164,7 +170,8 @@ class GamesScraper:
                 if not table:
                     econ = GameEconomy(
                         match_id=match_id,
-                        game_id=game_id
+                        game_id=game_id,
+                        scraped_at=datetime.now()
                     )
                     game_econ.append(econ)
                     continue
@@ -182,10 +189,12 @@ class GamesScraper:
                         cleaned_stat.append(stat)
 
                 home_stats, away_stats= cleaned_stat[:9], cleaned_stat[9:]
+
+                print("scraped_at:", datetime.now())
                 econ = GameEconomy(
                     match_id=match_id,
                     game_id=game_id,
-                    scraped_at= datetime.now(),
+                    scraped_at=datetime.now(),
                     home_pstl_win=int(home_stats[0]),
                     away_pstl_win=int(away_stats[0]),
                     home_eco_round=int(home_stats[1]),
@@ -203,7 +212,7 @@ class GamesScraper:
                     home_full_buy_round=int(home_stats[7]),
                     away_full_buy_round=int(away_stats[7]),
                     home_full_buy_win=int(home_stats[8]),
-                    away_full_buy_win=int(away_stats[8]),
+                    away_full_buy_win=int(away_stats[8])
                 )
                 game_econ.append(econ)
             
