@@ -1,9 +1,9 @@
-version: 2
+version: 3
 
 sources:
   - name: bronze
     database: valorant-project-2026
-    schema: bronze
+    schema: "{{ target.name }}_bronze"
 
     tables:
       - name: tours

@@ -3,11 +3,18 @@ from pathlib import Path
 BUCKET_NAME = "valorant-raw-data"
 
 DATASET_NAME = [
-    "staging",
-    "bronze",
-    "dbt_dev",
-    "dbt_ci",
-    "dbt_prod"
+    "dev_staging",
+    "dev_bronze",
+    "dev_silver",
+    "dev_gold",
+    "ci_staging",
+    "ci_bronze",
+    "ci_silver",
+    "ci_gold",
+    "prod_staging",
+    "prod_bronze",
+    "prod_silver",
+    "prod_gold",
 ]
 
 LOCATION = "asia-southeast2"
