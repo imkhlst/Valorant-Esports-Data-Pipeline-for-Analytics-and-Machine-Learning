@@ -1,0 +1,65 @@
+name: dbt - CI
+
+on:
+  workflow_dispatch:
+    workflows: ["Scraper - CI", "GCP - CI"]
+    type:
+    - completed
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+
+  dbt-run:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dbt
+        run: pip install dbt-bigquery==1.12.0
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Create dbt Profile
+        run: |
+          mkdir ~/.dbt
+          
+          cat > ~/.dbt/profiles.yml << 'EOF'
+          valorant:
+            target: ci
+            outputs:
+              ci:
+                dataset: ci_silver
+                location: asia-southeast2
+                method: oauth
+                priority: interactive
+                project: valorant-project-2026
+                threads: 4
+                type: bigquery
+          EOF
+
+      - name: Install dbt Packages
+        working-directory: ./valorant
+        run: dbt deps
+
+      - name: Check dbt Connection
+        working-directory: ./valorant
+        run: dbt debug --target ci
+
+      - name: Run dbt build
+        working-directory: ./valorant
+        run: dbt build --target ci

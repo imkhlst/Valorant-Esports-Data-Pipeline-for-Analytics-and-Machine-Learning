@@ -139,6 +139,7 @@ class MatchesScraper:
                 match_id = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="data-match-id")
 
                 if checkpoint.is_exist(match_id):
+                    logging.info(f"{match_id} already exists.")
                     continue
 
                 tab_elements = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="href", multiple=True)

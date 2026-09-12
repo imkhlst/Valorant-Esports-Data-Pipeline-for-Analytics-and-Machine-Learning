@@ -5,12 +5,6 @@ from entities.player_stats_entities import *
 from src.checkpoint.checkpoint import *
 from logger import logging
 
-import inspect
-
-print("GameEconomy class:", GameEconomy)
-print("GameEconomy file:", inspect.getfile(GameEconomy))
-print("GameEconomy signature:", inspect.signature(GameEconomy))
-
 class GamesScraper:
     def __init__(self):
         pass
@@ -189,8 +183,7 @@ class GamesScraper:
                         cleaned_stat.append(stat)
 
                 home_stats, away_stats= cleaned_stat[:9], cleaned_stat[9:]
-
-                print("scraped_at:", datetime.now())
+                
                 econ = GameEconomy(
                     match_id=match_id,
                     game_id=game_id,
