@@ -86,7 +86,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh workflow run scraper_pipeline.yml \
+          gh workflow run scraper_prod.yml \
           --ref main \
           -f previous_run_id=${{ github.run_id }}
 

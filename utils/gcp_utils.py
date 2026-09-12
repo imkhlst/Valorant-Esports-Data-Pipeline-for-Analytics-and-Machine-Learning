@@ -93,7 +93,7 @@ def load_table(
     file_name = file_name if isinstance(file_name, list) else [file_name]
 
     for name in file_name:
-        table_id = f"{project_id}.{dataset_name}.{name}"
+        table_id = f"{project_id}.{dataset_name}.staging_{name}"
         gcs_uri = f"gs://{gcs_data_dir_path}/{name}.parquet"
 
         logging.info(f"Starting load job for {gcs_uri} ...")
@@ -110,8 +110,9 @@ def load_table(
         print(f"Success! Loaded {destination_table.num_rows} rows into {table_id}")
 
 def merge_table(
+        dataset_name: str,
         file_name: str | list = FILE_NAME,
-        project_id: str = PROJECT_ID,
+        project_id: str = PROJECT_ID
 ):
     logging.info(f"Merging table from staging into bronze ...")
     client = bigquery.Client(project=project_id)
@@ -122,10 +123,12 @@ def merge_table(
         for name in file_name:
             logging.info(f"Start merging table {name} ...")
 
-            sql_path = Path("src/query") / f"{name}_incremental_load.sql"
+            sql = Path(f"src/query/{name}_incremental_load.sql").read_text()
 
-            with open(sql_path, "r", encoding="utf-8") as file:
-                sql = file.read()
+            sql = sql.format(
+                source_table=f"{project_id}.{dataset_name}.staging_{file_name}",
+                target_table=f"{project_id}.{dataset_name}.bronze_{file_name}"
+            )
 
             client.query(sql).result()
 
