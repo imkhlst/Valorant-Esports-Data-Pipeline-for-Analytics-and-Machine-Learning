@@ -1,10 +1,10 @@
-name: GCP Prod
+name: GCP - Production
 
 on:
   workflow_dispatch:
-    # workflows: ["Scraper Pipeline"]
-    # type:
-    # - completed
+    workflows: ["Scraper - Production"]
+    type:
+    - completed
 
 permissions:
   contents: 'read'
@@ -52,4 +52,4 @@ jobs:
           -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
           -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
           valorant-project \
-          python -m pipeline.gcp_pipeline
+          python -m pipeline.gcp_pipeline --prod

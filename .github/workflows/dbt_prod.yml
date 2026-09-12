@@ -1,10 +1,10 @@
-name: dbt Pipeline
+name: dbt - Production
 
 on:
   workflow_dispatch:
-    # workflows: ["Scraper Pipeline"]
-    # type:
-    # - completed
+    workflows: ["Scraper - Production", "GCP - Production"]
+    type:
+    - completed
 
 permissions:
   contents: read
@@ -14,7 +14,7 @@ jobs:
 
   dbt-run:
     runs-on: ubuntu-latest
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       - name: Checkout Repository
@@ -40,19 +40,10 @@ jobs:
           
           cat > ~/.dbt/profiles.yml << 'EOF'
           valorant:
-            target: ci
+            target: prod
             outputs:
-              ci:
-                dataset: dbt_ci
-                location: asia-southeast2
-                method: oauth
-                priority: interactive
-                project: valorant-project-2026
-                threads: 4
-                type: bigquery
-
               prod:
-                dataset: dbt_prod
+                dataset: prod_silver
                 location: asia-southeast2
                 method: oauth
                 priority: interactive
@@ -65,22 +56,10 @@ jobs:
         working-directory: ./valorant
         run: dbt deps
 
-      - name: Check dbt Connection - CI
-        if: github.event_name == 'pull_request'
-        working-directory: ./valorant
-        run: dbt debug --target ci
-
-      - name: Run dbt build - CI
-        if: github.event_name == 'pull_request'
-        working-directory: ./valorant
-        run: dbt build --target ci
-      
       - name: Check dbt Connection - Production
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: ./valorant
         run: dbt debug --target prod
 
       - name: Run dbt build - Production
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: ./valorant
         run: dbt build --target prod
