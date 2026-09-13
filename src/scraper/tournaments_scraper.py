@@ -75,7 +75,7 @@ class TournamentScraper:
                 if end_time_check - pipeline_start_time >= MAX_RUNTIME:
                     save_pipeline(
                         status="in_progress",
-                        module=["games"]
+                        module=["tournaments", "matches", "games"]
                     )
                     logging.info(f"Timeout - scraper has been stopped.")
                     break
