@@ -32,7 +32,7 @@ FILE_NAME = [
     "players"
 ]
 
-MAX_RUNTIME = timedelta(hours=4, minutes=45)
+MAX_RUNTIME = timedelta(hours=5, minutes=30)
 
 try:
     EXIST_TOUR_DATA = pd.read_parquet(Path("data/raw/tours.parquet"))
