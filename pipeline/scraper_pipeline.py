@@ -24,43 +24,35 @@ def main():
         else {"pipeline_status": "in_progress", "module_name": ["tournaments"], "module_status": False}
     )
 
-    if args.dev:
-        if not checkpoint["module_status"] and "tournaments" in checkpoint["module_name"]:
-            tournament_scraper = TournamentScraper()
+    if not checkpoint["module_status"] and "tournaments" in checkpoint["module_name"]:
+        tournament_scraper = TournamentScraper()
+        if args.dev:
             tournament_scraper.run(mode="dev", pipeline_start_time=start_time)
-        
-        if not checkpoint["module_status"] and "matches" in checkpoint["module_name"]:
-            match_scraper = MatchesScraper()
-            match_scraper.run(match_pages=Path("data/link/tours.json"), mode="dev", pipeline_start_time=start_time)
-
-        if not checkpoint["module_status"] and "games" in checkpoint["module_name"]:
-            game_scraper = GamesScraper()
-            game_scraper.run(tab_list=Path("data/link/matches.json"), mode="dev", pipeline_start_time=start_time)
-
-    elif args.ci:
-        if not checkpoint["module_status"] and "tournaments" in checkpoint["module_name"]:
-            tournament_scraper = TournamentScraper()
+        elif args.ci:
             tournament_scraper.run(mode="ci", pipeline_start_time=start_time)
-        
-        if not checkpoint["module_status"] and "matches" in checkpoint["module_name"]:
-            match_scraper = MatchesScraper()
-            match_scraper.run(match_pages=Path("data/link/tours.json"), mode="ci", pipeline_start_time=start_time)
-
-        if not checkpoint["module_status"] and "games" in checkpoint["module_name"]:
-            game_scraper = GamesScraper()
-            game_scraper.run(tab_list=Path("data/link/matches.json"), mode="ci", pipeline_start_time=start_time)
-
-    elif args.prod:
-        if not checkpoint["module_status"] and "tournaments" in checkpoint["module_name"]:
-            tournament_scraper = TournamentScraper()
+        elif args.prod:
             tournament_scraper.run(mode="prod", pipeline_start_time=start_time)
-        
-        if not checkpoint["module_status"] and "matches" in checkpoint["module_name"]:
-            match_scraper = MatchesScraper()
+
+    checkpoint = load_json(Path("data/checkpoint/pipeline_state.json"))
+    
+    if not checkpoint["module_status"] and "matches" in checkpoint["module_name"]:
+        match_scraper = MatchesScraper()
+        if args.dev:
+            match_scraper.run(match_pages=Path("data/link/tours.json"), mode="dev", pipeline_start_time=start_time)
+        elif args.ci:
+            match_scraper.run(match_pages=Path("data/link/tours.json"), mode="ci", pipeline_start_time=start_time)
+        elif args.prod:
             match_scraper.run(match_pages=Path("data/link/tours.json"), mode="prod", pipeline_start_time=start_time)
 
-        if not checkpoint["module_status"] and "games" in checkpoint["module_name"]:
-            game_scraper = GamesScraper()
+    checkpoint = load_json(Path("data/checkpoint/pipeline_state.json"))
+
+    if not checkpoint["module_status"] and "games" in checkpoint["module_name"]:
+        game_scraper = GamesScraper()
+        if args.dev:
+            game_scraper.run(tab_list=Path("data/link/matches.json"), mode="dev", pipeline_start_time=start_time)
+        elif args.ci:
+            game_scraper.run(tab_list=Path("data/link/matches.json"), mode="ci", pipeline_start_time=start_time)
+        elif args.prod:
             game_scraper.run(tab_list=Path("data/link/matches.json"), mode="prod", pipeline_start_time=start_time)
 
 if __name__ == "__main__":
