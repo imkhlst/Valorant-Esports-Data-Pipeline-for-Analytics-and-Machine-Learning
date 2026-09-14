@@ -1,7 +1,7 @@
 name: GCP - CI
 
 on:
-  workflow_dispatch:
+  workflow_run:
     workflows: ["Scraper - CI"]
     type:
     - completed

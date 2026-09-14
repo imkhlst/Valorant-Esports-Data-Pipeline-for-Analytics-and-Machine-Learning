@@ -75,7 +75,7 @@ class TournamentScraper:
                 if end_time_check - pipeline_start_time >= MAX_RUNTIME:
                     save_pipeline(
                         status="in_progress",
-                        module=["tournaments", "matches", "games"]
+                        module=["tournaments"]
                     )
                     logging.info(f"Timeout - scraper has been stopped.")
                     break
@@ -212,7 +212,7 @@ class TournamentScraper:
                 
                 save_pipeline(
                     status="in_progress",
-                    module=["matches", "games"]
+                    module=["matches"]
                 )
             
             save_file(data=matches_page, file_name="tours", format="json")
@@ -222,7 +222,7 @@ class TournamentScraper:
             logging.error(f"Error Occurs when running scrape_tournament_info: {e}")
             save_pipeline(
                 status="failed",
-                module=["tournaments", "matches", "games"]
+                module=["tournaments"]
             )
             raise
     

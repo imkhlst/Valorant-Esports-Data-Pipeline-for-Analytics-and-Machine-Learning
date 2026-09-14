@@ -52,7 +52,7 @@ class MatchesScraper:
             logging.error(f"Error occurs whe running scrape_map_veto: {e}")
             save_pipeline(
                 status="failed",
-                module=["matches", "games"]
+                module=["matches"]
             )
             raise
 
@@ -116,7 +116,7 @@ class MatchesScraper:
                 if end_time_check - pipeline_start_time >= MAX_RUNTIME:
                     save_pipeline(
                         status="in_progress",
-                        module=["matches", "games"]
+                        module=["matches"]
                     )
                     logging.info(f"Timeout - scraper has been stopped.")
                     break
@@ -273,7 +273,7 @@ class MatchesScraper:
             logging.error(f"Error occurs when running scrape_matches_info: {e}")
             save_pipeline(
                 status="failed",
-                module=["matches", "games"]
+                module=["matches"]
             )
             raise
     
