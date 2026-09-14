@@ -2,7 +2,7 @@ name: dbt - CI
 
 on:
   workflow_run:
-    workflows: ["Scraper - CI", "GCP - CI"]
+    workflows: ["GCP - CI"]
     types:
       - completed
 

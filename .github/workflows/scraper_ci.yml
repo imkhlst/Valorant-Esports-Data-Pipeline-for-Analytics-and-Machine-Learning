@@ -4,6 +4,13 @@ on:
   pull_request:
     branches:
       - main
+  
+  workflow_dispatch:
+    inputs:
+      previous_run_id:
+        description: "Previous workflow run ID"
+        required: false
+        default: ""
 
 permissions:
   contents: read
