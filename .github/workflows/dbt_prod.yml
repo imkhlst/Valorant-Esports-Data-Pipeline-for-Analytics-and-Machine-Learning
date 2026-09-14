@@ -3,8 +3,8 @@ name: dbt - Production
 on:
   workflow_dispatch:
     workflows: ["Scraper - Production", "GCP - Production"]
-    type:
-    - completed
+    types:
+      - completed
 
 permissions:
   contents: read

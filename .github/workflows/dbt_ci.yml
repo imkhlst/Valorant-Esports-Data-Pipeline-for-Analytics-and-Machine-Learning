@@ -3,8 +3,8 @@ name: dbt - CI
 on:
   workflow_run:
     workflows: ["Scraper - CI", "GCP - CI"]
-    type:
-    - completed
+    types:
+      - completed
 
 permissions:
   contents: read
