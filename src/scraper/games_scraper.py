@@ -233,6 +233,11 @@ class GamesScraper:
             
                 if mode != "prod":
                     if len(game_overview) > 0:
+                        save_pipeline(
+                            status="completed",
+                            module=None,
+                            completed=True
+                        )
                         break
 
                 logging.info(f"Check Runtime ...")

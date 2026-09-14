@@ -108,6 +108,10 @@ class MatchesScraper:
 
                 if mode != "prod":
                     if len(matches_info) > 0:
+                        save_pipeline(
+                            status="in_progress",
+                            module=["games"]
+                        )
                         break
 
                 logging.info(f"Check Runtime ...")

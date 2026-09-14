@@ -67,6 +67,10 @@ class TournamentScraper:
 
                 if mode != "prod":
                     if len(tour_info) > 0:
+                        save_pipeline(
+                            status="in_progress",
+                            module=["matches"]
+                        )
                         break
 
                 logging.info(f"Check Runtime ...")
