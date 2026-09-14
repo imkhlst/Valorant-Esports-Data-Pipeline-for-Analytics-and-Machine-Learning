@@ -3,8 +3,8 @@ name: GCP - Production
 on:
   workflow_dispatch:
     workflows: ["Scraper - Production"]
-    type:
-    - completed
+    types:
+      - completed
 
 permissions:
   contents: 'read'

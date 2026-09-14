@@ -1,10 +1,10 @@
 name: dbt - CI
 
 on:
-  workflow_dispatch:
+  workflow_run:
     workflows: ["Scraper - CI", "GCP - CI"]
-    type:
-    - completed
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -14,7 +14,7 @@ jobs:
 
   dbt-run:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       - name: Checkout Repository
