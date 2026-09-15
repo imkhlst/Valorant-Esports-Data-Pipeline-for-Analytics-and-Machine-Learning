@@ -6,8 +6,8 @@ on:
       - main
 
 permissions:
-  contents: read
-  actions: write
+  contents: 'read'
+  actions: 'write'
 
 jobs:
 
@@ -26,9 +26,7 @@ jobs:
           name: scraper_state
           run-id: ${{ inputs.previous_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: |
-            data/
-            logs/
+          path: data/
           
       - name: Build docker image
         run: docker build -t valorant-project .
@@ -61,9 +59,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: scraper_state
-          path: |
-            data/
-            logs/
+          path: data/
           if-no-files-found: error
 
       - name: Read pipeline state
