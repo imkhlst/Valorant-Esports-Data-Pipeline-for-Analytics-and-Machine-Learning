@@ -99,7 +99,7 @@ def save_file(data: list | pd.DataFrame, file_name: str, format: str):
             with open(file_path, "r", encoding="utf-8") as file:
                 old_data = json.load(file)
 
-            old_data.add(new_data)
+            old_data.extend(new_data)
 
             save_json(old_data, file_path=file_path)
 

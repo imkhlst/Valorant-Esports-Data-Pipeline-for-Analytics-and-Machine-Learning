@@ -2,13 +2,13 @@ name: dbt - Production
 
 on:
   workflow_dispatch:
-    workflows: ["Scraper - Production", "GCP - Production"]
+    workflows: ["GCP - Production"]
     types:
       - completed
 
 permissions:
-  contents: read
-  id-token: write
+  contents: 'read'
+  id-token: 'write'
 
 jobs:
 
