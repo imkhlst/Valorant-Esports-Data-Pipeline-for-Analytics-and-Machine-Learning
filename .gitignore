@@ -1,5 +1,6 @@
 
 test_gcs.py
+test.ipynb
 data/
 target/
 dbt_packages/

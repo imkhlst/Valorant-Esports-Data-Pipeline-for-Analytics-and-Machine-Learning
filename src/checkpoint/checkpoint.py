@@ -56,9 +56,9 @@ class Checkpoint:
         with open(self.checkpoint_path, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=2)
 
-    def is_exist(self, item_ids: str):
+    def is_exists(self, item_ids: str):
         return item_ids in self.completed_ids
 
-    def mark_completed(self, item_ids: list) -> None:
+    def mark_completed(self, item_ids: str) -> None:
         self.completed_ids.add(item_ids)
         self.save(self.completed_ids)

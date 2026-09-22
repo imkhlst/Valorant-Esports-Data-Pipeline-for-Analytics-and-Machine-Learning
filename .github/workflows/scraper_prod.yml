@@ -33,7 +33,19 @@ jobs:
           run-id: ${{ inputs.previous_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: data/
-          
+      
+      - name: Check checkpoint before scraper
+        run: |
+          echo "=== BEFORE DOCKER ==="
+          python - <<'PY'
+          import json
+
+          with open("data/checkpoint/matches.json") as f:
+              data = json.load(f)
+
+          print(f"Completed matches: {len(data.get('completed_ids', []))}")
+          PY
+
       - name: Build docker image
         run: docker build -t valorant-project .
 
@@ -49,6 +61,19 @@ jobs:
           -v "${{ github.workspace }}/data:/valorant-project/data" \
           valorant-project \
           python -m pipeline.scraper_pipeline --prod
+
+      - name: Check checkpoint after scraper
+        if: always()
+        run: |
+          echo "=== AFTER DOCKER ==="
+          python - <<'PY'
+          import json
+
+          with open("data/checkpoint/matches.json") as f:
+              data = json.load(f)
+
+          print(f"Completed matches: {len(data.get('completed_ids', []))}")
+          PY
 
       - name: Validate scraper_state
         if: always()

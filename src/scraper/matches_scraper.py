@@ -5,56 +5,58 @@ from entities.match_entities import *
 from entities.map_veto_entities import *
 from entities.checkpoint_entities import *
 from src.checkpoint.checkpoint import *
+from src.scraper.team_scraper import *
+from src.scraper.map_vetos_scraper import *
 from logger import logging
 
 class MatchesScraper:
     def __init__(self):
         pass
 
-    def scrape_map_veto(self, soup, match_id: str):
-        logging.info("Initialize scrape_map_veto ...")
+    # def scrape_map_veto(self, soup, match_id: str):
+    #     logging.info("Initialize scrape_map_veto ...")
 
-        try:
-            map_order_container = get_value(soup=soup, selector=".match-header-note", attr="text", multiple=True)
+    #     try:
+    #         map_order_container = get_value(soup=soup, selector=".match-header-note", attr="text", multiple=True)
 
-            if map_order_container[-1] is None:
-                logging.info(f"Map selection not found.")
-                return None
+    #         if map_order_container[-1] is None:
+    #             logging.info(f"Map selection not found.")
+    #             return None
 
-            map_order = map_order_container[-1].split(";")
-            vetos = set()
+    #         map_order = map_order_container[-1].split(";")
+    #         vetos = set()
 
-            for map in map_order:
-                map_split = map.strip().split(" ")
+    #         for map in map_order:
+    #             map_split = map.strip().split(" ")
 
-                if map_split[1].strip() == "ban" or map_split[1].strip() == "pick":
-                    veto = MapVeto(
-                        match_id=match_id,
-                        team_name=map_split[0],
-                        action=map_split[1].lower(),
-                        map_name=map_split[2],
-                        scraped_at=datetime.now()
-                    )
-                    vetos.add(veto)
+    #             if map_split[1].strip() == "ban" or map_split[1].strip() == "pick":
+    #                 veto = MapVeto(
+    #                     match_id=match_id,
+    #                     team_name=map_split[0],
+    #                     action=map_split[1].lower(),
+    #                     map_name=map_split[2],
+    #                     scraped_at=datetime.now()
+    #                 )
+    #                 vetos.add(veto)
 
-                else:
-                    veto = MapVeto(
-                        match_id=match_id,
-                        map_name=map_split[0],
-                        scraped_at=datetime.now()
-                    )
-                    logging.info(f"Found decider map: {map_split[0]}")
-                    vetos.add(veto)
+    #             else:
+    #                 veto = MapVeto(
+    #                     match_id=match_id,
+    #                     map_name=map_split[0],
+    #                     scraped_at=datetime.now()
+    #                 )
+    #                 logging.info(f"Found decider map: {map_split[0]}")
+    #                 vetos.add(veto)
 
-            return vetos
+    #         return vetos
 
-        except Exception as e:
-            logging.error(f"Error occurs whe running scrape_map_veto: {e}")
-            save_pipeline(
-                status="failed",
-                module=["matches"]
-            )
-            raise
+    #     except Exception as e:
+    #         logging.error(f"Error occurs whe running scrape_map_veto: {e}")
+    #         save_pipeline(
+    #             status="failed",
+    #             module=["matches"]
+    #         )
+    #         raise
 
     def scrape_matches_list(self, match_page: list) -> list:
         processed = set()
@@ -101,6 +103,8 @@ class MatchesScraper:
 
         try:
             matches_info = []
+            team_list = []
+            team_info = []
             map_veto = []
             tab_list = []
 
@@ -127,7 +131,7 @@ class MatchesScraper:
                 
                 tour_id, url = item[0], item[1]
 
-                checkpoint = Checkpoint(Path("data/checkpoint/matches.json"))
+                checkpoint = Checkpoint(checkpoint_path=Path("data/checkpoint/matches.json"))
                 checkpoint.load()
 
                 if url in processed:
@@ -142,7 +146,7 @@ class MatchesScraper:
 
                 match_id = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="data-match-id")
 
-                if checkpoint.is_exist(match_id):
+                if checkpoint.is_exists(match_id):
                     logging.info(f"{match_id} already exists.")
                     continue
 
@@ -161,24 +165,36 @@ class MatchesScraper:
                 logging.info(f"Found {match_id}, {bracket}, {date}, and {patch}.")
 
                 home_href = get_value(soup=soup, selector=".match-header-link.wf-link-hover.mod-1", attr="href")
-                home_url = absolute(url=home_href)
-                home_soup = get_soup(url=home_url)
-                home_info = get_value(soup=home_soup, selector=".wf-title", attr="text", multiple=True)
-                home_name = home_alias = home_info[0]
+                home_name = home_href.split("/")[-1]
+                if [tour_id, home_name] not in team_list:
+                    home_url = absolute(url=home_href)
+                    team_scraper = TeamScraper(url=home_url, tour_id=tour_id)
+                    home_team = team_scraper.scrape_team_info()
+                    team_info.append(home_team)
+                    team_list.append([tour_id, home_name])
 
-                if len(home_info) > 1:
-                    home_alias = home_info[1]
+                # home_info = get_value(soup=home_soup, selector=".wf-title", attr="text", multiple=True)
+                # home_name = home_alias = home_info[0]
+
+                # if len(home_info) > 1:
+                #     home_alias = home_info[1]
 
                 away_href = get_value(soup=soup, selector=".match-header-link.wf-link-hover.mod-2", attr="href")
-                away_url = absolute(url=away_href)
-                away_soup = get_soup(url=away_url)
-                away_info = get_value(soup=away_soup, selector=".wf-title", attr="text", multiple=True)
-                away_name = away_alias = away_info[0]
+                away_name = away_href.split("/")[-1]
+                if [tour_id, away_name] not in team_list:
+                    away_url = absolute(url=away_href)
+                    team_scraper = TeamScraper(url=away_url, tour_id=tour_id)
+                    away_team = team_scraper.scrape_team_info()
+                    team_info.append(away_team)
+                    team_list.append([tour_id, away_name])
 
-                if len(away_info) > 1:
-                    away_alias = away_info[1]
+                # away_info = get_value(soup=away_soup, selector=".wf-title", attr="text", multiple=True)
+                # away_name = away_alias = away_info[0]
 
-                logging.info(f"Found {home_name} as {home_alias} and {away_name} as {away_alias}.")
+                # if len(away_info) > 1:
+                #     away_alias = away_info[1]
+
+                logging.info(f"Found {home_name} and {away_name}.")
 
                 bo_info = get_value(soup=soup, selector=".match-header-vs-note", attr="text", multiple=True)[-1]
                 score_info = get_value(soup=soup, selector=".sp-hide span", attr="text", multiple=True)
@@ -236,9 +252,9 @@ class MatchesScraper:
                     patch=patch,
 
                     home_name=home_name,
-                    home_alias=home_alias,
+                    # home_alias=home_alias,
                     away_name=away_name,
-                    away_alias=away_alias,
+                    # away_alias=away_alias,
 
                     bo=bo_info,
                     home_score=home_score,
@@ -257,9 +273,9 @@ class MatchesScraper:
                 )
                 matches_info.append(match)
 
-                vetos = self.scrape_map_veto(soup=soup, match_id=match_id)
+                vetos = MapVetosScraper().scrape_map_veto(soup=soup, match_id=match_id)
                 map_veto.extend(vetos)
-                logging.info(f"Match info and map veto has been added.")
+                logging.info(f"Completed! Match info and map veto has been added.")
 
                 processed.add(url)
 
@@ -271,7 +287,7 @@ class MatchesScraper:
                 )
 
             save_file(data=tab_list, file_name="matches", format="json")
-            return matches_info, map_veto
+            return matches_info, team_info, map_veto
         
         except Exception as e:
             logging.error(f"Error occurs when running scrape_matches_info: {e}")
@@ -281,7 +297,7 @@ class MatchesScraper:
             )
             raise
     
-    def run(self, match_pages, mode: str, pipeline_start_time: datetime):
+    def run(self, match_pages: Path, mode: str, pipeline_start_time: datetime):
         module_start_time = datetime.now()
 
         logging.info("Initialize scrape_matches_list ...")
@@ -292,10 +308,13 @@ class MatchesScraper:
         matches_list = self.scrape_matches_list(match_page=match_pages)
 
         logging.info("Initialize scrape_matches_info ...")
-        matches_info, map_veto = self.scrape_matches_info(match_list=matches_list, pipeline_start_time=pipeline_start_time, mode=mode)
+        matches_info, team_info, map_veto = self.scrape_matches_info(match_list=matches_list, pipeline_start_time=pipeline_start_time, mode=mode)
 
         matches_df = pd.DataFrame([asdict(m) for m in matches_info])
         save_file(data=matches_df, file_name="matches", format="parquet")
+
+        team_df = pd.DataFrame([asdict(m) for m in team_info])
+        save_file(data=team_df, file_name="teams", format="parquet")
 
         map_veto_df = pd.DataFrame([asdict(m) for m in map_veto])
         save_file(data=map_veto_df, file_name="map_vetos", format="parquet")

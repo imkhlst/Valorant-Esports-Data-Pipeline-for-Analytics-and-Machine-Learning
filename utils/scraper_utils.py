@@ -1,4 +1,5 @@
 import os
+import re
 import pandas as pd
 import numpy as np
 import time
@@ -74,6 +75,11 @@ def get_value(
     except Exception as e:
         logging.error(f"get_value error: {e}")
         return None
+
+def sort_text(text: str):
+    sort = re.findall(r"\b[A-Z]+\b", text)
+    sorted_text = " ".join(sort)
+    return sorted_text
 
 def save_json(data, file_path: Path):
     with open(file_path, "w", encoding="utf-8") as file:
