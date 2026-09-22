@@ -14,11 +14,8 @@ class TeamScraper:
             team_soup = get_soup(url=self.url)
             team_id = self.url.split("/")[-2]
             team_info = get_value(soup=team_soup, selector=".wf-title", attr="text", multiple=True)
-            team_name = team_alias = team_info[0]
-
-            if len(team_info) > 0:
-                team_alias = team_info[1]
-
+            team_name = team_info[0]
+            team_alias = team_info[1] if len(team_info) > 1 else None
             team_country = get_value(soup=team_soup, selector=".team-header-country", attr="text")
 
             team = Team(
