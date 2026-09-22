@@ -3,7 +3,7 @@ from dataclasses import dataclass, asdict
 from typing import Optional
 
 @dataclass(frozen=True)
-class PlayerStats:
+class Stats:
     game_id: str
     name: str
     team_alias: str

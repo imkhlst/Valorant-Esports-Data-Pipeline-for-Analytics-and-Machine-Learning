@@ -94,7 +94,7 @@ class TournamentScraper:
                     logging.info(f"{url} has been processed.")
                     continue
 
-                if checkpoint.is_exist(current_toud_id):
+                if checkpoint.is_exists(current_toud_id):
                     logging.info(f"{current_toud_id} already exists.")
                     continue
 
