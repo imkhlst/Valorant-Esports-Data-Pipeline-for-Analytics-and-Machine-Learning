@@ -56,7 +56,6 @@ class TournamentScraper:
             raise
 
     def scrape_tournament_info(self, tour_list: list, pipeline_start_time: datetime, mode: str) -> list:
-        processed = set()
         queue = list(tour_list) if isinstance(tour_list, (set, list)) else [tour_list]
         print(f"Queue: {queue[0]}, ... {len(queue) - 1} more." if len(queue) > 1 else f"Queue: {queue}")
         try:
@@ -89,13 +88,9 @@ class TournamentScraper:
 
                 checkpoint = Checkpoint(Path("data/checkpoint/tours.json"))
                 checkpoint.load()
-                
-                if url in processed:
-                    logging.info(f"{url} has been processed.")
-                    continue
 
-                if checkpoint.is_exists(current_toud_id):
-                    logging.info(f"{current_toud_id} already exists.")
+                if checkpoint.is_exists(url):
+                    logging.info(f"{url} has been scraped. Skipping url ...")
                     continue
 
                 if current_toud_id in self.exist_tour_data["tour_id"].values:
@@ -169,7 +164,7 @@ class TournamentScraper:
                 tag = get_value(soup=soup, selector=".event-header-main-bc a[href]", attr="text")
 
                 if not any(i in self.stage_keyword for i in tag.lower().split(" ")):
-                    processed.add(url)
+                    checkpoint.mark_completed(url)
                     continue
 
                 title = get_value(soup=soup, selector=".event-header-main-title", attr="text")
@@ -194,7 +189,7 @@ class TournamentScraper:
                 
                 if status.lower() == "upcoming":
                     logging.info(f"{status} tournaments confirmed. Tournament must be completed to scrape matches list.")
-                    processed.add(url)
+                    checkpoint.mark_completed(url)
                     continue
 
                 elements = get_value(soup=soup, selector=".wf-nav a", attr="href", multiple=True)
@@ -210,9 +205,7 @@ class TournamentScraper:
                     else:
                         continue
 
-                processed.add(url)
-
-                checkpoint.mark_completed(tour_id)
+                checkpoint.mark_completed(url)
                 
                 save_pipeline(
                     status="in_progress",
@@ -233,7 +226,7 @@ class TournamentScraper:
     def run(self, mode: str, pipeline_start_time: datetime):
         module_start_time = datetime.now()
         
-        logging.info("Initialize scrape_tournament_list ...")
+        logging.info("Tournament list not found. Initialize scrape_tournament_list ...")
         tour_list = self.scrape_tournament_list()
         logging.info("Initialize scrape_tournament_info ...")
         tour_info = self.scrape_tournament_info(tour_list=tour_list, pipeline_start_time=pipeline_start_time, mode=mode)
