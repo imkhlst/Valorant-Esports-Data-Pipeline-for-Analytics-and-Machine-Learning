@@ -89,7 +89,9 @@ class MatchesScraper:
                     matches_list.append((tour_id, match_url))
                 
                 processed.add(url)
-            
+
+            save_file(data=matches_list, file_name="matches", format="json")
+
             return matches_list
 
         except Exception as e:
@@ -97,7 +99,6 @@ class MatchesScraper:
             raise 
     
     def scrape_matches_info(self, match_list: list, pipeline_start_time: datetime, mode: str):
-        processed = set()
         queue = list(match_list) if not isinstance(match_list, list) else match_list
         print(f"Queue: {queue[0]}, ... {len(queue) - 1} more." if len(queue) > 1 else f"Queue: {queue}")
 
@@ -134,21 +135,23 @@ class MatchesScraper:
                 checkpoint = Checkpoint(checkpoint_path=Path("data/checkpoint/matches.json"))
                 checkpoint.load()
 
-                if url in processed:
-                    logging.info(f"{url} has been processed.")
+                if checkpoint.is_exists(url):
+                    logging.info(f"{url} has been scraped. Skipping url ...")
                     continue
                 
                 soup = get_soup(url=url)
                 bracket = get_value(soup=soup, selector=".match-header-event-series", attr="text")
 
                 if "showmatch" in bracket.lower():
+                    logging.info(f"{url} is Showmatch. Skipping url ...")
+                    checkpoint.mark_completed(url)
                     continue
 
                 match_id = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="data-match-id")
 
-                if checkpoint.is_exists(match_id):
-                    logging.info(f"{match_id} already exists.")
-                    continue
+                # if checkpoint.is_exists(match_id):
+                #     logging.info(f"{match_id} already exists.")
+                #     continue
 
                 tab_elements = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="href", multiple=True)
                 tab_url = [absolute(url=i) for i in tab_elements]
@@ -277,16 +280,14 @@ class MatchesScraper:
                 map_veto.extend(vetos)
                 logging.info(f"Completed! Match info and map veto has been added.")
 
-                processed.add(url)
-
-                checkpoint.mark_completed(match_id)
+                checkpoint.mark_completed(url)
 
                 save_pipeline(
                     status="in_progress",
                     module=["games"]
                 )
 
-            save_file(data=tab_list, file_name="matches", format="json")
+            save_file(data=tab_list, file_name="games", format="json")
             return matches_info, team_info, map_veto
         
         except Exception as e:
@@ -297,15 +298,17 @@ class MatchesScraper:
             )
             raise
     
-    def run(self, match_pages: Path, mode: str, pipeline_start_time: datetime):
+    def run(self, mode: str, pipeline_start_time: datetime):
         module_start_time = datetime.now()
 
-        logging.info("Initialize scrape_matches_list ...")
+        if not Path("data/link/matches.json").exists():
+            logging.info("Failed! Matches list not found. Initialize scrape_matches_list ...")
+            match_pages = load_json(Path("data/link/tours.json"))
+            matches_list = self.scrape_matches_list(match_page=match_pages)
 
-        if not isinstance(match_pages, (set, list)):
-            match_pages = load_json(match_pages)
-        
-        matches_list = self.scrape_matches_list(match_page=match_pages)
+        else:
+            logging.info("Success! Matches list already exists.")
+            matches_list = load_json(Path("data/link/matches.json"))
 
         logging.info("Initialize scrape_matches_info ...")
         matches_info, team_info, map_veto = self.scrape_matches_info(match_list=matches_list, pipeline_start_time=pipeline_start_time, mode=mode)

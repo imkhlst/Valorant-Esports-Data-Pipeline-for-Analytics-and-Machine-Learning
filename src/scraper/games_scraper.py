@@ -226,7 +226,6 @@ class GamesScraper:
             raise
 
     def scrape_game_info(self, tab_list: list, pipeline_start_time: datetime, mode: str):
-        processed = set()
         queue = list(tab_list) if not isinstance(tab_list, list) else tab_list
         print(f"Queue: {queue[0]}, ... {len(queue) -1 } more." if len(queue) > 1 else f"Queue: {queue}")
         try:
@@ -264,29 +263,24 @@ class GamesScraper:
                 checkpoint = Checkpoint(checkpoint_path=Path("data/checkpoint/games.json"))
                 checkpoint.load()
 
-                if overview_tab in processed:
-                    logging.info(f"{overview_tab} already processed.")
-                    continue
-                
-                overview, player_info, stat_info, game_id, url = self.scrape_game_overview(match_id=match_id, overview_url=overview_tab, player_url=player_url)
+                if not checkpoint.is_exists(overview_tab):
+                    overview, player_info, stat_info, game_id, url = self.scrape_game_overview(match_id=match_id, overview_url=overview_tab, player_url=player_url)
+                    player.extend(player_info)
+                    stats.extend(stat_info)
+                    player_url.update(url)
+                    checkpoint.mark_completed(overview_tab)
 
-                if checkpoint.is_exists(game_id):
-                    continue
+                else:
+                    logging.info(f"{overview_tab} has been scraped.")
 
-                player.extend(player_info)
-                stats.extend(stat_info)
-                player_url.update(url)
+                if not checkpoint.is_exists(econ_tab):
+                    game_econ = self.scrape_game_economy(match_id=match_id, econ_url=econ_tab)
+                    game_overview.extend(overview)
+                    game_economy.extend(game_econ)
+                    checkpoint.mark_completed(econ_tab)
 
-                if econ_tab in processed:
-                    logging.info(f"{econ_tab} already processed.")
-                    continue
-
-                game_econ = self.scrape_game_economy(match_id=match_id, econ_url=econ_tab)
-                game_overview.extend(overview)
-                game_economy.extend(game_econ)
-                
-                processed.add(overview_tab)
-                processed.add(econ_tab)
+                else:
+                    logging.info(f"{econ_tab} has been scraped.")
 
                 save_pipeline(
                     status="completed",
@@ -305,29 +299,30 @@ class GamesScraper:
             )
             raise
 
-    def run(self, tab_list: Path, mode: str, pipeline_start_time: datetime):
+    def run(self, mode: str, pipeline_start_time: datetime):
         module_start_time = datetime.now()
 
-        logging.info(f"Initialize scraper_game_info ...")
-        if not isinstance(tab_list, (set, list)):
-            tab_list = load_json(tab_list)
+        if Path("data/link/games.json").exists():
+            logging.info("Success! Games list already exists.")
+            tab_list = load_json(Path("data/link/games.json"))
         
-        game_overview, game_economy, player, stats = self.scrape_game_info(tab_list=tab_list, pipeline_start_time=pipeline_start_time, mode=mode)
-        games_overview_df = pd.DataFrame([asdict(o) for o in game_overview])
-        save_file(data=games_overview_df, file_name="games_overview", format="parquet")
+            logging.info(f"Initialize scraper_game_info ...")
+            game_overview, game_economy, player, stats = self.scrape_game_info(tab_list=tab_list, pipeline_start_time=pipeline_start_time, mode=mode)
+            games_overview_df = pd.DataFrame([asdict(o) for o in game_overview])
+            save_file(data=games_overview_df, file_name="games_overview", format="parquet")
 
-        games_economy_df = pd.DataFrame([asdict(o) for o in game_economy])
-        save_file(data=games_economy_df, file_name="games_economy", format="parquet")
+            games_economy_df = pd.DataFrame([asdict(o) for o in game_economy])
+            save_file(data=games_economy_df, file_name="games_economy", format="parquet")
 
-        players_df = pd.DataFrame([asdict(p) for p in player])
-        save_file(data=players_df, file_name="players", format="parquet")
+            players_df = pd.DataFrame([asdict(p) for p in player])
+            save_file(data=players_df, file_name="players", format="parquet")
 
-        stats_df = pd.DataFrame([asdict(p) for p in stats])
-        save_file(data=stats_df, file_name="player_stats", format="parquet")
+            stats_df = pd.DataFrame([asdict(p) for p in stats])
+            save_file(data=stats_df, file_name="player_stats", format="parquet")
 
-        module_end_time = datetime.now()
-        duration = module_end_time - module_start_time
-        logging.info(f"Games scraper pipeline completed in {duration}s")
-        print("="*50)
-        print(f"Games scraper pipeline completed in {duration}s")
-        print("="*50)
+            module_end_time = datetime.now()
+            duration = module_end_time - module_start_time
+            logging.info(f"Games scraper pipeline completed in {duration}s")
+            print("="*50)
+            print(f"Games scraper pipeline completed in {duration}s")
+            print("="*50)
