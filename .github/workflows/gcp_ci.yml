@@ -1,7 +1,7 @@
 name: GCP - CI
 
 on:
-  workflow_dispatch:
+  workflow_run:
     workflows: ["Scraper - CI"]
     types:
       - completed
@@ -21,11 +21,12 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Download scraped data artifact
-        if: ${{ inputs.previous_run_id != '' }}
         uses: actions/download-artifact@v5
         with:
-          name: scraped-state
+          name: scraper-state
           path: data/raw/
+          run_id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Validate uploaded data
         run: |
