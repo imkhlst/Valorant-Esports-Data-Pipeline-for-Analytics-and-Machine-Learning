@@ -25,7 +25,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: scraper_state
-          path: data/raw/
+          path: data/
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
       
@@ -51,7 +51,7 @@ jobs:
       - name: Run GCP pipeline
         run: |
           docker run --rm \
-          -v "${{ github.workspace }}/data/raw:/valorant-project/data/raw" \
+          -v "${{ github.workspace }}/data:/valorant-project/data/raw" \
           -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
           -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
           valorant-project \
