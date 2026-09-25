@@ -1,4 +1,4 @@
-name: Data Pipeline CI
+name: CI Data Pipeline
 
 on:
   pull_request:
