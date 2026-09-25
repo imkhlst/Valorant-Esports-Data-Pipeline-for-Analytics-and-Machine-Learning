@@ -21,11 +21,12 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Download scraped data artifact
-        if: ${{ inputs.previous_run_id != '' }}
         uses: actions/download-artifact@v5
         with:
           name: scraped-state
           path: data/raw/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Validate uploaded data
         run: |
