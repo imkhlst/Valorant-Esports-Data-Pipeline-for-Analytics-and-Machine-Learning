@@ -1,7 +1,7 @@
 name: dbt - CI
 
 on:
-  workflow_dispatch:
+  workflow_run:
     workflows: ["GCP - CI"]
     types:
       - completed
