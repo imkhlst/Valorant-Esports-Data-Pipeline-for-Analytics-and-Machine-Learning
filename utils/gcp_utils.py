@@ -110,7 +110,8 @@ def load_table(
         print(f"Success! Loaded {destination_table.num_rows} rows into {table_id}")
 
 def merge_table(
-        dataset_name: str,
+        source_dataset: str,
+        target_dataset: str,
         file_name: str | list = FILE_NAME,
         project_id: str = PROJECT_ID
 ):
@@ -126,8 +127,8 @@ def merge_table(
             sql = Path(f"src/query/{name}_incremental_load.sql").read_text()
 
             sql = sql.format(
-                source_table=f"{project_id}.{dataset_name}.staging_{file_name}",
-                target_table=f"{project_id}.{dataset_name}.bronze_{file_name}"
+                source_table=f"{project_id}.{source_dataset}.{file_name}",
+                target_table=f"{project_id}.{target_dataset}.{file_name}"
             )
 
             client.query(sql).result()
