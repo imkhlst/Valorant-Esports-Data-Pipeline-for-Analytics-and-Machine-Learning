@@ -93,7 +93,7 @@ def load_table(
     file_name = file_name if isinstance(file_name, list) else [file_name]
 
     for name in file_name:
-        table_id = f"{project_id}.{dataset_name}.staging_{name}"
+        table_id = f"{project_id}.{dataset_name}.{name}"
         gcs_uri = f"gs://{gcs_data_dir_path}/{name}.parquet"
 
         logging.info(f"Starting load job for {gcs_uri} ...")
