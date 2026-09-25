@@ -34,6 +34,7 @@ def create_dataset(
 ):
     client = bigquery.Client(project=project_id)
     dataset_name = dataset_name if isinstance(dataset_name, list) else [dataset_name]
+    processed_datasets = []
 
     for i in dataset_name:
         dataset_id = f"{project_id}.{i}"
@@ -43,11 +44,11 @@ def create_dataset(
         try:
             logging.info(f"Checking BigQuery dataset ...")
 
-            client.get_dataset(dataset_id)
+            existing_dataset = client.get_dataset(dataset_id)
 
             logging.info(f"Dataset {dataset_id} already exists.")
 
-            return dataset
+            processed_datasets.append(existing_dataset)
         
         except Exception:
             logging.info(f"Dataset {dataset_id} does not exists. Creating ...")
@@ -56,7 +57,9 @@ def create_dataset(
 
             logging.info(f"Created dataset {dataset_id} in {location}")
 
-            return new_dataset
+            processed_datasets.append(new_dataset)
+
+    return processed_datasets
 
 def upload_data(
         file_name: str | list = FILE_NAME,
