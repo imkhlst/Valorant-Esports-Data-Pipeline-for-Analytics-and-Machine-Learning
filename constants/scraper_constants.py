@@ -29,7 +29,7 @@ FILE_NAME = [
     "games_overview",
     "games_economy",
     "map_vetos",
-    "players"
+    "player_stats"
 ]
 
 MAX_RUNTIME = timedelta(hours=5, minutes=30)

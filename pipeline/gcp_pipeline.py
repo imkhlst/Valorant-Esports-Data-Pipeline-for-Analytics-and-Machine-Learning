@@ -15,14 +15,14 @@ def main():
     upload_data()
 
     if args.dev:
-        load_table(dataset_name="dev")
-        merge_table(dataset_name="dev")
+        load_table(dataset_name="dev_staging")
+        merge_table(source_dataset="dev_staging", target_dataset="dev_bronze")
     elif args.ci:
-        load_table(dataset_name="ci")
-        merge_table(dataset_name="ci")
+        load_table(dataset_name="ci_staging")
+        merge_table(source_dataset="ci_staging", target_dataset="ci_bronze")
     elif args.prod:
-        load_table(dataset_name="prod")
-        merge_table(dataset_name="prod")
+        load_table(dataset_name="prod_staging")
+        merge_table(source_dataset="prod_staging", target_dataset="prod_bronze")
 
 if __name__ == "__main__":
     main()
