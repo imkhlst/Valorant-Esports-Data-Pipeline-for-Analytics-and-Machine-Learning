@@ -88,7 +88,6 @@ def load_table(
     logging.info(f"Loading table into BigQuery dataset ...")
     client = bigquery.Client(project=project_id)
     job_config = bigquery.LoadJobConfig(
-            autodetect=True,
             source_format=bigquery.SourceFormat.PARQUET,
             write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
         )
