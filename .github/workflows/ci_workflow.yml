@@ -126,6 +126,7 @@ jobs:
           run: |
             docker run --rm \
             -v "${{ github.workspace }}/data/raw:/valorant-project/data/raw" \
+            -v "${{ github.workspace }}/src:/valorant-project/src" \
             -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
             -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
             valorant-project \
