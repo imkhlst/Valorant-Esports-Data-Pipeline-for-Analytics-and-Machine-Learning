@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `{target_table}` (
     updated_at TIMESTAMP
 );
 
--- Add ingested_at and updated_at column if does not exist
+-- Add scraped_at, ingested_at and updated_at column if does not exist
 ALTER TABLE `{target_table}`
 ADD COLUMN IF NOT EXISTS scraped_at TIMESTAMP,
 ADD COLUMN IF NOT EXISTS ingested_at TIMESTAMP,
@@ -57,7 +57,7 @@ THEN UPDATE SET
     target.away_last_win = source.away_last_win,
     target.home_last_match = source.home_last_match,
     target.away_last_match = source.away_last_match,
-    target.scraped_at = source.scraped_at,
+    target.scraped_at = TIMESTAMP_MICROS(DIV(source.scraped_at, 1000)),
     target.ingested_at = target.ingested_at,
     target.updated_at = CURRENT_TIMESTAMP()
 
@@ -108,7 +108,7 @@ VALUES (
     source.away_last_win,
     source.home_last_match,
     source.away_last_match,
-    source.scraped_at,
+    TIMESTAMP_MICROS(DIV(source.scraped_at, 1000)),
     CURRENT_TIMESTAMP(),
     CURRENT_TIMESTAMP()
 )
