@@ -106,7 +106,6 @@ jobs:
         - name: Validate uploaded data
           run: |
             find data/raw -type f
-            find src/query -type f
 
         - name: Authenticate to Google Cloud
           uses: google-github-actions/auth@v3
@@ -120,14 +119,26 @@ jobs:
         - name: Validate GCP container
           run: |
             docker run --rm \
-            valorant-project \
-            python -c "import utils.gcp_utils; print('GCP container OK!')"
+              -v "${{ github.workspace }}/data:/valorant-project/data" \
+              valorant-project \
+              sh -c '
+                echo "=== CWD ==="
+                pwd
+
+                echo "=== SRC ==="
+                ls -lah /valorant-project/src
+
+                echo "=== QUERY ==="
+                find /valorant-project/src/query -maxdepth 1 -type f -print
+
+                echo "=== TARGET FILE ==="
+                test -f /valorant-project/src/query/tours_incremental_load.sql
+              '
 
         - name: Run GCP pipeline
           run: |
             docker run --rm \
             -v "${{ github.workspace }}/data/raw:/valorant-project/data/raw" \
-            -v "${{ github.workspace }}/src/query:/valorant-project/src/query" \
             -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
             -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
             valorant-project \

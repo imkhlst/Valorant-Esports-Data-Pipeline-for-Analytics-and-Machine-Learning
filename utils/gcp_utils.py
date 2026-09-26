@@ -125,13 +125,13 @@ def merge_table(
         file_name = file_name if isinstance(file_name, list) else [file_name]
         
         for name in file_name:
-            logging.info(f"Start merging table {name} ...")
+            logging.info(f"Start merging {name} table ...")
 
             sql = Path(f"src/query/{name}_incremental_load.sql").read_text()
 
             sql = sql.format(
-                source_table=f"{project_id}.{source_dataset}.{file_name}",
-                target_table=f"{project_id}.{target_dataset}.{file_name}"
+                source_table=f"{project_id}.{source_dataset}.{name}",
+                target_table=f"{project_id}.{target_dataset}.{name}"
             )
 
             client.query(sql).result()
