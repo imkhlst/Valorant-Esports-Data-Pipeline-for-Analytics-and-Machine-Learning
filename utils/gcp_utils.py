@@ -119,7 +119,7 @@ def merge_table(
 ):
     logging.info(f"Merging table from staging into bronze ...")
     client = bigquery.Client(project=project_id)
-
+    processed_tabel = []
     try:
         file_name = file_name if isinstance(file_name, list) else [file_name]
         
@@ -133,7 +133,8 @@ def merge_table(
                 target_table=f"{project_id}.{target_dataset}.{name}"
             )
 
-            client.query(sql).result()
+            table = client.query(sql).result()
+            processed_tabel.append(table)
 
             logging.info(f"Successfully merged table {name}.")
 
