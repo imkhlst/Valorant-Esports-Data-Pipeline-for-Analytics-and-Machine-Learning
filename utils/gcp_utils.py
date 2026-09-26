@@ -115,7 +115,8 @@ def merge_table(
         source_dataset: str,
         target_dataset: str,
         file_name: str | list = FILE_NAME,
-        project_id: str = PROJECT_ID
+        project_id: str = PROJECT_ID,
+        base_dir: str = BASE_DIR
 ):
     logging.info(f"Merging table from staging into bronze ...")
     client = bigquery.Client(project=project_id)
@@ -125,7 +126,7 @@ def merge_table(
         for name in file_name:
             logging.info(f"Start merging {name} table ...")
 
-            sql_path = BASE_DIR / "src" / "query" / f"{name}_incremental_load.sql"
+            sql_path = base_dir / "src" / "query" / f"{name}_incremental_load.sql"
             sql = sql_path.read_text()
 
             sql = sql.format(
