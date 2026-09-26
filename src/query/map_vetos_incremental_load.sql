@@ -18,13 +18,12 @@ ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP;
 -- Merge table from source (staging) and target (bronze)
 MERGE `{target_table}` AS target
 USING `{source_table}` AS source
-ON target.game_id = source.game_id
+ON target.match_id = source.match_id
 AND target.map_name = source.map_name
 AND target.team_name = source.team_name
 
 WHEN MATCHED
 THEN UPDATE SET
-    target.match_id = source.match_id,
     target.action = source.action,
     target.scraped_at = TIMESTAMP_MICROS(DIV(source.scraped_at, 1000)),
     target.ingested_at = target.ingested_at,
