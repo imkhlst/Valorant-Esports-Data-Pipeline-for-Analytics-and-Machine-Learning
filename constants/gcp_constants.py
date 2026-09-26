@@ -26,5 +26,3 @@ LOCAL_DATA_DIR_PATH = Path("data/raw")
 BLOB_NAME = "raw"
 
 GCS_DATA_DIR_PATH = f"{BUCKET_NAME}/{BLOB_NAME}"
-
-BASE_DIR = Path(__file__).resolve().parent.parent
