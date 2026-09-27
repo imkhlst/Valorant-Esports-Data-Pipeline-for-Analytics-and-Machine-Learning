@@ -79,6 +79,7 @@ jobs:
           echo "=== BEFORE DOCKER ==="
           python - <<'PY'
           import json
+          from pathlib import Path
           
           if Path("data/checkpoint/tours.json").exists():
             with open("data/checkpoint/tours.json") as f:
