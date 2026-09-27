@@ -1,7 +1,7 @@
 name: dbt - Production
 
 on:
-  workflow_dispatch:
+  workflow_run:
     workflows: ["GCP - Production"]
     types:
       - completed
@@ -43,7 +43,7 @@ jobs:
             target: prod
             outputs:
               prod:
-                dataset: prod_silver
+                dataset: prod
                 location: asia-southeast2
                 method: oauth
                 priority: interactive

@@ -29,7 +29,6 @@ jobs:
           path: data/
       
       - name: Check checkpoint before scraper
-        if: ${{ inputs.previous_run_id != '' }}
         run: |
           echo "=== BEFORE DOCKER ==="
           python - <<'PY'
@@ -73,7 +72,6 @@ jobs:
           python -m pipeline.scraper_pipeline --ci
 
       - name: Check checkpoint before scraper
-        if: ${{ inputs.previous_run_id != '' }}
         run: |
           echo "=== BEFORE DOCKER ==="
           python - <<'PY'

@@ -40,11 +40,25 @@ jobs:
           echo "=== BEFORE DOCKER ==="
           python - <<'PY'
           import json
+          
+          if "data/checkpoint/tours.json".exists():
+            with open("data/checkpoint/tours.json") as f:
+                tours = json.load(f)
 
-          with open("data/checkpoint/matches.json") as f:
-              data = json.load(f)
+            print(f"Completed tours: {len(tours.get('completed_ids', []))}")
 
-          print(f"Completed matches: {len(data.get('completed_ids', []))}")
+          elif "data/checkpoint/matches.json".exists():
+            with open("data/checkpoint/matches.json") as f:
+                matches = json.load(f)
+                
+            print(f"Completed matches: {len(matches.get('completed_ids', []))}")
+          
+          elif "data/checkpoint/games.json".exists():
+            with open("data/checkpoint/games.json") as f:
+                games = json.load(f)
+                
+            print(f"Completed games: {len(games.get('completed_ids', []))}")
+
           PY
 
       - name: Build docker image
@@ -70,10 +84,24 @@ jobs:
           python - <<'PY'
           import json
 
-          with open("data/checkpoint/matches.json") as f:
-              data = json.load(f)
+          if "data/checkpoint/tours.json".exists():
+            with open("data/checkpoint/tours.json") as f:
+                tours = json.load(f)
 
-          print(f"Completed matches: {len(data.get('completed_ids', []))}")
+            print(f"Completed tours: {len(tours.get('completed_ids', []))}")
+
+          elif "data/checkpoint/matches.json".exists():
+            with open("data/checkpoint/matches.json") as f:
+                matches = json.load(f)
+                
+            print(f"Completed matches: {len(matches.get('completed_ids', []))}")
+          
+          elif "data/checkpoint/games.json".exists():
+            with open("data/checkpoint/games.json") as f:
+                games = json.load(f)
+                
+            print(f"Completed games: {len(games.get('completed_ids', []))}")
+
           PY
 
       - name: Validate scraper_state
