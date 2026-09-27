@@ -13,10 +13,8 @@ Version: 1.4
 | valorant-project-2026.bronze.matches | match_date | matches | match_date | Direct mapping | Match calendar date |
 | valorant-project-2026.bronze.matches | match_datetime | matches | match_datetime | Direct mapping | Match timestamp |
 | valorant-project-2026.bronze.matches | bracket | matches | bracket | Direct mapping | Match bracket |
-| valorant-project-2026.bronze.matches | home_name | matches | home_name | Direct mapping | Home team name |
-| valorant-project-2026.bronze.matches | home_alias | matches | home_alias | Direct mapping | Home team alias |
-| valorant-project-2026.bronze.matches | away_name | matches | away_name | Direct mapping | Away team name |
-| valorant-project-2026.bronze.matches | away_alias | matches | away_alias | Direct mapping | Away team alias |
+| valorant-project-2026.bronze.matches | home_id | matches | home_id | Direct mapping | Home team ID |
+| valorant-project-2026.bronze.matches | away_id | matches | away_id | Direct mapping | Away team ID |
 | valorant-project-2026.bronze.matches | bo | matches | bo | Direct mapping | Best-of-series match |
 | valorant-project-2026.bronze.matches | patch | matches | patch | Direct mapping | Patch version played |
 | valorant-project-2026.bronze.matches | home_score | matches | home_score | Domain validation | home team match win score |
@@ -28,9 +26,12 @@ Version: 1.4
 | valorant-project-2026.bronze.matches | home_n_last_win | matches | home_n_last_win | Domain validation | home team n-last match win recorded |
 | valorant-project-2026.bronze.matches | away_n_last_win | matches | away_n_last_win | Domain validation | away team n-last match win recorded |
 | valorant-project-2026.bronze.matches | home_n_last_match | matches | home_n_last_match | Domain validation | home team n-last match recorded |
-| stg_valorant-project-2026.bronze.matchesmatches | away_n_last_match | matches | away_n_last_match | Domain validation | away team n-last match recorded |
+| valorant-project-2026.bronze.matches | away_n_last_match | matches | away_n_last_match | Domain validation | away team n-last match recorded |
 | valorant-project-2026.bronze.matches | home_n_last_wr | matches | home_n_last_wr | Domain validation | home team n-last match win rate |
 | valorant-project-2026.bronze.matches | away_n_last_wr | matches | away_n_last_wr | Domain validation | away team n-last match win rate |
+| valorant-project-2026.bronze.matches | scraped_at | matches | scraped_at | Direct mapping | Timestamp indicating when the data was scraped from the source |
+| valorant-project-2026.bronze.matches | ingested_at | matches | ingested_at | Direct mapping | Timestamp indicating when the record was first ingested into the data warehouse |
+| valorant-project-2026.bronze.matches | updated_at | matches | updated_at | Direct mapping | Timestamp when the record was last modified in the data warehouse |
 
 ### games_overview
 
@@ -50,6 +51,9 @@ Version: 1.4
 | valorant-project-2026.bronze.games_overview | away_def_score | games_overview | away_def_score | Domain validation | Number of regulation and overtime-adjusted rounds won by the away team while defending |
 | valorant-project-2026.bronze.games_overview | home_ot_score | games_overview | home_ot_score | Domain validation | Number of overtime rounds won by the home team |
 | valorant-project-2026.bronze.games_overview | away_ot_score | games_overview | away_ot_score | Domain validation | Number of overtime rounds won by the away team |
+| valorant-project-2026.bronze.games_overview | scraped_at | matches | scraped_at | Direct mapping | Timestamp indicating when the data was scraped from the source |
+| valorant-project-2026.bronze.games_overview | ingested_at | matches | ingested_at | Direct mapping | Timestamp indicating when the record was first ingested into the data warehouse |
+| valorant-project-2026.bronze.games_overview | updated_at | matches | updated_at | Direct mapping | Timestamp when the record was last modified in the data warehouse |
 
 ### games_economy
 
@@ -77,6 +81,9 @@ Version: 1.4
 | valorant-project-2026.bronze.games_economy | away_full_buy_round | games_economy | away_full_buy_round | Domain validation | Number of full buy rounds played by the away team |
 | valorant-project-2026.bronze.games_economy | home_full_buy_win | games_economy | home_full_buy_win | Domain validation | Number of full buy win played by the home team |
 | valorant-project-2026.bronze.games_economy | away_full_buy_win | games_economy | away_full_buy_win | Domain validation | Number of full buy win played by the away team |
+| valorant-project-2026.bronze.games_economy | scraped_at | matches | scraped_at | Direct mapping | Timestamp indicating when the data was scraped from the source |
+| valorant-project-2026.bronze.games_economy | ingested_at | matches | ingested_at | Direct mapping | Timestamp indicating when the record was first ingested into the data warehouse |
+| valorant-project-2026.bronze.games_economy | updated_at | matches | updated_at | Direct mapping | Timestamp when the record was last modified in the data warehouse |
 
 ### players
 
@@ -99,9 +106,12 @@ Version: 1.4
 | valorant-project-2026.bronze.players | kast | players | kast | Domain validation | Percentage of rounds in which the player recorded a kill, assist, survived, or was traded |
 | valorant-project-2026.bronze.players | adr | players | adr | Domain validation | Average Damage per Round (ADR) achieved by the player |
 | valorant-project-2026.bronze.players | hs | players | hs | Domain validation | Percentage of the player's kills that were headshots |
-| stg_plvalorant-project-2026.bronze.playersayers | fk | players | fk | Domain validation | Number of first kills recorded by the player |
+| valorant-project-2026.bronze.players | fk | players | fk | Domain validation | Number of first kills recorded by the player |
 | valorant-project-2026.bronze.players | fd | players | fd | Domain validation | Number of first deaths recorded by the player |
 | valorant-project-2026.bronze.players | fkfd | players | fkfd | Domain validation | First-kill to first-death diff of the player |
+| valorant-project-2026.bronze.players | scraped_at | matches | scraped_at | Direct mapping | Timestamp indicating when the data was scraped from the source |
+| valorant-project-2026.bronze.players | ingested_at | matches | ingested_at | Direct mapping | Timestamp indicating when the record was first ingested into the data warehouse |
+| valorant-project-2026.bronze.players | updated_at | matches | updated_at | Direct mapping | Timestamp when the record was last modified in the data warehouse |
 
 ### map_vetos
 
@@ -111,6 +121,9 @@ Version: 1.4
 | valorant-project-2026.bronze.map_vetos | map_name | stg_map_vetos | map_name | STR conversion | Name of the map involved in the veto action |
 | valorant-project-2026.bronze.map_vetos | team_alias | stg_map_vetos | team_alias | STR conversion | Alias of the team performing the veto action |
 | valorant-project-2026.bronze.map_vetos | action | stg_map_vetos | action | STR conversion | Type of map veto action performed |
+| valorant-project-2026.bronze.map_vetos | scraped_at | matches | scraped_at | Direct mapping | Timestamp indicating when the data was scraped from the source |
+| valorant-project-2026.bronze.map_vetos | ingested_at | matches | ingested_at | Direct mapping | Timestamp indicating when the record was first ingested into the data warehouse |
+| valorant-project-2026.bronze.map_vetos | updated_at | matches | updated_at | Direct mapping | Timestamp when the record was last modified in the data warehouse |
 
 ## Silver → Gold
 
@@ -118,29 +131,40 @@ Version: 1.4
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| stg_tours | tour_id | dims_tours | tour_id | Direct mapping | Tournament unique identifier |
-| stg_tours | tour_name | dims_tours | tour_name | Direct mapping | Official name of the tournament |
-| stg_tours | tour_tag | dims_tours | tour_tag | Direct mapping | Short tag or abbreviation used to identify the tournament |
-| stg_tours | tour_stage | dims_tours | tour_stage | Domain validation | Competetion stage of the tournament |
-| stg_tours | tour_region | dims_tours | tour_region | Domain validation | Regional scope of the tournament |
-| stg_tours | tour_status | dims_tours | tour_status | Direct mapping | Current or recorded status of the tournament |
+| valorant-project-2026.bronze.tours | tour_id | dims_tours | tour_id | Direct mapping | Tournament unique identifier |
+| valorant-project-2026.bronze.tours | tour_name | dims_tours | tour_name | Direct mapping | Official name of the tournament |
+| valorant-project-2026.bronze.tours | tour_tag | dims_tours | tour_tag | Direct mapping | Short tag or abbreviation used to identify the tournament |
+| valorant-project-2026.bronze.tours | tour_stage | dims_tours | tour_stage | Domain validation | Competetion stage of the tournament |
+| valorant-project-2026.bronze.tours | tour_region | dims_tours | tour_region | Domain validation | Regional scope of the tournament |
+| valorant-project-2026.bronze.tours | tour_status | dims_tours | tour_status | Direct mapping | Current or recorded status of the tournament |
+| valorant-project-2026.bronze.tours | scraped_at | matches | scraped_at | Direct mapping | Timestamp indicating when the data was scraped from the source |
+| valorant-project-2026.bronze.tours | ingested_at | matches | ingested_at | Direct mapping | Timestamp indicating when the record was first ingested into the data warehouse |
+| valorant-project-2026.bronze.tours | updated_at | matches | updated_at | Direct mapping | Timestamp when the record was last modified in the data warehouse |
 
 ### dims_teams
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| matches | team_name | dims_teams | team_id | Window function | Surrogate identifier uniquely assigned to each team |
-| matches | team_name | dims_teams | team_name | Unique direct mapping | Standardized full name of the team |
-| matches | team_alias | dims_teams | team_alias | Direct mapping | Standardized short alias used to identify the team in source data |
-| dims_tours | tour_region | dims_teams | tour_region | Dimension lookup | Competitive region associated with the team |
+| valorant-project-2026.bronze.teams | team_id | dims_teams | team_id | Direct mapping | Surrogate identifier uniquely assigned to each team |
+| valorant-project-2026.bronze.teams | team_name | dims_teams | team_name | Unique direct mapping | Standardized full name of the team |
+| valorant-project-2026.bronze.teams | team_alias | dims_teams | team_alias | Direct mapping | Standardized short alias used to identify the team in source data |
+| valorant-project-2026.bronze.teams | team_country | dims_teams | team_country | Direct mapping | Country associated with the team |
+| valorant-project-2026.bronze.tours | tour_region | dims_teams | team_region | Dimension lookup | Competitive region associated with the team |
+| valorant-project-2026.bronze.teams | scraped_at | matches | scraped_at | Direct mapping | Timestamp indicating when the data was scraped from the source |
+| valorant-project-2026.bronze.teams | ingested_at | matches | ingested_at | Direct mapping | Timestamp indicating when the record was first ingested into the data warehouse |
+| valorant-project-2026.bronze.teams | updated_at | matches | updated_at | Direct mapping | Timestamp when the record was last modified in the data warehouse |
 
 ### dims_players
 
 | Source Model | Source Field | Target Model | Target Field | Transformation | Description |
 |---|---|---|---|---|---|
-| players | player_name | dims_players | player_id | Window function | Surrogate identifier uniquely assigned to each player |
-| players | player_name | dims_players | player_name | Unique direct mapping | Standardized name of the player |
-| players | nationality | dims_players | player_nationality | Direct mapping | Nationality associated with the player |
+| valorant-project-2026.bronze.players | player_id | dims_players | player_id | Direct mapping | Surrogate identifier uniquely assigned to each player |
+| valorant-project-2026.bronze.players | player_nickname | dims_players | nick_name | Direct mapping | In-game name of the player |
+| valorant-project-2026.bronze.players | player_realname | dims_players | real_name | Direct mapping | Real name of the player |
+| valorant-project-2026.bronze.players | player_nationality | dims_players | nationality | Direct mapping | Nationality associated with the player |
+| valorant-project-2026.bronze.teams | scraped_at | matches | scraped_at | Direct mapping | Timestamp indicating when the data was scraped from the source |
+| valorant-project-2026.bronze.teams | ingested_at | matches | ingested_at | Direct mapping | Timestamp indicating when the record was first ingested into the data warehouse |
+| valorant-project-2026.bronze.teams | updated_at | matches | updated_at | Direct mapping | Timestamp when the record was last modified in the data warehouse |
 
 ### dims_maps
 
@@ -165,8 +189,8 @@ Version: 1.4
 | matches | match_date | fact_matches | match_date | Direct mapping | Match calendar date |
 | matches | match_datetime | fact_matches | match_datetime | Direct mapping | Match timestamp |
 | matches | bracket | fact_matches | bracket | Direct mapping | Match bracket |
-| dims_teams | team_id | fact_matches | home_team_id | Dimension Lookup | Team FK |
-| dims_teams | team_id | fact_matches | away_team_id | Dimension Lookup | Team FK |
+| matches | home_id | fact_matches | home_team_id | Direct mapping | Team FK |
+| matches | away_id | fact_matches | away_team_id | Direct mapping | Team FK |
 | matches | bo | fact_matches | bo | Direct mapping | Best-of-series match |
 | matches | patch | fact_matches | patch | Direct mapping | Patch version played |
 | matches | home_score | fact_matches | home_score | Direct mapping | Home team score |

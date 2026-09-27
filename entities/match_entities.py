@@ -9,10 +9,8 @@ class Match:
     date: datetime
     bracket: str
 
-    home_name: str
-    # home_alias: str
-    away_name: str
-    # away_alias: str
+    home_id: str
+    away_id: str
 
     bo: str
     home_score: int

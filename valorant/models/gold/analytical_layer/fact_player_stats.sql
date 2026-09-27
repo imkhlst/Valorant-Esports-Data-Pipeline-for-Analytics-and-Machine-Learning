@@ -35,11 +35,11 @@ SELECT
     fk,
     fd,
     fkfd
-FROM {{ ref('players') }} pp
+FROM {{ ref('player_stats') }} pp
 JOIN statistics s
 ON pp.game_id = s.game_id
 AND pp.team_alias = s.team_alias
 JOIN {{ ref('dims_players') }} p
-ON pp.player_name = p.player_name
+ON pp.player_name = p.nick_name
 JOIN {{ ref('dims_agents') }} ag
 ON pp.agent = ag.agent_name

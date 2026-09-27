@@ -3,7 +3,6 @@ from datetime import datetime
 
 @dataclass(frozen=True)
 class Team:
-    tour_id: str
     team_id: str
     team_name: str
     team_alias: str

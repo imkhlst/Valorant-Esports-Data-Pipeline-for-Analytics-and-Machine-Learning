@@ -1,6 +1,6 @@
 # Data Dictionary
 
-Version : 1.3
+Version : 1.4
 
 ## Silver Models
 
@@ -22,10 +22,8 @@ Version : 1.3
 | `match_date` | date | No | None | Match calendar date | `2025-04-06` |
 | `match_datetime` | datetime | No | None | Match timestamp | `2025-04-06T04:00:00` |
 | `bracket` | string | No | None | Match bracket | `Group Stage: Week 3` |
-| `home_name` | string | No | None | Home team name | `Paper Rex` |
-| `home_alias` | string | No | None | Home team alias | `PRX` |
-| `away_name` | string | No | None | Away team name | `BOOM Esports` |
-| `away_alias` | string | No | None | Away team alias | `BME` |
+| `home_id` | integer | No | None | Home team ID | `624` |
+| `away_id` | integer | No | None | Away team ID | `466` |
 | `bo` | string | No | None | Best-of-series match | `Bo3` |
 | `patch` | string | Yes | None | Patch version played | `10.06` |
 | `home_score` | integer | No | Must be `>= 0` | home team match win score | `1` |
@@ -40,6 +38,9 @@ Version : 1.3
 | `away_n_last_match` | integer | No | Must be in range `0` and `5` | away team n-last match recorded | `5` |
 | `home_n_last_wr` | float | No | Must be in range `0` and `1` and can be NULL when denominator `home_n_last_match` is zero | home team n-last match win rate | `0.2` |
 | `away_n_last_wr` | float | No | Must be in range `0` and `1` and can be NULL when denominator `away_n_last_match` is zero | away team n-last match win rate | `0.4` |
+| `scraped_at` | timestamp | No | None | Timestamp indicating when the data was scraped from the source | `2026-09-27 19:53:18.977146 UTC` |
+| `ingested_at` | timestamp | No | None | Timestamp indicating when the record was first ingested into the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
+| `updated_at` | timestamp | No | None | Timestamp when the record was last modified in the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
 
 ### games_overview
 
@@ -68,6 +69,9 @@ Version : 1.3
 | `away_def_score` | integer | Yes | Must be `>= 0` when present | Number of regulation and overtime-adjusted rounds won by the away team while defending | `9` |
 | `home_ot_score` | integer | Yes | Must be `>= 0` when present | Number of overtime rounds won by the home team | `2` |
 | `away_ot_score` | integer | Yes | Must be `>= 0` when present | Number of overtime rounds won by the away team | `0` |
+| `scraped_at` | timestamp | No | None | Timestamp indicating when the data was scraped from the source | `2026-09-27 19:53:18.977146 UTC` |
+| `ingested_at` | timestamp | No | None | Timestamp indicating when the record was first ingested into the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
+| `updated_at` | timestamp | No | None | Timestamp when the record was last modified in the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
 
 ### games_economy
 
@@ -104,6 +108,9 @@ Version : 1.3
 | `away_full_buy_round` | integer | Yes | Must be `>= 0` when present | Number of full buy rounds played by the away team | `24` |
 | `home_full_buy_win` | integer | Yes | Must be `>= 0` when present | Number of full buy rounds win by the home team | `6` |
 | `away_full_buy_win` | integer | Yes | Must be `>= 0` when present | Number of semi buy rounds win by the away team | `14` |
+| `scraped_at` | timestamp | No | None | Timestamp indicating when the data was scraped from the source | `2026-09-27 19:53:18.977146 UTC` |
+| `ingested_at` | timestamp | No | None | Timestamp indicating when the record was first ingested into the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
+| `updated_at` | timestamp | No | None | Timestamp when the record was last modified in the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
 
 ### players
 
@@ -138,6 +145,9 @@ Version : 1.3
 | `fk` | integer | Yes | Must be `>= 0` when present | Number of first kills recorded by the player | `12` |
 | `fd` | integer | Yes | Must be `>= 0` when present | Number of first deaths recorded by the player | `1` |
 | `fkfd` | integer | Yes | `fk - fd` when present | First-kill to first-death diff of the player | `11` |
+| `scraped_at` | timestamp | No | None | Timestamp indicating when the data was scraped from the source | `2026-09-27 19:53:18.977146 UTC` |
+| `ingested_at` | timestamp | No | None | Timestamp indicating when the record was first ingested into the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
+| `updated_at` | timestamp | No | None | Timestamp when the record was last modified in the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
 
 ## Gold Models
 
@@ -160,6 +170,9 @@ Version : 1.3
 | `tour_stage` | string | No | None | Competetion stage of the tournament | `Champions` |
 | `tour_region` | string | No | None | Regional scope of the tournament | `World` |
 | `tour_status` | string | No | None | Current or recorded status of the tournament | `Completed` |
+| `scraped_at` | timestamp | No | None | Timestamp indicating when the data was scraped from the source | `2026-09-27 19:53:18.977146 UTC` |
+| `ingested_at` | timestamp | No | None | Timestamp indicating when the record was first ingested into the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
+| `updated_at` | timestamp | No | None | Timestamp when the record was last modified in the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
 
 ### dims_teams
 
@@ -177,7 +190,11 @@ Version : 1.3
 | `team_id` | integer | No | `Unique` | Surrogate identifier uniquely assigned to each team | `11` |
 | `team_name` | string | No | None | Standardized full name of the team | `Dragon Ranger Gaming` |
 | `team_alias` | string | No | None | Standardized short alias used to identify the team in source data | `DRG` |
+| `team_country` | string | No | None | Country associated with the team | `China` |
 | `team_region` | string | No | None | Competitive region associated with the team | `China` |
+| `scraped_at` | timestamp | No | None | Timestamp indicating when the data was scraped from the source | `2026-09-27 19:53:18.977146 UTC` |
+| `ingested_at` | timestamp | No | None | Timestamp indicating when the record was first ingested into the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
+| `updated_at` | timestamp | No | None | Timestamp when the record was last modified in the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
 
 ### dims_players
 
@@ -192,9 +209,13 @@ Version : 1.3
 
 | Column | Data Type | Nullable | Business Rule | Description | Example |
 |---|---|---|---|---|---|
-| `player_id` | integer | No | `Unique` | Surrogate identifier uniquely assigned to each player | `11` |
-| `player_name` | string | No | None | Standardized name of the player | `Akeman` |
-| `player_nationality` | string | No | None | Nationality associated with the player | `China` |
+| `player_id` | integer | No | `Unique` | Surrogate identifier uniquely assigned to each player | `52904` |
+| `nick_name` | string | No | None | In-game name of the player | `Akeman` |
+| `real_name` | string | No | None | Real name of the player | `Zhang Haoran (张浩然)` |
+| `nationality` | string | No | None | Nationality associated with the player | `China` |
+| `scraped_at` | timestamp | No | None | Timestamp indicating when the data was scraped from the source | `2026-09-27 19:53:18.977146 UTC` |
+| `ingested_at` | timestamp | No | None | Timestamp indicating when the record was first ingested into the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
+| `updated_at` | timestamp | No | None | Timestamp when the record was last modified in the data warehouse | `2026-09-27 13:25:08.504559 UTC` |
 
 ### dims_maps
 
@@ -373,7 +394,7 @@ Version : 1.3
 | `agent_id` | integer | No | None | Agent FK | `10` |
 | `is_win` | integer | No | None | Binary indicator equal to 1 when the player's team won the game | `1` |
 | `mod` | integer | No | None | Statistical aggregation mode indicating whether the player statistics | `atk` |
-| `r` | integer | Yes | Must be `> 0` when present | Player rating for the game | `1.09` |
+| `r` | float | Yes | Must be `> 0` when present | Player rating for the game | `1.09` |
 | `acs` | integer | Yes | Must be `> 0` when present | Average Combat Score (ACS) achieved by the player in the game | `164` |
 | `k` | integer | Yes | Must be `> 0` when present | Number of kills recorded by the player in the game | `8` |
 | `d` | integer | Yes | Must be `>= 0` when present | Number of deaths recorded by the player in the game | `10` |

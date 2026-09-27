@@ -14,7 +14,7 @@ SELECT
     1.0 * COUNT(f.agent_id) / NULLIF(p.map_played, 0) AS pick_rate,
     1.0 * SUM(is_win) / NULLIF(COUNT(DISTINCT game_id), 0) AS win_rate,
     1.0 * COUNT(DISTINCT game_id) / NULLIF(p.map_played, 0) AS presence_rate
-FROM {{ ref('fact_players') }} f
+FROM {{ ref('fact_player_stats') }} f
 JOIN {{ ref('maps_performance') }} p
 ON f.map_id = p.map_id
 JOIN {{ ref('dims_agents') }} a

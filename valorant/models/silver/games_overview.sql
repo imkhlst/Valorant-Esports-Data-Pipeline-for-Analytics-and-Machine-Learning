@@ -82,7 +82,11 @@ SELECT
         WHEN SAFE_CAST(away_ot_score AS INT64) >= 0
         THEN SAFE_CAST(away_ot_score AS INT64)
         ELSE NULL
-    END AS away_ot_score
+    END AS away_ot_score,
+    
+    SAFE_CAST(o.scraped_at AS TIMESTAMP) AS scraped_at,
+    SAFE_CAST(o.ingested_at AS TIMESTAMP) AS ingested_at,
+    SAFE_CAST(o.updated_at AS TIMESTAMP) AS updated_at
 FROM {{ source('bronze', 'games_overview') }} o
 JOIN {{ source('bronze', 'matches') }} m
 ON o.match_id = m.match_id

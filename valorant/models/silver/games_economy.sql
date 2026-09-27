@@ -121,7 +121,11 @@ SELECT
         WHEN SAFE_CAST(away_full_buy_win AS INT64) >= 0
         THEN SAFE_CAST(away_full_buy_win AS INT64)
         ELSE NULL
-    END AS away_full_buy_win
+    END AS away_full_buy_win,
+    
+    SAFE_CAST(e.scraped_at AS TIMESTAMP) AS scraped_at,
+    SAFE_CAST(e.ingested_at AS TIMESTAMP) AS ingested_at,
+    SAFE_CAST(e.updated_at AS TIMESTAMP) AS updated_at
 FROM {{ source('bronze', 'games_economy') }} e
 JOIN {{ source('bronze', 'matches') }} m
 ON m.match_id = e.match_id

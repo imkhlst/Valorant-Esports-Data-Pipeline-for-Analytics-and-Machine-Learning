@@ -19,5 +19,8 @@ SELECT
         ELSE SAFE_CAST(tour_region AS STRING)
     END AS tour_region,
 
-    SAFE_CAST(tour_status AS STRING) AS tour_status
+    SAFE_CAST(tour_status AS STRING) AS tour_status,
+    SAFE_CAST(scraped_at AS TIMESTAMP) AS scraped_at,
+    SAFE_CAST(ingested_at AS TIMESTAMP) AS ingested_at,
+    SAFE_CAST(updated_at AS TIMESTAMP) AS updated_at
 FROM {{ source('bronze', 'tours') }}
