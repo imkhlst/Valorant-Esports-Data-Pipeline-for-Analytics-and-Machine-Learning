@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `{target_table}` (
     match_id STRING,
     game_id STRING,
     game_map STRING,
-    game_duration STRING,
+    game_duration INT64,
     home_score INT64,
     away_score INT64,
     home_atk_score INT64,
