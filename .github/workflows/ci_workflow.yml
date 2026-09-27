@@ -29,24 +29,26 @@ jobs:
           path: data/
       
       - name: Check checkpoint before scraper
+        if: ${{ inputs.previous_run_id != '' }}
         run: |
           echo "=== BEFORE DOCKER ==="
           python - <<'PY'
           import json
+          from pathlib import Path
           
-          if "data/checkpoint/tours.json".exists():
+          if Path("data/checkpoint/tours.json").exists():
             with open("data/checkpoint/tours.json") as f:
                 tours = json.load(f)
 
             print(f"Completed tours: {len(tours.get('completed_ids', []))}")
 
-          elif "data/checkpoint/matches.json".exists():
+          elif Path("data/checkpoint/tours.json").exists():
             with open("data/checkpoint/matches.json") as f:
                 matches = json.load(f)
                 
             print(f"Completed matches: {len(matches.get('completed_ids', []))}")
           
-          elif "data/checkpoint/games.json".exists():
+          elif Path("data/checkpoint/tours.json").exists():
             with open("data/checkpoint/games.json") as f:
                 games = json.load(f)
                 
@@ -72,24 +74,25 @@ jobs:
           python -m pipeline.scraper_pipeline --ci
 
       - name: Check checkpoint before scraper
+        if: always()
         run: |
           echo "=== BEFORE DOCKER ==="
           python - <<'PY'
           import json
           
-          if "data/checkpoint/tours.json".exists():
+          if Path("data/checkpoint/tours.json").exists():
             with open("data/checkpoint/tours.json") as f:
                 tours = json.load(f)
 
             print(f"Completed tours: {len(tours.get('completed_ids', []))}")
 
-          elif "data/checkpoint/matches.json".exists():
+          elif Path("data/checkpoint/tours.json").exists():
             with open("data/checkpoint/matches.json") as f:
                 matches = json.load(f)
                 
             print(f"Completed matches: {len(matches.get('completed_ids', []))}")
           
-          elif "data/checkpoint/games.json".exists():
+          elif Path("data/checkpoint/tours.json").exists():
             with open("data/checkpoint/games.json") as f:
                 games = json.load(f)
                 

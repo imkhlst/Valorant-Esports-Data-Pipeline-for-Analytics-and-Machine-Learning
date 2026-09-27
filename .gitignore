@@ -6,3 +6,5 @@ target/
 dbt_packages/
 logs/
 .env
+*/__pycache__
+*.pyc
