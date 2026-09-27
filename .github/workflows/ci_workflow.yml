@@ -87,13 +87,13 @@ jobs:
 
             print(f"Completed tours: {len(tours.get('completed_ids', []))}")
 
-          elif Path("data/checkpoint/tours.json").exists():
+          elif Path("data/checkpoint/matches.json").exists():
             with open("data/checkpoint/matches.json") as f:
                 matches = json.load(f)
                 
             print(f"Completed matches: {len(matches.get('completed_ids', []))}")
           
-          elif Path("data/checkpoint/tours.json").exists():
+          elif Path("data/checkpoint/games.json").exists():
             with open("data/checkpoint/games.json") as f:
                 games = json.load(f)
                 
