@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `{target_table}` (
     tour_id STRING,
     match_id STRING,
     date STRING,
-    patch FLOAT64,
+    patch STRING,
     bracket STRING,
     home_id STRING,
     away_id STRING,
