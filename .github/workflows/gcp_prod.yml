@@ -15,7 +15,6 @@ jobs:
 
   gcp-run:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout repository
@@ -28,10 +27,31 @@ jobs:
           path: data/
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Validate uploaded data
+        if: steps.scraper_state.outputs.status == 'completed'
         run: |
           find data/raw -type f
+
+      - name: Validate scraper completion
+        id: scraper_state
+        run: |
+          STATUS=$(python -c "
+          import json
+          with open('data/checkpoint/pipeline_state.json') as file:
+              state = json.load(file)
+          print(state['pipeline_status'])
+          ")
+
+          echo "Scraper pipeline status: $STATUS"
+          
+          if [ "$STATUS" != 'completed' ]; then
+            echo "Scraper pipeline is not completed."
+            echo "Skipping GCP ingestion."
+            exit 1
+          fi
+
+          echo "Scraper pipeline completed."
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
