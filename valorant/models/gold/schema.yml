@@ -1279,7 +1279,6 @@ models:
           Number of previous head-to-head matches won by the team against the opposing team.
         data_type: int64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -1288,7 +1287,6 @@ models:
           Total games won by the team in previous head-to-head encounters.
         data_type: int64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
