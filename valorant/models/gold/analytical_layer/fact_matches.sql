@@ -20,8 +20,8 @@ SELECT
     match_date,
     match_datetime,
     bracket,
-    t1.team_id AS home_team_id,
-    t2.team_id AS away_team_id,
+    home_id AS home_team_id,
+    away_id AS away_team_id,
     bo,
     patch,
     home_score,
@@ -51,7 +51,3 @@ SELECT
 FROM {{ ref('matches') }} m
 JOIN round_score r
 ON r.match_id = m.match_id
-JOIN {{ ref('dims_teams') }} t1
-ON t1.team_name = m.home_name
-JOIN {{ ref('dims_teams') }} t2
-ON t2.team_name = m.away_name

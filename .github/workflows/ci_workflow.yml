@@ -1,25 +1,19 @@
-name: Scraper - Production
+name: CI Data Pipeline
 
 on:
-  workflow_dispatch:
-    inputs:
-      previous_run_id:
-        description: "Previous workflow run ID"
-        required: false
-        default: ""
-        
-  # schedule:
-  #   cron: 0 23 1 * *
-
-permissions:
-  contents: read
-  actions: write
+  pull_request:
+    branches:
+      - main
 
 jobs:
 
   scrape-run:
     runs-on: ubuntu-latest
     timeout-minutes: 360
+
+    permissions:
+      contents: 'read'
+      actions: 'write'
 
     steps:
       - name: Checkout repository
@@ -61,7 +55,7 @@ jobs:
             print(f"Completed games: {len(games.get('completed_ids', []))}")
 
           PY
-
+          
       - name: Build docker image
         run: docker build -t valorant-project .
 
@@ -75,13 +69,14 @@ jobs:
         run: |
           docker run --rm \
           -v "${{ github.workspace }}/data:/valorant-project/data" \
+          -v "${{ github.workspace }}/logs:/valorant-project/logs" \
           valorant-project \
-          python -m pipeline.scraper_pipeline --prod
+          python -m pipeline.scraper_pipeline --ci
 
       - name: Check checkpoint after scraping
         if: always()
         run: |
-          echo "=== AFTER DOCKER ==="
+          echo "=== BEFORE DOCKER ==="
           python - <<'PY'
           import json
           from pathlib import Path
@@ -142,69 +137,118 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh workflow run scraper_prod.yml \
+          gh workflow run scraper_ci.yml \
           --ref main \
           -f previous_run_id=${{ github.run_id }}
 
-  # dbt:
-  #   needs: gcp
-  #   runs-on: ubuntu-latest
+  gcp-run:
+      runs-on: ubuntu-latest
+      needs: scrape-run
 
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v4
+      permissions:
+        contents: 'read'
+        id-token: 'write'
 
-  #     - name: Authenticate to Google Cloud
-  #       uses: google-github-actions/auth@v3
-  #       with:
-  #         workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-  #         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        
+        - name: Download scraped data artifact
+          uses: actions/download-artifact@v5
+          with:
+            name: scraper_state
+            path: data/
+        
+        - name: Validate uploaded data
+          run: |
+            find data/raw -type f
+
+        - name: Authenticate to Google Cloud
+          uses: google-github-actions/auth@v3
+          with:
+            workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+            service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+        - name: Build Docker Image
+          run: docker build -t valorant-project .
+
+        - name: Validate GCP container
+          run: |
+            docker run --rm \
+              -v "${{ github.workspace }}/data:/valorant-project/data" \
+              valorant-project \
+              sh -c '
+                echo "=== CWD ==="
+                pwd
+
+                echo "=== SRC ==="
+                find /valorant-project/src -type f
+
+                echo "=== QUERY ==="
+                find /valorant-project/src/query -type f
+              '
+
+        - name: Run GCP pipeline
+          run: |
+            docker run --rm \
+            -v "${{ github.workspace }}/data/raw:/valorant-project/data/raw" \
+            -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
+            valorant-project \
+            python -m pipeline.gcp_pipeline --ci
+
+  dbt-run:
+      runs-on: ubuntu-latest
+      needs: gcp-run
+
+      permissions:
+        contents: 'read'
+        id-token: 'write'
       
-  #     - name: Build Docker images
-  #       run: docker build -t valorant-project .
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v4
 
-  #     - name: Create dbt Profile
-  #       run: |
-  #         mkdir ~/.dbt
-          
-  #         cat > ~/.dbt/profiles.yml << 'EOF'
-  #         valorant:
-  #           target: prod
-  #           outputs:
-  #             prod:
-  #               dataset: dbt_prod
-  #               location: asia-southeast2
-  #               method: oauth
-  #               priority: interactive
-  #               project: valorant-project-2026
-  #               threads: 4
-  #               type: bigquery
-  #         EOF
+        - name: Setup Python
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.11'
 
-  #     - name: Install dbt packages
-  #       run: |
-  #         docker run --rm \
-  #         -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
-  #         -v "$HOME/.dbt:/root/.dbt:ro" \
-  #         valorant-project \
-  #         sh -c "cd /valorant-project/dbt && dbt deps"
-      
-  #     - name: Check dbt Connection
-  #       run: |
-  #         docker run --rm \
-  #         -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
-  #         -v "$HOME/.dbt:/root/.dbt:ro" \
-  #         -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
-  #         -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
-  #         valorant-project \
-  #         sh -c "cd /valorant-project/dbt && dbt debug"
+        - name: Install dbt
+          run: pip install dbt-bigquery==1.12.0
 
-  #     - name: Run dbt build
-  #       run: |
-  #         docker run --rm \
-  #         -v "${{ github.workspace }}/dbt:/valorant-project/dbt" \
-  #         -v "$HOME/.dbt:/root/.dbt:ro" \
-  #         -v "$GOOGLE_APPLICATION_CREDENTIALS:/tmp/gcp-credentials.json:ro" \
-  #         -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
-  #         valorant-project \
-  #         sh -c "cd /valorant-project/dbt && dbt build"
+        - name: Authenticate to Google Cloud
+          uses: google-github-actions/auth@v3
+          with:
+            workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+            service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+        - name: Create dbt Profile
+          run: |
+            mkdir ~/.dbt
+            
+            cat > ~/.dbt/profiles.yml << 'EOF'
+            valorant:
+              target: ci
+              outputs:
+                ci:
+                  dataset: ci
+                  location: asia-southeast2
+                  method: oauth
+                  priority: interactive
+                  project: valorant-project-2026
+                  threads: 4
+                  type: bigquery
+            EOF
+
+        - name: Install dbt Packages
+          working-directory: ./valorant
+          run: dbt deps
+
+        - name: Check dbt Connection
+          working-directory: ./valorant
+          run: dbt debug --target ci
+
+        - name: Run dbt build
+          working-directory: ./valorant
+          run: dbt build --target ci

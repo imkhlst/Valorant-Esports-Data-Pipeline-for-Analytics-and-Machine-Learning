@@ -14,14 +14,14 @@ DATASET_NAME = [
     "prod_staging",
     "prod_bronze",
     "prod_silver",
-    "prod_gold",
+    "prod_gold"
 ]
 
 LOCATION = "asia-southeast2"
 
 PROJECT_ID = "valorant-project-2026"
 
-LOCAL_DATA_DIR_PATH = Path("data") / "raw"
+LOCAL_DATA_DIR_PATH = Path("data/raw")
 
 BLOB_NAME = "raw"
 

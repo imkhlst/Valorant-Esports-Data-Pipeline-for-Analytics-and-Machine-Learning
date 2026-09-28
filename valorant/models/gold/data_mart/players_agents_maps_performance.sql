@@ -4,7 +4,7 @@
 
 SELECT
     f.player_id,
-    p.player_name,
+    p.nick_name AS player_name,
     f.agent_id,
     a.agent_name,
     f.map_id,
@@ -24,7 +24,7 @@ SELECT
     AVG(fk) AS avg_fk,
     AVG(fd) AS avg_fd,
     AVG(fkfd) AS avg_fkfd
-FROM {{ ref('fact_players') }} f
+FROM {{ ref('fact_player_stats') }} f
 JOIN {{ ref('dims_players') }} p
 ON f.player_id = p.player_id
 JOIN {{ ref('dims_agents') }} a
@@ -34,7 +34,7 @@ ON f.map_id = m.map_id
 WHERE mod = 'avg'
 GROUP BY
     f.player_id,
-    p.player_name,
+    p.nick_name,
     f.agent_id,
     a.agent_name,
     f.map_id,

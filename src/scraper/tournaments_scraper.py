@@ -174,6 +174,12 @@ class TournamentScraper:
 
                 logging.info(f"{title} is Exist. Tournament status: {status}.")
                 
+                if mode != "prod":
+                    if region == "World":
+                        logging.info(f"Region: {region}. Region must be APAC / Pasific, EMEA, China, or America.")
+                        checkpoint.mark_completed(url)
+                        continue
+                
                 tour = Tour(
                     tour_id=tour_id,
                     tour_name=title,

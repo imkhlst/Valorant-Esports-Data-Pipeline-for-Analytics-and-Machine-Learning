@@ -168,13 +168,13 @@ class MatchesScraper:
                 logging.info(f"Found {match_id}, {bracket}, {date}, and {patch}.")
 
                 home_href = get_value(soup=soup, selector=".match-header-link.wf-link-hover.mod-1", attr="href")
-                home_name = home_href.split("/")[-1]
-                if [tour_id, home_name] not in team_list:
+                home_id = home_href.split("/")[-2]
+                if home_id not in team_list:
                     home_url = absolute(url=home_href)
-                    team_scraper = TeamScraper(url=home_url, tour_id=tour_id)
-                    home_team = team_scraper.scrape_team_info()
+                    team_scraper = TeamScraper()
+                    home_team = team_scraper.scrape_team_info(url=home_url)
                     team_info.append(home_team)
-                    team_list.append([tour_id, home_name])
+                    team_list.append(home_id)
 
                 # home_info = get_value(soup=home_soup, selector=".wf-title", attr="text", multiple=True)
                 # home_name = home_alias = home_info[0]
@@ -183,13 +183,13 @@ class MatchesScraper:
                 #     home_alias = home_info[1]
 
                 away_href = get_value(soup=soup, selector=".match-header-link.wf-link-hover.mod-2", attr="href")
-                away_name = away_href.split("/")[-1]
-                if [tour_id, away_name] not in team_list:
+                away_id = away_href.split("/")[-2]
+                if away_id not in team_list:
                     away_url = absolute(url=away_href)
-                    team_scraper = TeamScraper(url=away_url, tour_id=tour_id)
-                    away_team = team_scraper.scrape_team_info()
+                    team_scraper = TeamScraper()
+                    away_team = team_scraper.scrape_team_info(url=away_url)
                     team_info.append(away_team)
-                    team_list.append([tour_id, away_name])
+                    team_list.append(away_id)
 
                 # away_info = get_value(soup=away_soup, selector=".wf-title", attr="text", multiple=True)
                 # away_name = away_alias = away_info[0]
@@ -197,7 +197,7 @@ class MatchesScraper:
                 # if len(away_info) > 1:
                 #     away_alias = away_info[1]
 
-                logging.info(f"Found {home_name} and {away_name}.")
+                logging.info(f"Found {home_id} and {away_id}.")
 
                 bo_info = get_value(soup=soup, selector=".match-header-vs-note", attr="text", multiple=True)[-1]
                 score_info = get_value(soup=soup, selector=".sp-hide span", attr="text", multiple=True)
@@ -254,10 +254,8 @@ class MatchesScraper:
                     bracket=bracket,
                     patch=patch,
 
-                    home_name=home_name,
-                    # home_alias=home_alias,
-                    away_name=away_name,
-                    # away_alias=away_alias,
+                    home_id=home_id,
+                    away_id=away_id,
 
                     bo=bo_info,
                     home_score=home_score,

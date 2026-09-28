@@ -34,6 +34,7 @@ def create_dataset(
 ):
     client = bigquery.Client(project=project_id)
     dataset_name = dataset_name if isinstance(dataset_name, list) else [dataset_name]
+    processed_datasets = []
 
     for i in dataset_name:
         dataset_id = f"{project_id}.{i}"
@@ -43,11 +44,11 @@ def create_dataset(
         try:
             logging.info(f"Checking BigQuery dataset ...")
 
-            client.get_dataset(dataset_id)
+            existing_dataset = client.get_dataset(dataset_id)
 
             logging.info(f"Dataset {dataset_id} already exists.")
 
-            return dataset
+            processed_datasets.append(existing_dataset)
         
         except Exception:
             logging.info(f"Dataset {dataset_id} does not exists. Creating ...")
@@ -56,7 +57,9 @@ def create_dataset(
 
             logging.info(f"Created dataset {dataset_id} in {location}")
 
-            return new_dataset
+            processed_datasets.append(new_dataset)
+
+    return processed_datasets
 
 def upload_data(
         file_name: str | list = FILE_NAME,
@@ -85,7 +88,6 @@ def load_table(
     logging.info(f"Loading table into BigQuery dataset ...")
     client = bigquery.Client(project=project_id)
     job_config = bigquery.LoadJobConfig(
-            autodetect=True,
             source_format=bigquery.SourceFormat.PARQUET,
             write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
         )
@@ -93,7 +95,7 @@ def load_table(
     file_name = file_name if isinstance(file_name, list) else [file_name]
 
     for name in file_name:
-        table_id = f"{project_id}.{dataset_name}.staging_{name}"
+        table_id = f"{project_id}.{dataset_name}.{name}"
         gcs_uri = f"gs://{gcs_data_dir_path}/{name}.parquet"
 
         logging.info(f"Starting load job for {gcs_uri} ...")
@@ -110,24 +112,24 @@ def load_table(
         print(f"Success! Loaded {destination_table.num_rows} rows into {table_id}")
 
 def merge_table(
-        dataset_name: str,
+        source_dataset: str,
+        target_dataset: str,
         file_name: str | list = FILE_NAME,
         project_id: str = PROJECT_ID
 ):
     logging.info(f"Merging table from staging into bronze ...")
     client = bigquery.Client(project=project_id)
-
     try:
         file_name = file_name if isinstance(file_name, list) else [file_name]
         
         for name in file_name:
-            logging.info(f"Start merging table {name} ...")
+            logging.info(f"Start merging {name} table ...")
 
             sql = Path(f"src/query/{name}_incremental_load.sql").read_text()
 
             sql = sql.format(
-                source_table=f"{project_id}.{dataset_name}.staging_{file_name}",
-                target_table=f"{project_id}.{dataset_name}.bronze_{file_name}"
+                source_table=f"{project_id}.{source_dataset}.{name}",
+                target_table=f"{project_id}.{target_dataset}.{name}"
             )
 
             client.query(sql).result()

@@ -1,4 +1,4 @@
-version: 1.3
+version: 1.4
 
 models:
   - name: matches
@@ -48,28 +48,16 @@ models:
         data_type: string
         data_tests:
           - not_null
-      - name: home_name
+      - name: home_id
         description: >
-          Full name of the home team participating in the match.
-        data_type: string
+          Team ID of the home team participating in the match.
+        data_type: int64
         data_tests:
           - not_null
-      - name: home_alias
+      - name: away_id
         description: >
-          Short alias or abbreviation identifying the home team.
-        data_type: string
-        data_tests:
-          - not_null
-      - name: away_name
-        description: >
-          Full name of the away team participating in the match.
-        data_type: string
-        data_tests:
-          - not_null
-      - name: away_alias
-        description: >
-          Short alias or abbreviation identifying the away team.
-        data_type: string
+          Team ID of the away team participating in the match.
+        data_type: int64
         data_tests:
           - not_null
       - name: bo
@@ -107,7 +95,6 @@ models:
           and away team won by the home team.
         data_type: int64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -117,7 +104,6 @@ models:
           and away team won by the away team.
         data_type: int64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -127,7 +113,6 @@ models:
           against the home team.
         data_type: int64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -137,7 +122,6 @@ models:
           against the away team.
         data_type: int64
         data_tests:
-          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -199,6 +183,24 @@ models:
               arguments:
                 min_value: 0
                 max_value: 1
+      - name: scraped_at
+        description: >
+          Timestamp indicating when the data was scraped from the source.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: ingested_at
+        description: >
+          Timestamp indicating when the record was first ingested into the data warehouse.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: updated_at
+        description: >
+          Timestamp when the record was last modified in the data warehouse.
+        data_type: timestamp
+        data_tests:
+          - not_null
               
   - name: games_overview
     description: >
@@ -319,6 +321,24 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
+      - name: scraped_at
+        description: >
+          Timestamp indicating when the data was scraped from the source.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: ingested_at
+        description: >
+          Timestamp indicating when the record was first ingested into the data warehouse.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: updated_at
+        description: >
+          Timestamp when the record was last modified in the data warehouse.
+        data_type: timestamp
+        data_tests:
+          - not_null
 
   - name: games_economy
     description: >
@@ -504,8 +524,26 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
+      - name: scraped_at
+        description: >
+          Timestamp indicating when the data was scraped from the source.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: ingested_at
+        description: >
+          Timestamp indicating when the record was first ingested into the data warehouse.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: updated_at
+        description: >
+          Timestamp when the record was last modified in the data warehouse.
+        data_type: timestamp
+        data_tests:
+          - not_null
 
-  - name: players
+  - name: player_stats
     description: >
       Player-level statistics for each game, including player identity,
       team, agent, and combat performance metrics.
@@ -545,7 +583,7 @@ models:
           - relationships:
               arguments:
                 to: ref('dims_players')
-                field: player_name
+                field: nick_name
       - name: team_alias
         description: >
           Alias of the team represented by the player in the game.
@@ -678,3 +716,21 @@ models:
         description: >
           First-kill to first-death diff of the player.
         data_type: int64
+      - name: scraped_at
+        description: >
+          Timestamp indicating when the data was scraped from the source.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: ingested_at
+        description: >
+          Timestamp indicating when the record was first ingested into the data warehouse.
+        data_type: timestamp
+        data_tests:
+          - not_null
+      - name: updated_at
+        description: >
+          Timestamp when the record was last modified in the data warehouse.
+        data_type: timestamp
+        data_tests:
+          - not_null

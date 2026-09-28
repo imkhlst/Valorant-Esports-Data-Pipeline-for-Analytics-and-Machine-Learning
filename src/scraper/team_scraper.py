@@ -4,22 +4,20 @@ from entities.team_entities import *
 from logger import logging
 
 class TeamScraper:
-    def __init__(self, url: str, tour_id: str):
-        self.url = url
-        self.tour_id = tour_id
+    def __init__(self):
+        pass
 
-    def scrape_team_info(self):
+    def scrape_team_info(self, url: str):
         logging.info("Initialize scrape_team_info ...")
         try:
-            team_soup = get_soup(url=self.url)
-            team_id = self.url.split("/")[-2]
+            team_soup = get_soup(url=url)
+            team_id = url.split("/")[-2]
             team_info = get_value(soup=team_soup, selector=".wf-title", attr="text", multiple=True)
             team_name = team_info[0]
-            team_alias = team_info[1] if len(team_info) > 1 else None
+            team_alias = team_info[1] if len(team_info) > 1 else team_info[0]
             team_country = get_value(soup=team_soup, selector=".team-header-country", attr="text")
 
             team = Team(
-                tour_id=self.tour_id,
                 team_id=team_id,
                 team_name=team_name,
                 team_alias=team_alias,

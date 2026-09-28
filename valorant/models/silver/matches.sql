@@ -16,10 +16,8 @@ SELECT
     ) AS match_datetime,
     
     SAFE_CAST(bracket AS STRING) AS bracket,
-    SAFE_CAST(home_name AS STRING) AS home_name,
-    SAFE_CAST(home_alias AS STRING) AS home_alias,
-    SAFE_CAST(away_name AS STRING) AS away_name,
-    SAFE_CAST(away_alias AS STRING) AS away_alias,
+    SAFE_CAST(home_id AS INT64) AS home_id,
+    SAFE_CAST(away_id AS INT64) AS away_id,
     SAFE_CAST(bo AS STRING) AS bo,
     SAFE_CAST(patch AS STRING) AS patch,
 
@@ -93,5 +91,9 @@ SELECT
         WHEN away_n_last_win / NULLIF(away_n_last_match, 0) BETWEEN 0 AND 1
         THEN away_n_last_win / NULLIF(away_n_last_match, 0)
         ELSE NULL
-    END AS away_n_last_wr
+    END AS away_n_last_wr,
+    
+    SAFE_CAST(scraped_at AS TIMESTAMP) AS scraped_at,
+    SAFE_CAST(ingested_at AS TIMESTAMP) AS ingested_at,
+    SAFE_CAST(updated_at AS TIMESTAMP) AS updated_at
 FROM {{ source('bronze', 'matches') }}

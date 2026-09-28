@@ -78,7 +78,11 @@ SELECT
         WHEN SAFE_CAST(fkfd AS INT64) = (SAFE_CAST(fk AS INT64) - SAFE_CAST(fd AS INT64))
         THEN SAFE_CAST(fkfd AS INT64)
         ELSE NULL
-    END AS fkfd
-FROM {{ source('bronze', 'players') }} p
+    END AS fkfd,
+
+    SAFE_CAST(p.scraped_at AS TIMESTAMP) AS scraped_at,
+    SAFE_CAST(p.ingested_at AS TIMESTAMP) AS ingested_at,
+    SAFE_CAST(p.updated_at AS TIMESTAMP) AS updated_at
+FROM {{ source('bronze', 'player_stats') }} p
 JOIN {{ ref('games_overview') }} o
 ON SAFE_CAST(p.game_id AS INT64) = o.game_id
