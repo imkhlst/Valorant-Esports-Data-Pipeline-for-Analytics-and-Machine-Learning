@@ -13,51 +13,6 @@ class MatchesScraper:
     def __init__(self):
         pass
 
-    # def scrape_map_veto(self, soup, match_id: str):
-    #     logging.info("Initialize scrape_map_veto ...")
-
-    #     try:
-    #         map_order_container = get_value(soup=soup, selector=".match-header-note", attr="text", multiple=True)
-
-    #         if map_order_container[-1] is None:
-    #             logging.info(f"Map selection not found.")
-    #             return None
-
-    #         map_order = map_order_container[-1].split(";")
-    #         vetos = set()
-
-    #         for map in map_order:
-    #             map_split = map.strip().split(" ")
-
-    #             if map_split[1].strip() == "ban" or map_split[1].strip() == "pick":
-    #                 veto = MapVeto(
-    #                     match_id=match_id,
-    #                     team_name=map_split[0],
-    #                     action=map_split[1].lower(),
-    #                     map_name=map_split[2],
-    #                     scraped_at=datetime.now()
-    #                 )
-    #                 vetos.add(veto)
-
-    #             else:
-    #                 veto = MapVeto(
-    #                     match_id=match_id,
-    #                     map_name=map_split[0],
-    #                     scraped_at=datetime.now()
-    #                 )
-    #                 logging.info(f"Found decider map: {map_split[0]}")
-    #                 vetos.add(veto)
-
-    #         return vetos
-
-    #     except Exception as e:
-    #         logging.error(f"Error occurs whe running scrape_map_veto: {e}")
-    #         save_pipeline(
-    #             status="failed",
-    #             module=["matches"]
-    #         )
-    #         raise
-
     def scrape_matches_list(self, match_page: list) -> list:
         processed = set()
         queue = list(match_page) if not isinstance(match_page, list) else match_page
@@ -149,10 +104,6 @@ class MatchesScraper:
 
                 match_id = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="data-match-id")
 
-                # if checkpoint.is_exists(match_id):
-                #     logging.info(f"{match_id} already exists.")
-                #     continue
-
                 tab_elements = get_value(soup=soup, selector=".vm-stats-tabnav a", attr="href", multiple=True)
                 tab_url = [absolute(url=i) for i in tab_elements]
                 tab_list.append([match_id, sorted(tab_url)])
@@ -176,12 +127,6 @@ class MatchesScraper:
                     team_info.append(home_team)
                     team_list.append(home_id)
 
-                # home_info = get_value(soup=home_soup, selector=".wf-title", attr="text", multiple=True)
-                # home_name = home_alias = home_info[0]
-
-                # if len(home_info) > 1:
-                #     home_alias = home_info[1]
-
                 away_href = get_value(soup=soup, selector=".match-header-link.wf-link-hover.mod-2", attr="href")
                 away_id = away_href.split("/")[-2]
                 if away_id not in team_list:
@@ -190,12 +135,6 @@ class MatchesScraper:
                     away_team = team_scraper.scrape_team_info(url=away_url)
                     team_info.append(away_team)
                     team_list.append(away_id)
-
-                # away_info = get_value(soup=away_soup, selector=".wf-title", attr="text", multiple=True)
-                # away_name = away_alias = away_info[0]
-
-                # if len(away_info) > 1:
-                #     away_alias = away_info[1]
 
                 logging.info(f"Found {home_id} and {away_id}.")
 

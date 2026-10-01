@@ -29,9 +29,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate uploaded data
-        if: steps.scraper_state.outputs.status == 'completed'
         run: |
-          find data/raw -type f
+          echo "=== Raw data ==="
+          find data/raw -type f || true
+
+          echo "=== Checkpoint ==="
+          find data/checkpoint -type f || true
 
       - name: Validate scraper completion
         id: scraper_state
