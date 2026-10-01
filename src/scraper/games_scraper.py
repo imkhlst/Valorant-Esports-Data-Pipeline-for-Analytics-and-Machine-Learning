@@ -8,56 +8,6 @@ from logger import logging
 class GamesScraper:
     def __init__(self):
         pass
-
-    # def scrape_player_stat(self, game_id: str,  soup: str):
-    #     logging.info("Initialize scrape_player_stat ...")
-    #     try:
-    #         stats_info = []
-    #         tables = get_value(soup=soup, selector=".ovw-scroll-wrap", multiple=True)
-    #         for table in tables:
-    #             flags = get_value(soup=table, selector=".flag", attr="title", multiple=True)
-    #             names = get_value(soup=table, selector=".ovw-player-name", attr="text", multiple=True)
-    #             team_aliases = get_value(soup=table, selector=".ovw-player-tag", attr="text", multiple=True)
-    #             agents = get_value(soup=table, selector=".stats-sq.mod-agent.small img", attr="title", multiple=True)
-    #             for mod in ["mod-both", "mod-ct", "mod-t"]:
-    #                 stats_list = get_value(soup=table, selector=f".side.{mod}", attr="text", multiple=True)
-    #                 if len(stats_list) < 60:
-    #                     stats_list.extend([""] * (60 - len(stats_list)))
-    #                 for i, name in enumerate(names):
-    #                     stats = PlayerStats(
-    #                         game_id=game_id,
-    #                         name=name,
-    #                         team_alias=team_aliases[i],
-    #                         nationality=flags[i],
-    #                         agent=agents[i],
-    #                         mod="atk" if mod == "mod-t" else "def" if mod == "mod-ct" else "avg",
-    #                         r=float(stats_list[0 + ((len(stats_list) // 5) * i)]) if stats_list[0 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         acs=int(stats_list[1 + ((len(stats_list) // 5) * i)].replace(",", "")) if stats_list[1 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         k=int(stats_list[2 + ((len(stats_list) // 5) * i)]) if stats_list[2 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         d=int(stats_list[3 + ((len(stats_list) // 5) * i)]) if stats_list[3 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         a=int(stats_list[4 + ((len(stats_list) // 5) * i)]) if stats_list[4 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         kd=int(stats_list[5 + ((len(stats_list) // 5) * i)]) if stats_list[5 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         kast=int(stats_list[6 + ((len(stats_list) // 5) * i)].replace("%", "")) if stats_list[6 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         adr=int(stats_list[7 + ((len(stats_list) // 5) * i)].replace(",", "")) if stats_list[7 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         hs=int(stats_list[8 + ((len(stats_list) // 5) * i)].replace("%", "")) if stats_list[8 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         fk=int(stats_list[9 + ((len(stats_list) // 5) * i)]) if stats_list[9 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         fd=int(stats_list[10 + ((len(stats_list) // 5) * i)]) if stats_list[10 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         fkfd=int(stats_list[11 + ((len(stats_list) // 5) * i)]) if stats_list[11 + ((len(stats_list) // 5) * i)] != "" else None,
-    #                         scraped_at= datetime.now()
-    #                     )
-    #                     stats_info.append(stats)
-    #                 logging.info(f"Found player info: {names[0]}, {flags[0]}, {team_aliases[0]}, {agents[0]}, {mod}")
-                
-    #         logging.info(f"Stats info has been added.")
-    #         return stats_info
-        
-    #     except Exception as e:
-    #         logging.error(f"Error occurs whe running scrape_player_stat: {e}")
-    #         save_pipeline(
-    #             status="failed",
-    #             module=["games"]
-    #         )
-    #         raise
             
     def scrape_game_overview(self, match_id: str, overview_url: str, player_url: set) -> list:
         logging.info(f"Initialize scraper_game_overview ...")

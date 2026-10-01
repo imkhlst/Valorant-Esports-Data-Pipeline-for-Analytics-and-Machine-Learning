@@ -24,6 +24,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Debug workflow context
+        run: |
+          echo "=== WORKFLOW DEBUG ==="
+          echo "Workflow      : ${{ github.workflow }}"
+          echo "Run ID        : ${{ github.run_id }}"
+          echo "Run Number    : ${{ github.run_number }}"
+          echo "Event         : ${{ github.event_name }}"
+          echo "Ref           : ${{ github.ref }}"
+          echo "SHA           : ${{ github.sha }}"
 
       - name: Download previous scrape state
         if: ${{ inputs.previous_run_id != '' }}
