@@ -2,6 +2,11 @@ name: GCP - Production
 
 on:
   workflow_dispatch:
+    inputs:
+      scraper_run_id:
+        description: "Scraper workflow run ID"
+        required: true
+        type: string
 
 permissions:
   contents: 'read'
