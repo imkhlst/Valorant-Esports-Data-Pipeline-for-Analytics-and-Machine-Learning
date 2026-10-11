@@ -210,7 +210,7 @@ class GamesScraper:
                     break
 
                 match_id, tabs = item[0], item[1]
-                econ_tab, overview_tab = tabs[0], tabs[1]
+                econ_tab, overview_tab = tabs[0], tabs[1] if "overview" in tabs[1] else tabs[2]
 
                 checkpoint = Checkpoint(checkpoint_path=Path("data/checkpoint/games.json"))
                 checkpoint.load()
