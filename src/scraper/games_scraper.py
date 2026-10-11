@@ -94,7 +94,7 @@ class GamesScraper:
                 url_list.update(url)
 
             logging.info(f"Game overview and player info has been added.")
-            return game_overview, player_info, stat_info, game_id, url_list
+            return game_overview, player_info, stat_info, url_list
         
         except Exception as e:
             logging.info(f"Error occurs when running scrape_game_overview: {e}")
@@ -102,6 +102,7 @@ class GamesScraper:
                 status="failed",
                 module=["games"]
             )
+            print(f"Error source from {overview_url} and game ID [{game_id}]")
             raise
     
     def scrape_game_economy(self, match_id: str, econ_url: str) -> list:
@@ -173,6 +174,7 @@ class GamesScraper:
                 status="failed",
                 module=["games"]
             )
+            print(f"Error source from {econ_url} and game ID [{game_id}]")
             raise
 
     def scrape_game_info(self, tab_list: list, pipeline_start_time: datetime, mode: str):
@@ -214,7 +216,7 @@ class GamesScraper:
                 checkpoint.load()
 
                 if not checkpoint.is_exists(overview_tab):
-                    overview, player_info, stat_info, game_id, url = self.scrape_game_overview(match_id=match_id, overview_url=overview_tab, player_url=player_url)
+                    overview, player_info, stat_info, url = self.scrape_game_overview(match_id=match_id, overview_url=overview_tab, player_url=player_url)
                     player.extend(player_info)
                     stats.extend(stat_info)
                     player_url.update(url)

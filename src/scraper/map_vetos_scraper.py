@@ -51,4 +51,5 @@ class MapVetosScraper:
                 status="failed",
                 module=["matches"]
             )
+            print(f"Error source from match ID [{match_id}]")
             raise

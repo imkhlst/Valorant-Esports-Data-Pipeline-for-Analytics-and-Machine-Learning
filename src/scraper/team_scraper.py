@@ -35,4 +35,5 @@ class TeamScraper:
                 status="failed",
                 module=["matches"]
             )
+            print(f"Error source from {url} and team ID [{team_id}]")
             raise

@@ -58,6 +58,7 @@ class PlayerScraper:
                 status="failed",
                 module=["games"]
             )
+            print(f"Found error in {url}")
             raise
     
     def scrape_stat(
@@ -124,4 +125,5 @@ class PlayerScraper:
                 status="failed",
                 module=["games"]
             )
+            print(f"Error source from game ID [{game_id}]")
             raise
