@@ -53,6 +53,7 @@ class TournamentScraper:
         
         except Exception as e:
             logging.error(f"Error Occurs when running scrape_tournament_list: {e}")
+            print(f"Error Occurs when running scrape_tournament_list: {e}")
             raise
 
     def scrape_tournament_info(self, tour_list: list, pipeline_start_time: datetime, mode: str) -> list:
@@ -227,6 +228,7 @@ class TournamentScraper:
                 status="failed",
                 module=["tournaments"]
             )
+            print(f"Error found in {url} and tour ID [{tour_id}]")
             raise
     
     def run(self, mode: str, pipeline_start_time: datetime):

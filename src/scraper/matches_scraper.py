@@ -51,6 +51,7 @@ class MatchesScraper:
 
         except Exception as e:
             logging.error(f"Error occurs when running scrape_matches_list: {e}")
+            print(f"Error source from {url} and tour ID [{tour_id}]")
             raise 
     
     def scrape_matches_info(self, match_list: list, pipeline_start_time: datetime, mode: str):
@@ -233,6 +234,7 @@ class MatchesScraper:
                 status="failed",
                 module=["matches"]
             )
+            print(f"Error source from {url} and match ID [{match_id}]")
             raise
     
     def run(self, mode: str, pipeline_start_time: datetime):
