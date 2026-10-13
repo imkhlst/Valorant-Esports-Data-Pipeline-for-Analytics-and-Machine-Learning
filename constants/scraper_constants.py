@@ -16,11 +16,10 @@ STAGE_KEYWORD = [
     "kickoff"
 ]
 
-REGION_KEYWORD = [
-    "pasific",
-    "emea",
-    "americas",
-    "china"
+TITLE_KEYWORD = [
+    "vct",
+    "masters",
+    "champions"
 ]
 
 FILE_NAME = [
