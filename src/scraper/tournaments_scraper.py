@@ -166,14 +166,14 @@ class TournamentScraper:
                 tour_id = url.split("/")[4]
                 tag = get_value(soup=soup, selector=".event-header-main-bc a[href]", attr="text")
                 title = get_value(soup=soup, selector=".event-header-main-title", attr="text")
-
-                if not any(i in self.region_keyword for i in tag.lower().split(" ")):
-                    logging.info(f"{tag} not a main region in valorant champions tournament.")
+                    
+                if not "champions" in tag.lower().split(" "):
+                    logging.info(f"Tags [{tag}] not a valorant champions tournament event.")
                     checkpoint.mark_completed(url)
                     continue
 
                 if not any(i in self.title_keyword for i in title.lower().split(" ")):
-                    logging.info(f"{title} not a main valorant champions tournament.")
+                    logging.info(f"Title [{title}] not a valorant champions tournament event.")
                     checkpoint.mark_completed(url)
                     continue
 
