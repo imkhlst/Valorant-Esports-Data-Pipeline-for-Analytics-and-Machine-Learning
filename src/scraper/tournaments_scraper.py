@@ -12,11 +12,13 @@ class TournamentScraper:
             base_url: str = BASE_URL,
             title_keyword: list = TITLE_KEYWORD,
             stage_keyword: list = STAGE_KEYWORD,
+            region_keyword: list = REGION_KEYWORD,
             exist_tour_data: list = EXIST_TOUR_DATA
     ):
         self.base_url = base_url
         self.stage_keyword = stage_keyword
         self.title_keyword = title_keyword
+        self.region_keyword = region_keyword
         self.exist_tour_data = exist_tour_data
 
     def scrape_tournament_list(self):
@@ -164,9 +166,14 @@ class TournamentScraper:
                 tour_id = url.split("/")[4]
                 tag = get_value(soup=soup, selector=".event-header-main-bc a[href]", attr="text")
                 title = get_value(soup=soup, selector=".event-header-main-title", attr="text")
+                    
+                if not "champions" in tag.lower().split(" "):
+                    logging.info(f"Tags [{tag}] not a valorant champions tournament event.")
+                    checkpoint.mark_completed(url)
+                    continue
 
                 if not any(i in self.title_keyword for i in title.lower().split(" ")):
-                    logging.info(f"{title} not an official valorant champions tour.")
+                    logging.info(f"Title [{title}] not a valorant champions tournament event.")
                     checkpoint.mark_completed(url)
                     continue
 

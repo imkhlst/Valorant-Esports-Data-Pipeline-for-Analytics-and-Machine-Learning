@@ -16,6 +16,13 @@ STAGE_KEYWORD = [
     "kickoff"
 ]
 
+REGION_KEYWORD = [
+    "emea",
+    "pacific",
+    "americas",
+    "china"
+]
+
 TITLE_KEYWORD = [
     "vct",
     "masters",
