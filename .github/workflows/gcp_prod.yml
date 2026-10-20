@@ -27,7 +27,7 @@ jobs:
         with:
           name: scraper_state
           path: data/
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ inputs.scraper_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate uploaded data
