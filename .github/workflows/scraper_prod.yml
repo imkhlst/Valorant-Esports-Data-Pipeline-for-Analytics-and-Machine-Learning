@@ -153,5 +153,5 @@ jobs:
         run: |
           gh workflow run gcp_prod.yml \
             --repo "${{ github.repository }}" \
-            --ref main
+            --ref main \
             -f scraper_run_id=${{ github.run_id }}

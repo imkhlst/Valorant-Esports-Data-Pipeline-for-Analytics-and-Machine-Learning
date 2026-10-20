@@ -32,7 +32,7 @@ WHEN MATCHED
 THEN UPDATE SET
     target.match_id = source.match_id,
     target.game_map = source.game_map,
-    target.game_duration = source.game_duration,
+    target.game_duration = SAFE_CAST(source.game_duration AS STRING),
     target.home_score = source.home_score,
     target.away_score = source.away_score,
     target.home_atk_score = source.home_atk_score,
@@ -67,7 +67,7 @@ VALUES (
     source.match_id,
     source.game_id,
     source.game_map,
-    source.game_duration,
+    SAFE_CAST(source.game_duration AS STRING),
     source.home_score,
     source.away_score,
     source.home_atk_score,
