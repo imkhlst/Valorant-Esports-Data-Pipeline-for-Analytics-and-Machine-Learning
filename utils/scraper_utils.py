@@ -129,6 +129,8 @@ def save_file(data: list | pd.DataFrame, file_name: str, format: str):
                 [old_df, new_df],
                 ignore_index=True
             )
+            if file_name == "player" or file_name == "teams":
+                new_data = new_data.drop_duplicates(subset=new_data.columns[:1].to_list(), keep="first")
 
         new_data.to_parquet(path=file_path, index=False)
         logging.info(f"Data has been save in {file_path}")
