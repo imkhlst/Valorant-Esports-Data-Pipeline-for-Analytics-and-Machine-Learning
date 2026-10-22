@@ -24,7 +24,7 @@ AND target.team_name = source.team_name
 
 WHEN MATCHED
 THEN UPDATE SET
-    target.action = source.action,
+    target.action = SAFE_CAST(source.action AS STRING),
     target.scraped_at = TIMESTAMP_MICROS(DIV(source.scraped_at, 1000)),
     target.ingested_at = target.ingested_at,
     target.updated_at = CURRENT_TIMESTAMP()
@@ -40,10 +40,10 @@ THEN INSERT (
     updated_at
 )
 VALUES (
-    source.match_id,
-    source.map_name,
-    source.team_name,
-    source.action,
+    SAFE_CAST(source.match_id AS STRING),
+    SAFE_CAST(source.map_name AS STRING),
+    SAFE_CAST(source.team_name AS STRING),
+    SAFE_CAST(source.action AS STRING),
     TIMESTAMP_MICROS(DIV(source.scraped_at, 1000)),
     CURRENT_TIMESTAMP(),
     CURRENT_TIMESTAMP()

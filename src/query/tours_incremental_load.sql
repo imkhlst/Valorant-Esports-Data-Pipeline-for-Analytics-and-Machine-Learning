@@ -24,11 +24,11 @@ ON target.tour_id = source.tour_id
 
 WHEN MATCHED
 THEN UPDATE SET
-    target.tour_name = source.tour_name,
-    target.tour_tag = source.tour_tag,
-    target.tour_stage = source.tour_stage,
-    target.tour_region = source.tour_region,
-    target.tour_status = source.tour_status,
+    target.tour_name = SAFE_CAST(source.tour_name AS STRING),
+    target.tour_tag = SAFE_CAST(source.tour_tag AS STRING),
+    target.tour_stage = SAFE_CAST(source.tour_stage AS STRING),
+    target.tour_region = SAFE_CAST(source.tour_region AS STRING),
+    target.tour_status = SAFE_CAST(source.tour_status AS STRING),
     target.scraped_at = TIMESTAMP_MICROS(DIV(source.scraped_at, 1000)),
     target.ingested_at = target.ingested_at,
     target.updated_at = CURRENT_TIMESTAMP()
@@ -46,12 +46,12 @@ THEN INSERT (
     updated_at
 )
 VALUES (
-    source.tour_id,
-    source.tour_name,
-    source.tour_tag,
-    source.tour_stage,
-    source.tour_region,
-    source.tour_status,
+    SAFE_CAST(source.tour_id AS STRING),
+    SAFE_CAST(source.tour_name AS STRING),
+    SAFE_CAST(source.tour_tag AS STRING),
+    SAFE_CAST(source.tour_stage AS STRING),
+    SAFE_CAST(source.tour_region AS STRING),
+    SAFE_CAST(source.tour_status AS STRING),
     TIMESTAMP_MICROS(DIV(source.scraped_at, 1000)),
     CURRENT_TIMESTAMP(),
     CURRENT_TIMESTAMP()

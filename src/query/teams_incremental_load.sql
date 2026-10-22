@@ -22,9 +22,9 @@ ON target.team_id = source.team_id
 
 WHEN MATCHED
 THEN UPDATE SET
-    target.team_name = source.team_name,
-    target.team_alias = source.team_alias,
-    target.team_country = source.team_country,
+    target.team_name = SAFE_CAST(source.team_name AS STRING),
+    target.team_alias = SAFE_CAST(source.team_alias AS STRING),
+    target.team_country = SAFE_CAST(source.team_country AS STRING),
     target.scraped_at = TIMESTAMP_MICROS(DIV(source.scraped_at, 1000)),
     target.ingested_at = target.ingested_at,
     target.updated_at = CURRENT_TIMESTAMP()
@@ -40,10 +40,10 @@ THEN INSERT (
     updated_at
 )
 VALUES (
-    source.team_id,
-    source.team_name,
-    source.team_alias,
-    source.team_country,
+    SAFE_CAST(source.team_id AS STRING),
+    SAFE_CAST(source.team_name AS STRING),
+    SAFE_CAST(source.team_alias AS STRING),
+    SAFE_CAST(source.team_country AS STRING),
     TIMESTAMP_MICROS(DIV(source.scraped_at, 1000)),
     CURRENT_TIMESTAMP(),
     CURRENT_TIMESTAMP()
