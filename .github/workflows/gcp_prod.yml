@@ -69,5 +69,5 @@ jobs:
         run: |
           gh workflow run dbt_prod.yml \
             --repo "${{ github.repository }}" \
-            --ref main
-            -f gcp_run_id=${{ github.run_id }}
+            --ref main \
+            -f gcp_run_id="${{ github.run_id }}
