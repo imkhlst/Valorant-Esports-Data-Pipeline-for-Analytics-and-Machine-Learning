@@ -61,3 +61,13 @@ jobs:
           -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
           valorant-project \
           python -m pipeline.gcp_pipeline --prod
+      
+      - name: Trigger next workflow
+        if: steps.pipeline_state.outputs.status == 'completed'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run dbt_prod.yml \
+            --repo "${{ github.repository }}" \
+            --ref main \
+            -f gcp_run_id=${{ github.run_id }}
