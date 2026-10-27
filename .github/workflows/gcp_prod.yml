@@ -54,6 +54,7 @@ jobs:
           python -c "import utils.gcp_utils; print('GCP container OK!')"
 
       - name: Run GCP pipeline
+        id: gcp_state
         run: |
           docker run --rm \
           -v "${{ github.workspace }}/data/raw:/valorant-project/data/raw" \
@@ -61,9 +62,10 @@ jobs:
           -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-credentials.json \
           valorant-project \
           python -m pipeline.gcp_pipeline --prod
+          echo "status=completed" >> $GITHUB_OUTPUT
       
       - name: Trigger next workflow
-        if: steps.pipeline_state.outputs.status == 'completed'
+        if: steps.gcp_state.outputs.status == 'completed'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
