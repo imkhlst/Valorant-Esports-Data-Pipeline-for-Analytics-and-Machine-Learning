@@ -1,10 +1,12 @@
 name: dbt - Production
 
 on:
-  workflow_run:
-    workflows: ["GCP - Production"]
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      gcp_run_id:
+        description: "GCP workflow run ID"
+        required: true
+        type: string
 
 permissions:
   contents: 'read'
